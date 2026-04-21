@@ -1,0 +1,426 @@
+{
+  "exportedAt": "2026-04-20T21:21:17.635Z",
+  "productsData": [
+    {
+      "id": 1776704593089,
+      "name": "The last of us 2",
+      "price": "350000",
+      "category": "juegos",
+      "platform": "ps4",
+      "image": "https://i.imgur.com/NXSuqcR.jpeg",
+      "condition": "Nuevo",
+      "message": "Hola! Quiero consultar por The last of us 2.",
+      "isFeatured": false,
+      "createdAt": "2026-04-20"
+    },
+    {
+      "id": 1776702219605,
+      "name": "God Of War",
+      "price": "150000",
+      "category": "juegos",
+      "platform": "ps4",
+      "image": "https://i.imgur.com/GHOGmmI.jpeg",
+      "description": "1",
+      "message": "Hola! Quiero consultar por God Of War.",
+      "isFeatured": false,
+      "createdAt": "2026-04-20",
+      "condition": "Nuevo"
+    },
+    {
+      "id": 100,
+      "name": "Recargas para todos los juegos",
+      "price": "Disponible ahora",
+      "category": "recargas-servicios",
+      "image": "https://i.imgur.com/T7uvTyL.png",
+      "message": "Hola! Quiero consultar por Recargas para todos los juegos.",
+      "isFeatured": false,
+      "createdAt": "2026-04-01"
+    },
+    {
+      "id": 1,
+      "name": "Joystick PS4",
+      "price": "125.000",
+      "category": "accesorios",
+      "platform": "ps4",
+      "image": "https://i.imgur.com/hBoVgOm.jpeg",
+      "message": "Hola! Quiero consultar por Joystick PS4.",
+      "isFeatured": true,
+      "createdAt": "2026-04-20",
+      "originalPrice": ""
+    },
+    {
+      "id": 2,
+      "name": "Auricular Gamer",
+      "price": "Consultar precio",
+      "category": "accesorios",
+      "platform": "ps4",
+      "image": "https://i.imgur.com/V7IWjBe.jpeg",
+      "message": "Hola! Quiero consultar por Auricular Gamer.",
+      "isFeatured": false,
+      "createdAt": "2026-04-20"
+    },
+    {
+      "id": 3,
+      "name": "God of War Ragnarok",
+      "price": "Consultar precio",
+      "category": "juegos",
+      "platform": "ps5",
+      "image": "https://i.imgur.com/h18c8aJ.jpeg",
+      "message": "Hola! Quiero consultar por God of War Ragnarok.",
+      "isFeatured": true,
+      "createdAt": "2026-04-20",
+      "condition": "Nuevo"
+    },
+    {
+      "id": 4,
+      "name": "Consolas",
+      "price": "Nuevas y usadas",
+      "category": "consolas",
+      "image": "https://i.imgur.com/Uv1nMii.jpeg",
+      "message": "Hola! Quiero consultar por Consolas.",
+      "isFeatured": false,
+      "createdAt": "2026-04-01"
+    },
+    {
+      "id": 5,
+      "name": "Recargas para juegos",
+      "price": "Promo disponible",
+      "category": "recargas-servicios",
+      "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1200&q=80",
+      "message": "Hola! Quiero consultar por Recargas para juegos.",
+      "isFeatured": false,
+      "createdAt": "2026-04-01"
+    },
+    {
+      "id": 6,
+      "name": "Servicios streaming",
+      "price": "Planes disponibles",
+      "category": "recargas-servicios",
+      "image": "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80",
+      "message": "Hola! Quiero consultar por Servicios streaming.",
+      "isFeatured": false,
+      "createdAt": "2026-04-01"
+    },
+    {
+      "id": 7,
+      "name": "Mando PS3",
+      "price": "95.000",
+      "category": "accesorios",
+      "platform": "ps3",
+      "image": "https://i.imgur.com/mPxekSH.png",
+      "message": "Hola! Quiero consultar por Mando PS3.",
+      "isFeatured": true,
+      "createdAt": "2026-04-20",
+      "originalPrice": "85.000"
+    },
+    {
+      "id": 8,
+      "name": "Combo PS4 + GTA V",
+      "price": "Consultar combo",
+      "category": "consolas",
+      "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+      "message": "Hola! Quiero consultar por Combo PS4 + GTA V.",
+      "isFeatured": false,
+      "createdAt": "2026-04-01"
+    }
+  ],
+  "editableHeroSlides": [
+    {
+      "title": "⚡ RECARGAS DISPONIBLES",
+      "subtitle": "Saldo, servicios y recargas para todos tus juegos. Consultá ahora.",
+      "image": "https://i.imgur.com/LnLO32v.png",
+      "buttonText": "Consultar recargas",
+      "message": "Hola! Quiero consultar por recargas disponibles."
+    },
+    {
+      "title": "🔥 YA DISPONIBLE",
+      "subtitle": "Nuevos lanzamientos y novedades en juegos. Consultá lo último en SKAY GAMES.",
+      "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
+      "buttonText": "Consultar lanzamiento",
+      "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥"
+    },
+    {
+      "title": "Juegos PS4 y PS5",
+      "subtitle": "Encontrá títulos físicos y digitales para seguir jugando sin parar.",
+      "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      "buttonText": "Consultar juegos",
+      "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5."
+    },
+    {
+      "title": "Consolas nuevas y usadas",
+      "subtitle": "PS3, PS4, PS5 y más opciones para todos los presupuestos.",
+      "image": "https://i.imgur.com/V7IWjBe.jpeg",
+      "buttonText": "Consultar consolas",
+      "message": "Hola! Quiero consultar por consolas disponibles."
+    }
+  ],
+  "draftHeroSlides": [
+    {
+      "title": "⚡ RECARGAS DISPONIBLES",
+      "subtitle": "Saldo, servicios y recargas para todos tus juegos. Consultá ahora.",
+      "image": "https://i.imgur.com/LnLO32v.png",
+      "buttonText": "Consultar recargas",
+      "message": "Hola! Quiero consultar por recargas disponibles."
+    },
+    {
+      "title": "🔥 YA DISPONIBLE",
+      "subtitle": "Nuevos lanzamientos y novedades en juegos. Consultá lo último en SKAY GAMES.",
+      "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
+      "buttonText": "Consultar lanzamiento",
+      "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥"
+    },
+    {
+      "title": "Juegos PS4 y PS5",
+      "subtitle": "Encontrá títulos físicos y digitales para seguir jugando sin parar.",
+      "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      "buttonText": "Consultar juegos",
+      "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5."
+    },
+    {
+      "title": "Consolas nuevas y usadas",
+      "subtitle": "PS3, PS4, PS5 y más opciones para todos los presupuestos.",
+      "image": "https://i.imgur.com/V7IWjBe.jpeg",
+      "buttonText": "Consultar consolas",
+      "message": "Hola! Quiero consultar por consolas disponibles."
+    }
+  ],
+  "editableCategories": [
+    {
+      "id": "consolas",
+      "title": "Consolas",
+      "description": "PlayStation, Xbox, consolas nuevas y usadas, listas para jugar.",
+      "image": "https://i.imgur.com/Uv1nMii.jpeg"
+    },
+    {
+      "id": "juegos",
+      "title": "Juegos",
+      "description": "Juegos físicos y digitales para PS3, PS4, PS5 y otras plataformas.",
+      "image": "https://i.imgur.com/MlECLuE.jpeg"
+    },
+    {
+      "id": "accesorios",
+      "title": "Accesorios",
+      "description": "Mandos, auriculares, cables, bases, soportes y mucho más.",
+      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "id": "recargas-servicios",
+      "title": "Recargas y servicios",
+      "description": "Recargas para juegos y servicios digitales.",
+      "image": "https://i.imgur.com/LnLO32v.png"
+    }
+  ],
+  "draftCategories": [
+    {
+      "id": "consolas",
+      "title": "Consolas",
+      "description": "PlayStation, Xbox, consolas nuevas y usadas, listas para jugar.",
+      "image": "https://i.imgur.com/Uv1nMii.jpeg"
+    },
+    {
+      "id": "juegos",
+      "title": "Juegos",
+      "description": "Juegos físicos y digitales para PS3, PS4, PS5 y otras plataformas.",
+      "image": "https://i.imgur.com/MlECLuE.jpeg"
+    },
+    {
+      "id": "accesorios",
+      "title": "Accesorios",
+      "description": "Mandos, auriculares, cables, bases, soportes y mucho más.",
+      "image": "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "id": "recargas-servicios",
+      "title": "Recargas y servicios",
+      "description": "Recargas para juegos y servicios digitales.",
+      "image": "https://i.imgur.com/LnLO32v.png"
+    }
+  ],
+  "editableHeaderBackgrounds": [
+    "https://i.imgur.com/31OfpU4.jpeg",
+    "https://i.imgur.com/ViT4Fxr.jpeg",
+    "https://i.imgur.com/L07oMdy.jpeg",
+    "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1400&q=80"
+  ],
+  "draftHeaderBackgrounds": [
+    "https://i.imgur.com/31OfpU4.jpeg",
+    "https://i.imgur.com/ViT4Fxr.jpeg",
+    "https://i.imgur.com/L07oMdy.jpeg",
+    "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1400&q=80"
+  ],
+  "editableComboSlides": [
+    {
+      "id": 1,
+      "title": "Combo Accesorios PS2",
+      "subtitle": "Armá tu combo ideal con mandos, cables y accesorios esenciales.",
+      "image": "https://i.imgur.com/sVQ0Bkz.png",
+      "message": "Hola! Quiero consultar por el combo de accesorios para PS2."
+    },
+    {
+      "id": 2,
+      "title": "Combo Mesa + Silla Gamer",
+      "subtitle": "Mejorá tu espacio con un combo gamer completo para jugar cómodo.",
+      "image": "https://images.unsplash.com/photo-1616588589676-62b3bd0d0b2f?auto=format&fit=crop&w=1600&q=80",
+      "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer."
+    },
+    {
+      "id": 3,
+      "title": "Combo PS4 + Juego + Control",
+      "subtitle": "Llevate un combo listo para jugar desde el primer día.",
+      "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1600&q=80",
+      "message": "Hola! Quiero consultar por el combo PS4 + juego + control."
+    }
+  ],
+  "draftComboSlides": [
+    {
+      "id": 1,
+      "title": "Combo Accesorios PS2",
+      "subtitle": "Armá tu combo ideal con mandos, cables y accesorios esenciales.",
+      "image": "https://i.imgur.com/sVQ0Bkz.png",
+      "message": "Hola! Quiero consultar por el combo de accesorios para PS2."
+    },
+    {
+      "id": 2,
+      "title": "Combo Mesa + Silla Gamer",
+      "subtitle": "Mejorá tu espacio con un combo gamer completo para jugar cómodo.",
+      "image": "https://images.unsplash.com/photo-1616588589676-62b3bd0d0b2f?auto=format&fit=crop&w=1600&q=80",
+      "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer."
+    },
+    {
+      "id": 3,
+      "title": "Combo PS4 + Juego + Control",
+      "subtitle": "Llevate un combo listo para jugar desde el primer día.",
+      "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1600&q=80",
+      "message": "Hola! Quiero consultar por el combo PS4 + juego + control."
+    }
+  ],
+  "savedOffers": [
+    {
+      "id": 1,
+      "title": "🔥 Oferta Limitada!",
+      "subtitle": "Ps3 UltraSlim + Juegos + Tienda de juegos",
+      "price": "Gs. 700.000",
+      "startsAt": "2026-04-20T18:20",
+      "endsAt": "2026-04-21T18:20",
+      "image": "https://i.imgur.com/msLP2KI.jpeg"
+    },
+    {
+      "id": 2,
+      "title": "🔥 Oferta 2",
+      "subtitle": "Se activa cuando termina la oferta 1",
+      "price": "Gs. 0",
+      "startsAt": "2026-04-21T18:20",
+      "endsAt": "2026-04-22T18:20",
+      "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "id": 3,
+      "title": "🔥 Oferta 3",
+      "subtitle": "Se activa cuando termina la oferta 2",
+      "price": "Gs. 0",
+      "startsAt": "2026-04-22T18:20",
+      "endsAt": "2026-04-23T18:20",
+      "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80"
+    }
+  ],
+  "draftOffers": [
+    {
+      "id": 1,
+      "title": "🔥 Oferta Limitada!",
+      "subtitle": "Ps3 UltraSlim + Juegos + Tienda de juegos",
+      "price": "Gs. 700.000",
+      "startsAt": "2026-04-20T18:20",
+      "endsAt": "2026-04-21T18:20",
+      "image": "https://i.imgur.com/msLP2KI.jpeg"
+    },
+    {
+      "id": 2,
+      "title": "🔥 Oferta 2",
+      "subtitle": "Se activa cuando termina la oferta 1",
+      "price": "Gs. 0",
+      "startsAt": "2026-04-21T18:20",
+      "endsAt": "2026-04-22T18:20",
+      "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "id": 3,
+      "title": "🔥 Oferta 3",
+      "subtitle": "Se activa cuando termina la oferta 2",
+      "price": "Gs. 0",
+      "startsAt": "2026-04-22T18:20",
+      "endsAt": "2026-04-23T18:20",
+      "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80"
+    }
+  ],
+  "editableRechargeItems": [
+    {
+      "id": 1,
+      "type": "recarga",
+      "name": "Free Fire",
+      "image": "https://i.imgur.com/QLBhjxz.png",
+      "options": [
+        {
+          "id": 1,
+          "label": "100 💎",
+          "price": "Gs. 10.000"
+        },
+        {
+          "id": 2,
+          "label": "310 💎",
+          "price": "Gs. 30.000"
+        },
+        {
+          "id": 3,
+          "label": "520 💎",
+          "price": "Gs. 50.000"
+        },
+        {
+          "id": 1776717350986.0034,
+          "label": "600 💎",
+          "price": "Gs. 60.000"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "recarga",
+      "name": "Call of Duty Mobile",
+      "image": "https://i.imgur.com/YRrshz6.png",
+      "options": [
+        {
+          "id": 1,
+          "label": "80 CP",
+          "price": "Gs. 10.000"
+        },
+        {
+          "id": 2,
+          "label": "420 CP",
+          "price": "Gs. 35.000"
+        },
+        {
+          "id": 3,
+          "label": "880 CP",
+          "price": "Gs. 70.000"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "streaming",
+      "name": "Netflix",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+      "options": [
+        {
+          "id": 1,
+          "label": "Plan mensual",
+          "price": "Consultar"
+        },
+        {
+          "id": 2,
+          "label": "Cuenta compartida",
+          "price": "Consultar"
+        }
+      ]
+    }
+  ]
+}
