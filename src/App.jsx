@@ -256,35 +256,47 @@ export default function SkayGamesWeb() {
     "Reparación y soporte técnico",
   ];
 
+  const createOfferDates = (durationHours = 12, startDate = new Date()) => {
+    const start = new Date(startDate);
+    const end = new Date(start.getTime() + durationHours * 60 * 60 * 1000);
+
+    return {
+      startsAt: start.toISOString(),
+      endsAt: end.toISOString(),
+      durationHours,
+    };
+  };
+
+  const firstOfferDates = createOfferDates(12);
+  const secondOfferDates = createOfferDates(12, new Date(new Date(firstOfferDates.endsAt).getTime()));
+  const thirdOfferDates = createOfferDates(12, new Date(new Date(secondOfferDates.endsAt).getTime()));
+
   const defaultOffers = [
-  {
-    "id": 1,
-    "title": "🔥 Oferta Limitada!",
-    "subtitle": "Ps3 UltraSlim + Juegos + Tienda de juegos",
-    "price": "Gs. 700.000",
-    "startsAt": "2026-04-20T18:20",
-    "endsAt": "2026-04-21T18:20",
-    "image": "https://i.imgur.com/msLP2KI.jpeg"
-  },
-  {
-    "id": 2,
-    "title": "🔥 Oferta 2",
-    "subtitle": "Se activa cuando termina la oferta 1",
-    "price": "Gs. 0",
-    "startsAt": "2026-04-21T18:20",
-    "endsAt": "2026-04-22T18:20",
-    "image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    "id": 3,
-    "title": "🔥 Oferta 3",
-    "subtitle": "Se activa cuando termina la oferta 2",
-    "price": "Gs. 0",
-    "startsAt": "2026-04-22T18:20",
-    "endsAt": "2026-04-23T18:20",
-    "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80"
-  }
-];
+    {
+      id: 1,
+      title: "🔥 Oferta 1",
+      subtitle: "Configurá el producto y elegí duración.",
+      price: "Gs. 0",
+      image: "https://i.imgur.com/msLP2KI.jpeg",
+      ...firstOfferDates,
+    },
+    {
+      id: 2,
+      title: "🔥 Oferta 2",
+      subtitle: "Se activa automáticamente al terminar la oferta 1.",
+      price: "Gs. 0",
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      ...secondOfferDates,
+    },
+    {
+      id: 3,
+      title: "🔥 Oferta 3",
+      subtitle: "Se activa automáticamente al terminar la oferta 2.",
+      price: "Gs. 0",
+      image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
+      ...thirdOfferDates,
+    },
+  ];
 
   const adminSections = [
     { id: "mercaderias", title: "Mercaderías", description: "Agregar, editar y ordenar los productos visibles.", stats: ["Agregar", "Editar", "Eliminar", "Destacado / Recién llegado"] },
@@ -529,8 +541,6 @@ export default function SkayGamesWeb() {
     }
   });
 
-  const [supabaseStatus, setSupabaseStatus] = useState("");
-
 
   const navigateTo = (page) => {
     if (page !== "admin") setAdminLoginError("");
@@ -593,13 +603,9 @@ export default function SkayGamesWeb() {
   };
 
   const loadProductsFromSupabase = async () => {
-    if (!supabase) {
-      setSupabaseStatus("Supabase no configurado");
-      return;
-    }
+    if (!supabase) return;
 
     try {
-      setSupabaseStatus("Cargando productos desde Supabase...");
       const { data, error } = await supabase
         .from("productos")
         .select("*")
@@ -608,20 +614,14 @@ export default function SkayGamesWeb() {
 
       if (error) {
         console.error("Error cargando productos desde Supabase:", error);
-        setSupabaseStatus("Error al cargar productos desde Supabase");
         return;
       }
 
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setProductsData(data.map(mapSupabaseProduct));
-        setSupabaseStatus("Productos cargados desde Supabase");
-      } else {
-        setProductsData([]);
-        setSupabaseStatus("No hay productos activos en Supabase");
       }
     } catch (err) {
       console.error("Error inesperado con Supabase:", err);
-      setSupabaseStatus("Error inesperado con Supabase");
     }
   };
 
@@ -634,49 +634,48 @@ export default function SkayGamesWeb() {
     try { window.localStorage.setItem("skaygames_rechargeItems", JSON.stringify(editableRechargeItems)); } catch {}
   }, [editableRechargeItems]);
 
-  const nowTs = Date.now();
-  const activeOffer = savedOffers.find((offer) => {
-    const start = new Date(offer.startsAt).getTime();
-    const end = new Date(offer.endsAt).getTime();
-    return !Number.isNaN(start) && !Number.isNaN(end) && nowTs >= start && nowTs < end;
-  }) || savedOffers[0];
+  const getActiveOffer = (offers) => {
+    const now = Date.now();
+    return (
+      offers.find((offer) => {
+        const start = new Date(offer.startsAt).getTime();
+        const end = new Date(offer.endsAt).getTime();
+        return !Number.isNaN(start) && !Number.isNaN(end) && now >= start && now < end;
+      }) || null
+    );
+  };
+
+  const activeOffer = getActiveOffer(savedOffers);
+  const displayOffer = activeOffer || savedOffers[0] || null;
+
+  const formatCountdown = (diff) => {
+    if (diff <= 0) return "Finalizada";
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s restantes`;
+    }
+
+    return `${minutes}m ${seconds}s restantes`;
+  };
 
   useEffect(() => {
     const updateCountdown = () => {
-      const active = savedOffers.find((offer) => {
-        const start = new Date(offer.startsAt).getTime();
-        const end = new Date(offer.endsAt).getTime();
-        return !Number.isNaN(start) && !Number.isNaN(end) && Date.now() >= start && Date.now() < end;
-      });
+      const active = getActiveOffer(savedOffers);
 
       if (active) {
-        const diff = new Date(active.endsAt).getTime() - Date.now();
-        if (Number.isNaN(diff) || diff <= 0) {
-          setOfferCountdown("Finalizada");
-          return;
-        }
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setOfferCountdown(`${hours}h ${minutes}m ${seconds}s`);
-        return;
-      }
-
-      const upcoming = [...savedOffers]
-        .filter((offer) => new Date(offer.startsAt).getTime() > Date.now())
-        .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())[0];
-
-      if (upcoming) {
-        const diff = new Date(upcoming.startsAt).getTime() - Date.now();
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        setOfferCountdown(`Próxima en ${hours}h ${minutes}m ${seconds}s`);
+        const end = new Date(active.endsAt).getTime();
+        setOfferCountdown(formatCountdown(end - Date.now()));
         return;
       }
 
       setOfferCountdown("Sin oferta activa");
     };
+
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
@@ -1111,7 +1110,31 @@ export default function SkayGamesWeb() {
     };
 
     const updateDraftOffer = (index, field, value) => {
-      setDraftOffers((prev) => prev.map((offer, i) => (i === index ? { ...offer, [field]: value } : offer)));
+      setDraftOffers((prev) =>
+        prev.map((offer, i) => {
+          if (i !== index) return offer;
+
+          if (field === "durationHours") {
+            const durationHours = Number(value) || 12;
+            const baseStart =
+              i === 0
+                ? new Date()
+                : new Date(prev[i - 1]?.endsAt || new Date());
+
+            const start = new Date(baseStart);
+            const end = new Date(start.getTime() + durationHours * 60 * 60 * 1000);
+
+            return {
+              ...offer,
+              durationHours,
+              startsAt: start.toISOString(),
+              endsAt: end.toISOString(),
+            };
+          }
+
+          return { ...offer, [field]: value };
+        })
+      );
     };
 
     const saveSingleHeaderImage = (index) => {
@@ -1150,28 +1173,25 @@ export default function SkayGamesWeb() {
     };
 
     const saveSingleOffer = (index) => {
-      const offer = draftOffers[index];
-      const start = new Date(offer.startsAt).getTime();
-      const end = new Date(offer.endsAt).getTime();
-      if (!offer.startsAt || !offer.endsAt || Number.isNaN(start) || Number.isNaN(end) || start >= end) {
-        setOfferSaveMessage(`La oferta ${index + 1} debe tener inicio y fin válidos.`);
-        return;
-      }
-      if (index > 0) {
-        const prevEnd = new Date(draftOffers[index - 1].endsAt).getTime();
-        if (start < prevEnd) {
-          setOfferSaveMessage(`La oferta ${index + 1} debe comenzar después de que termine la oferta ${index}.`);
-          return;
-        }
-      }
-      if (index < draftOffers.length - 1) {
-        const nextStart = new Date(draftOffers[index + 1].startsAt).getTime();
-        if (!Number.isNaN(nextStart) && end > nextStart) {
-          setOfferSaveMessage(`La oferta ${index + 1} debe terminar antes de que comience la oferta ${index + 2}.`);
-          return;
-        }
-      }
-      const next = savedOffers.map((saved, i) => (i === index ? offer : saved));
+      const next = draftOffers.map((offer, i, arr) => {
+        const durationHours = Number(offer.durationHours) || 12;
+
+        const start =
+          i === 0
+            ? new Date()
+            : new Date(arr[i - 1].endsAt);
+
+        const end = new Date(start.getTime() + durationHours * 60 * 60 * 1000);
+
+        return {
+          ...offer,
+          durationHours,
+          startsAt: start.toISOString(),
+          endsAt: end.toISOString(),
+        };
+      });
+
+      setDraftOffers(next);
       setSavedOffers(next);
       if (typeof window !== "undefined") {
         window.localStorage.setItem("skaygames_offers", JSON.stringify(next));
@@ -1617,12 +1637,14 @@ export default function SkayGamesWeb() {
                             <textarea value={offer.subtitle} onChange={(e) => updateDraftOffer(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
                             <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen de la oferta" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                             <div>
-                              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Fecha y hora de inicio</label>
-                              <input type="datetime-local" value={offer.startsAt} onChange={(e) => updateDraftOffer(index, "startsAt", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Duración automática</label>
+                              <select value={offer.durationHours || 12} onChange={(e) => updateDraftOffer(index, "durationHours", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                                <option value={12}>12 horas</option>
+                                <option value={24}>24 horas</option>
+                              </select>
                             </div>
-                            <div>
-                              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Fecha y hora de finalización</label>
-                              <input type="datetime-local" value={offer.endsAt} onChange={(e) => updateDraftOffer(index, "endsAt", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-white/70">
+                              Se inicia automáticamente al guardar. La oferta {index + 1} calcula sola su tiempo y las siguientes se encadenan automáticamente.
                             </div>
                           </div>
                           <div className="mt-4 flex justify-end">
@@ -1736,11 +1758,6 @@ export default function SkayGamesWeb() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {supabaseStatus && (
-        <div className="fixed bottom-4 right-4 z-[9999] rounded-2xl border border-cyan-400/20 bg-black/80 px-4 py-3 text-xs font-bold text-cyan-300 shadow-2xl backdrop-blur">
-          {supabaseStatus}
-        </div>
-      )}
       <header
         id="mainHeader"
         className={`fixed top-0 left-0 w-full h-[96px] z-50 overflow-hidden backdrop-blur-md bg-black/70 transition-all duration-300 ${
@@ -1922,17 +1939,17 @@ export default function SkayGamesWeb() {
                 <div className="relative z-10 grid gap-6 md:grid-cols-[280px_1fr] items-center">
                   <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40">
                     <img
-                      src={activeOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
-                      alt={activeOffer?.title || "Oferta activa"}
+                      src={displayOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
+                      alt={displayOffer?.title || "Oferta activa"}
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                      <div className="inline-block rounded-full bg-red-500/20 px-4 py-2 text-xs font-bold text-red-300">{offerCountdown.includes("Próxima") ? offerCountdown : `Tiempo restante: ${offerCountdown}`}</div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white mt-4">{activeOffer?.title}</h2>
-                      <p className="text-white/70 mt-2">{activeOffer?.subtitle}</p>
-                      <p className="text-2xl font-bold text-green-400 mt-3">{activeOffer?.price}</p>
+                      <div className="inline-block rounded-full bg-red-500/20 px-4 py-2 text-xs font-bold text-red-300">{offerCountdown === "Sin oferta activa" ? offerCountdown : `Tiempo restante: ${offerCountdown}`}</div>
+                      <h2 className="text-3xl md:text-4xl font-black text-white mt-4">{displayOffer?.title || "Sin oferta activa"}</h2>
+                      <p className="text-white/70 mt-2">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
+                      <p className="text-2xl font-bold text-green-400 mt-3">{displayOffer?.price || "Gs. 0"}</p>
                     </div>
                     <a href={whatsappLink} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
                   </div>
