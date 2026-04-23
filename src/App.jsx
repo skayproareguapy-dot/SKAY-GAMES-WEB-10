@@ -391,20 +391,20 @@ export default function SkayGamesWeb() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-  const [savedOffers, setSavedOffers] = useState(() => readCachedJson("skaygames_offers", defaultOffers, normalizeOffers));
-  const [draftOffers, setDraftOffers] = useState(() => readCachedJson("skaygames_offers", defaultOffers, normalizeOffers));
+  const [savedOffers, setSavedOffers] = useState(defaultOffers);
+  const [draftOffers, setDraftOffers] = useState(defaultOffers);
   const [offerCountdown, setOfferCountdown] = useState("");
   const [contentSaveMessage, setContentSaveMessage] = useState("");
   const [comboSaveMessage, setComboSaveMessage] = useState("");
   const [offerSaveMessage, setOfferSaveMessage] = useState("");
-  const [editableHeroSlides, setEditableHeroSlides] = useState(() => readCachedJson("skaygames_heroSlides", heroSlides));
-  const [editableCategories, setEditableCategories] = useState(() => readCachedJson("skaygames_categories", categories));
-  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(() => readCachedJson("skaygames_headerBackgrounds", headerBackgrounds));
-  const [editableComboSlides, setEditableComboSlides] = useState(() => readCachedJson("skaygames_comboSlides", comboSlides));
-  const [draftHeroSlides, setDraftHeroSlides] = useState(() => readCachedJson("skaygames_heroSlides", heroSlides));
-  const [draftCategories, setDraftCategories] = useState(() => readCachedJson("skaygames_categories", categories));
-  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(() => readCachedJson("skaygames_headerBackgrounds", headerBackgrounds));
-  const [draftComboSlides, setDraftComboSlides] = useState(() => readCachedJson("skaygames_comboSlides", comboSlides));
+  const [editableHeroSlides, setEditableHeroSlides] = useState(heroSlides);
+  const [editableCategories, setEditableCategories] = useState(categories);
+  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(headerBackgrounds);
+  const [editableComboSlides, setEditableComboSlides] = useState(comboSlides);
+  const [draftHeroSlides, setDraftHeroSlides] = useState(heroSlides);
+  const [draftCategories, setDraftCategories] = useState(categories);
+  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(headerBackgrounds);
+  const [draftComboSlides, setDraftComboSlides] = useState(comboSlides);
 
   const [newProductName, setNewProductName] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
@@ -416,9 +416,7 @@ export default function SkayGamesWeb() {
   const [newProductRecent, setNewProductRecent] = useState(true);
   const [productFormMessage, setProductFormMessage] = useState("");
   const [editingProductId, setEditingProductId] = useState(null);
-  const [editableRechargeItems, setEditableRechargeItems] = useState(() =>
-    readCachedJson("skaygames_rechargeItems", defaultRechargeItems)
-  );
+  const [editableRechargeItems, setEditableRechargeItems] = useState(defaultRechargeItems);
   const [newRechargeName, setNewRechargeName] = useState("");
   const [newRechargeImage, setNewRechargeImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
@@ -528,11 +526,25 @@ export default function SkayGamesWeb() {
     }
   };
 
+  const parseWebContentValue = (value, fallback) => {
+    if (value === null || value === undefined) return fallback;
+
+    if (typeof value === "string") {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return fallback;
+      }
+    }
+
+    return value;
+  };
+
   const applyWebContentFromRemote = (rows = []) => {
     const byKey = Object.fromEntries(
       rows
         .filter((row) => row?.clave)
-        .map((row) => [row.clave, row.valor])
+        .map((row) => [row.clave, parseWebContentValue(row.valor, null)])
     );
 
     if (Array.isArray(byKey.heroSlides)) {
@@ -585,7 +597,7 @@ export default function SkayGamesWeb() {
         return;
       }
 
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         applyWebContentFromRemote(data);
       }
     } catch (err) {
@@ -599,10 +611,12 @@ export default function SkayGamesWeb() {
     }
 
     try {
+      const payload = typeof valor === "string" ? valor : JSON.stringify(valor);
+
       const { error } = await supabase
         .from(WEB_CONTENT_TABLE)
         .upsert(
-          [{ clave, valor, updated_at: new Date().toISOString() }],
+          [{ clave, valor: payload, updated_at: new Date().toISOString() }],
           { onConflict: "clave" }
         );
 
