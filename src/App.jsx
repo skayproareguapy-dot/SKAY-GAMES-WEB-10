@@ -320,111 +320,31 @@ export default function SkayGamesWeb() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-  const [savedOffers, setSavedOffers] = useState(() => {
-    const normalizeOffers = (offers) =>
-      offers.map((offer, index) => ({
-        ...offer,
-        image: offer.image || defaultOffers[index]?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-      }));
-    if (typeof window === "undefined") return defaultOffers;
-    try {
-      const saved = window.localStorage.getItem("skaygames_offers");
-      return saved ? normalizeOffers(JSON.parse(saved)) : defaultOffers;
-    } catch {
-      return defaultOffers;
-    }
-  });
-  const [draftOffers, setDraftOffers] = useState(() => {
-    const normalizeOffers = (offers) =>
-      offers.map((offer, index) => ({
-        ...offer,
-        image: offer.image || defaultOffers[index]?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-      }));
-    if (typeof window === "undefined") return defaultOffers;
-    try {
-      const saved = window.localStorage.getItem("skaygames_offers");
-      return saved ? normalizeOffers(JSON.parse(saved)) : defaultOffers;
-    } catch {
-      return defaultOffers;
-    }
-  });
+  const normalizeOffers = (offers, defaults = defaultOffers) =>
+    offers.map((offer, index) => ({
+      ...defaults[index],
+      ...offer,
+      image:
+        offer?.image ||
+        defaults[index]?.image ||
+        "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+    }));
+
+  const [savedOffers, setSavedOffers] = useState(normalizeOffers(defaultOffers));
+  const [draftOffers, setDraftOffers] = useState(normalizeOffers(defaultOffers));
   const [offerCountdown, setOfferCountdown] = useState("");
   const [contentSaveMessage, setContentSaveMessage] = useState("");
   const [comboSaveMessage, setComboSaveMessage] = useState("");
   const [offerSaveMessage, setOfferSaveMessage] = useState("");
-  const [editableHeroSlides, setEditableHeroSlides] = useState(() => {
-    if (typeof window === "undefined") return heroSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_heroSlides");
-      return saved ? JSON.parse(saved) : heroSlides;
-    } catch {
-      return heroSlides;
-    }
-  });
-  const [editableCategories, setEditableCategories] = useState(() => {
-    if (typeof window === "undefined") return categories;
-    try {
-      const saved = window.localStorage.getItem("skaygames_categories");
-      return saved ? JSON.parse(saved) : categories;
-    } catch {
-      return categories;
-    }
-  });
-  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(() => {
-    if (typeof window === "undefined") return headerBackgrounds;
-    try {
-      const saved = window.localStorage.getItem("skaygames_headerBackgrounds");
-      return saved ? JSON.parse(saved) : headerBackgrounds;
-    } catch {
-      return headerBackgrounds;
-    }
-  });
-  const [editableComboSlides, setEditableComboSlides] = useState(() => {
-    if (typeof window === "undefined") return comboSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_comboSlides");
-      return saved ? JSON.parse(saved) : comboSlides;
-    } catch {
-      return comboSlides;
-    }
-  });
+  const [editableHeroSlides, setEditableHeroSlides] = useState(heroSlides);
+  const [editableCategories, setEditableCategories] = useState(categories);
+  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(headerBackgrounds);
+  const [editableComboSlides, setEditableComboSlides] = useState(comboSlides);
 
-  const [draftHeroSlides, setDraftHeroSlides] = useState(() => {
-    if (typeof window === "undefined") return heroSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_heroSlides");
-      return saved ? JSON.parse(saved) : heroSlides;
-    } catch {
-      return heroSlides;
-    }
-  });
-  const [draftCategories, setDraftCategories] = useState(() => {
-    if (typeof window === "undefined") return categories;
-    try {
-      const saved = window.localStorage.getItem("skaygames_categories");
-      return saved ? JSON.parse(saved) : categories;
-    } catch {
-      return categories;
-    }
-  });
-  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(() => {
-    if (typeof window === "undefined") return headerBackgrounds;
-    try {
-      const saved = window.localStorage.getItem("skaygames_headerBackgrounds");
-      return saved ? JSON.parse(saved) : headerBackgrounds;
-    } catch {
-      return headerBackgrounds;
-    }
-  });
-  const [draftComboSlides, setDraftComboSlides] = useState(() => {
-    if (typeof window === "undefined") return comboSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_comboSlides");
-      return saved ? JSON.parse(saved) : comboSlides;
-    } catch {
-      return comboSlides;
-    }
-  });
+  const [draftHeroSlides, setDraftHeroSlides] = useState(heroSlides);
+  const [draftCategories, setDraftCategories] = useState(categories);
+  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(headerBackgrounds);
+  const [draftComboSlides, setDraftComboSlides] = useState(comboSlides);
 
   const [newProductName, setNewProductName] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
@@ -436,8 +356,7 @@ export default function SkayGamesWeb() {
   const [newProductRecent, setNewProductRecent] = useState(true);
   const [productFormMessage, setProductFormMessage] = useState("");
   const [editingProductId, setEditingProductId] = useState(null);
-  const [editableRechargeItems, setEditableRechargeItems] = useState(() => {
-    const defaults = [
+  const defaultRechargeItems = [
   {
     "id": 1,
     "type": "recarga",
@@ -508,14 +427,7 @@ export default function SkayGamesWeb() {
     ]
   }
 ];
-    if (typeof window === "undefined") return defaults;
-    try {
-      const saved = window.localStorage.getItem("skaygames_rechargeItems");
-      return saved ? JSON.parse(saved) : defaults;
-    } catch {
-      return defaults;
-    }
-  });
+  const [editableRechargeItems, setEditableRechargeItems] = useState(defaultRechargeItems);
   const [newRechargeName, setNewRechargeName] = useState("");
   const [newRechargeImage, setNewRechargeImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
@@ -531,15 +443,7 @@ export default function SkayGamesWeb() {
 
   const [activePage, setActivePage] = useState(getPageFromHash());
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [productsData, setProductsData] = useState(() => {
-    if (typeof window === "undefined") return initialProducts;
-    try {
-      const saved = window.localStorage.getItem("skaygames_products");
-      return saved ? JSON.parse(saved) : initialProducts;
-    } catch {
-      return initialProducts;
-    }
-  });
+  const [productsData, setProductsData] = useState(initialProducts);
 
 
   const navigateTo = (page) => {
@@ -574,11 +478,6 @@ export default function SkayGamesWeb() {
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try { window.localStorage.setItem("skaygames_products", JSON.stringify(productsData)); } catch {}
-  }, [productsData]);
 
   const mapSupabaseProduct = (item) => ({
     id: item.id,
@@ -628,11 +527,6 @@ export default function SkayGamesWeb() {
   useEffect(() => {
     loadProductsFromSupabase();
   }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try { window.localStorage.setItem("skaygames_rechargeItems", JSON.stringify(editableRechargeItems)); } catch {}
-  }, [editableRechargeItems]);
 
   const getActiveOffer = (offers) => {
     const now = Date.now();
@@ -1140,35 +1034,23 @@ export default function SkayGamesWeb() {
     const saveSingleHeaderImage = (index) => {
       const next = editableHeaderBackgrounds.map((item, i) => (i === index ? draftHeaderBackgrounds[index] : item));
       setEditableHeaderBackgrounds(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_headerBackgrounds", JSON.stringify(next));
-      }
       setContentSaveMessage(`Imagen de header ${index + 1} guardada correctamente.`);
     };
 
     const saveSingleHeroSlide = (index) => {
       const next = editableHeroSlides.map((slide, i) => (i === index ? draftHeroSlides[index] : slide));
       setEditableHeroSlides(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_heroSlides", JSON.stringify(next));
-      }
       setContentSaveMessage(`Slide ${index + 1} guardado correctamente.`);
     };
 
     const saveSingleCategory = (index) => {
       const next = editableCategories.map((item, i) => (i === index ? draftCategories[index] : item));
       setEditableCategories(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_categories", JSON.stringify(next));
-      }
       setContentSaveMessage(`Botón ${index + 1} guardado correctamente.`);
     };
 
     const saveCombos = () => {
       setEditableComboSlides(draftComboSlides);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_comboSlides", JSON.stringify(draftComboSlides));
-      }
       setComboSaveMessage("Combos guardados correctamente.");
     };
 
@@ -1193,9 +1075,6 @@ export default function SkayGamesWeb() {
 
       setDraftOffers(next);
       setSavedOffers(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_offers", JSON.stringify(next));
-      }
       setOfferSaveMessage(`Oferta ${index + 1} guardada correctamente.`);
     };
 
@@ -1210,13 +1089,6 @@ export default function SkayGamesWeb() {
       setEditableHeaderBackgrounds(headerBackgrounds);
       setEditableComboSlides(comboSlides);
       setSavedOffers(defaultOffers);
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem("skaygames_heroSlides");
-        window.localStorage.removeItem("skaygames_categories");
-        window.localStorage.removeItem("skaygames_headerBackgrounds");
-        window.localStorage.removeItem("skaygames_comboSlides");
-        window.localStorage.removeItem("skaygames_offers");
-      }
       setContentSaveMessage("Se restauró el contenido visual.");
       setComboSaveMessage("");
       setOfferSaveMessage("");
