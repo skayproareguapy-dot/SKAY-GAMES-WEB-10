@@ -306,6 +306,77 @@ export default function SkayGamesWeb() {
     { id: "respaldo", title: "Respaldo y restauración", description: "Exportar e importar copias de seguridad.", stats: ["Exportar", "Importar", "Último backup", "Restaurar"] },
   ];
 
+  const WEB_CONTENT_TABLE = "web_content";
+
+  const defaultRechargeItems = [
+    {
+      id: 1,
+      type: "recarga",
+      name: "Free Fire",
+      image: "https://i.imgur.com/QLBhjxz.png",
+      options: [
+        { id: 1, label: "100 💎", price: "Gs. 10.000" },
+        { id: 2, label: "310 💎", price: "Gs. 30.000" },
+        { id: 3, label: "520 💎", price: "Gs. 50.000" },
+        { id: 1776717350986.0034, label: "600 💎", price: "Gs. 60.000" },
+      ],
+    },
+    {
+      id: 2,
+      type: "recarga",
+      name: "Call of Duty Mobile",
+      image: "https://i.imgur.com/YRrshz6.png",
+      options: [
+        { id: 1, label: "80 CP", price: "Gs. 10.000" },
+        { id: 2, label: "420 CP", price: "Gs. 35.000" },
+        { id: 3, label: "880 CP", price: "Gs. 70.000" },
+      ],
+    },
+    {
+      id: 3,
+      type: "streaming",
+      name: "Netflix",
+      image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+      options: [
+        { id: 1, label: "Plan mensual", price: "Consultar" },
+        { id: 2, label: "Cuenta compartida", price: "Consultar" },
+      ],
+    },
+  ];
+
+  const normalizeOffers = (offers = []) =>
+    offers.map((offer, index) => ({
+      ...offer,
+      image:
+        offer.image ||
+        defaultOffers[index]?.image ||
+        "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+    }));
+
+  const readCachedJson = (key, fallback, formatter = (value) => value) => {
+    if (typeof window === "undefined") return fallback;
+    try {
+      const saved = window.localStorage.getItem(key);
+      return saved ? formatter(JSON.parse(saved)) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const writeCachedJson = (key, value) => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {}
+  };
+
+  const removeCachedJson = (key) => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.removeItem(key);
+    } catch {}
+  };
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentComboSlide, setCurrentComboSlide] = useState(0);
   const [selectedGamePlatform, setSelectedGamePlatform] = useState("all");
@@ -320,31 +391,20 @@ export default function SkayGamesWeb() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-  const normalizeOffers = (offers, defaults = defaultOffers) =>
-    offers.map((offer, index) => ({
-      ...defaults[index],
-      ...offer,
-      image:
-        offer?.image ||
-        defaults[index]?.image ||
-        "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-    }));
-
-  const [savedOffers, setSavedOffers] = useState(normalizeOffers(defaultOffers));
-  const [draftOffers, setDraftOffers] = useState(normalizeOffers(defaultOffers));
+  const [savedOffers, setSavedOffers] = useState(() => readCachedJson("skaygames_offers", defaultOffers, normalizeOffers));
+  const [draftOffers, setDraftOffers] = useState(() => readCachedJson("skaygames_offers", defaultOffers, normalizeOffers));
   const [offerCountdown, setOfferCountdown] = useState("");
   const [contentSaveMessage, setContentSaveMessage] = useState("");
   const [comboSaveMessage, setComboSaveMessage] = useState("");
   const [offerSaveMessage, setOfferSaveMessage] = useState("");
-  const [editableHeroSlides, setEditableHeroSlides] = useState(heroSlides);
-  const [editableCategories, setEditableCategories] = useState(categories);
-  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(headerBackgrounds);
-  const [editableComboSlides, setEditableComboSlides] = useState(comboSlides);
-
-  const [draftHeroSlides, setDraftHeroSlides] = useState(heroSlides);
-  const [draftCategories, setDraftCategories] = useState(categories);
-  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(headerBackgrounds);
-  const [draftComboSlides, setDraftComboSlides] = useState(comboSlides);
+  const [editableHeroSlides, setEditableHeroSlides] = useState(() => readCachedJson("skaygames_heroSlides", heroSlides));
+  const [editableCategories, setEditableCategories] = useState(() => readCachedJson("skaygames_categories", categories));
+  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(() => readCachedJson("skaygames_headerBackgrounds", headerBackgrounds));
+  const [editableComboSlides, setEditableComboSlides] = useState(() => readCachedJson("skaygames_comboSlides", comboSlides));
+  const [draftHeroSlides, setDraftHeroSlides] = useState(() => readCachedJson("skaygames_heroSlides", heroSlides));
+  const [draftCategories, setDraftCategories] = useState(() => readCachedJson("skaygames_categories", categories));
+  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(() => readCachedJson("skaygames_headerBackgrounds", headerBackgrounds));
+  const [draftComboSlides, setDraftComboSlides] = useState(() => readCachedJson("skaygames_comboSlides", comboSlides));
 
   const [newProductName, setNewProductName] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
@@ -356,78 +416,9 @@ export default function SkayGamesWeb() {
   const [newProductRecent, setNewProductRecent] = useState(true);
   const [productFormMessage, setProductFormMessage] = useState("");
   const [editingProductId, setEditingProductId] = useState(null);
-  const defaultRechargeItems = [
-  {
-    "id": 1,
-    "type": "recarga",
-    "name": "Free Fire",
-    "image": "https://i.imgur.com/QLBhjxz.png",
-    "options": [
-      {
-        "id": 1,
-        "label": "100 💎",
-        "price": "Gs. 10.000"
-      },
-      {
-        "id": 2,
-        "label": "310 💎",
-        "price": "Gs. 30.000"
-      },
-      {
-        "id": 3,
-        "label": "520 💎",
-        "price": "Gs. 50.000"
-      },
-      {
-        "id": 1776717350986.0034,
-        "label": "600 💎",
-        "price": "Gs. 60.000"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "type": "recarga",
-    "name": "Call of Duty Mobile",
-    "image": "https://i.imgur.com/YRrshz6.png",
-    "options": [
-      {
-        "id": 1,
-        "label": "80 CP",
-        "price": "Gs. 10.000"
-      },
-      {
-        "id": 2,
-        "label": "420 CP",
-        "price": "Gs. 35.000"
-      },
-      {
-        "id": 3,
-        "label": "880 CP",
-        "price": "Gs. 70.000"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "type": "streaming",
-    "name": "Netflix",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-    "options": [
-      {
-        "id": 1,
-        "label": "Plan mensual",
-        "price": "Consultar"
-      },
-      {
-        "id": 2,
-        "label": "Cuenta compartida",
-        "price": "Consultar"
-      }
-    ]
-  }
-];
-  const [editableRechargeItems, setEditableRechargeItems] = useState(defaultRechargeItems);
+  const [editableRechargeItems, setEditableRechargeItems] = useState(() =>
+    readCachedJson("skaygames_rechargeItems", defaultRechargeItems)
+  );
   const [newRechargeName, setNewRechargeName] = useState("");
   const [newRechargeImage, setNewRechargeImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
@@ -443,7 +434,15 @@ export default function SkayGamesWeb() {
 
   const [activePage, setActivePage] = useState(getPageFromHash());
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [productsData, setProductsData] = useState(initialProducts);
+  const [productsData, setProductsData] = useState(() => {
+    if (typeof window === "undefined") return initialProducts;
+    try {
+      const saved = window.localStorage.getItem("skaygames_products");
+      return saved ? JSON.parse(saved) : initialProducts;
+    } catch {
+      return initialProducts;
+    }
+  });
 
 
   const navigateTo = (page) => {
@@ -478,6 +477,11 @@ export default function SkayGamesWeb() {
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try { window.localStorage.setItem("skaygames_products", JSON.stringify(productsData)); } catch {}
+  }, [productsData]);
 
   const mapSupabaseProduct = (item) => ({
     id: item.id,
@@ -524,9 +528,122 @@ export default function SkayGamesWeb() {
     }
   };
 
+  const applyWebContentFromRemote = (rows = []) => {
+    const byKey = Object.fromEntries(
+      rows
+        .filter((row) => row?.clave)
+        .map((row) => [row.clave, row.valor])
+    );
+
+    if (Array.isArray(byKey.heroSlides)) {
+      setEditableHeroSlides(byKey.heroSlides);
+      setDraftHeroSlides(byKey.heroSlides);
+      writeCachedJson("skaygames_heroSlides", byKey.heroSlides);
+    }
+
+    if (Array.isArray(byKey.categories)) {
+      setEditableCategories(byKey.categories);
+      setDraftCategories(byKey.categories);
+      writeCachedJson("skaygames_categories", byKey.categories);
+    }
+
+    if (Array.isArray(byKey.headerBackgrounds)) {
+      setEditableHeaderBackgrounds(byKey.headerBackgrounds);
+      setDraftHeaderBackgrounds(byKey.headerBackgrounds);
+      writeCachedJson("skaygames_headerBackgrounds", byKey.headerBackgrounds);
+    }
+
+    if (Array.isArray(byKey.comboSlides)) {
+      setEditableComboSlides(byKey.comboSlides);
+      setDraftComboSlides(byKey.comboSlides);
+      writeCachedJson("skaygames_comboSlides", byKey.comboSlides);
+    }
+
+    if (Array.isArray(byKey.offers)) {
+      const normalized = normalizeOffers(byKey.offers);
+      setSavedOffers(normalized);
+      setDraftOffers(normalized);
+      writeCachedJson("skaygames_offers", normalized);
+    }
+
+    if (Array.isArray(byKey.rechargeItems)) {
+      setEditableRechargeItems(byKey.rechargeItems);
+      writeCachedJson("skaygames_rechargeItems", byKey.rechargeItems);
+    }
+  };
+
+  const loadWebContentFromSupabase = async () => {
+    if (!supabase) return;
+
+    try {
+      const { data, error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .select("clave, valor");
+
+      if (error) {
+        console.error("Error cargando contenido web desde Supabase:", error);
+        return;
+      }
+
+      if (Array.isArray(data)) {
+        applyWebContentFromRemote(data);
+      }
+    } catch (err) {
+      console.error("Error inesperado cargando contenido web:", err);
+    }
+  };
+
+  const saveWebContentToSupabase = async (clave, valor) => {
+    if (!supabase) {
+      return { ok: false, message: "Supabase no está configurado." };
+    }
+
+    try {
+      const { error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .upsert(
+          [{ clave, valor, updated_at: new Date().toISOString() }],
+          { onConflict: "clave" }
+        );
+
+      if (error) {
+        console.error(`Error guardando ${clave} en Supabase:`, error);
+        return { ok: false, message: `No se pudo guardar ${clave} en Supabase.` };
+      }
+
+      return { ok: true };
+    } catch (err) {
+      console.error(`Error inesperado guardando ${clave}:`, err);
+      return { ok: false, message: `Ocurrió un error guardando ${clave}.` };
+    }
+  };
+
+  const deleteWebContentFromSupabase = async (clave) => {
+    if (!supabase) return;
+
+    try {
+      const { error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .delete()
+        .eq("clave", clave);
+
+      if (error) {
+        console.error(`Error eliminando ${clave} de Supabase:`, error);
+      }
+    } catch (err) {
+      console.error(`Error inesperado eliminando ${clave}:`, err);
+    }
+  };
+
   useEffect(() => {
     loadProductsFromSupabase();
+    loadWebContentFromSupabase();
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try { window.localStorage.setItem("skaygames_rechargeItems", JSON.stringify(editableRechargeItems)); } catch {}
+  }, [editableRechargeItems]);
 
   const getActiveOffer = (offers) => {
     const now = Date.now();
@@ -1031,30 +1148,54 @@ export default function SkayGamesWeb() {
       );
     };
 
-    const saveSingleHeaderImage = (index) => {
+    const saveSingleHeaderImage = async (index) => {
       const next = editableHeaderBackgrounds.map((item, i) => (i === index ? draftHeaderBackgrounds[index] : item));
       setEditableHeaderBackgrounds(next);
-      setContentSaveMessage(`Imagen de header ${index + 1} guardada correctamente.`);
+      writeCachedJson("skaygames_headerBackgrounds", next);
+
+      const result = await saveWebContentToSupabase("headerBackgrounds", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Imagen de header ${index + 1} guardada correctamente.`
+          : result.message
+      );
     };
 
-    const saveSingleHeroSlide = (index) => {
+    const saveSingleHeroSlide = async (index) => {
       const next = editableHeroSlides.map((slide, i) => (i === index ? draftHeroSlides[index] : slide));
       setEditableHeroSlides(next);
-      setContentSaveMessage(`Slide ${index + 1} guardado correctamente.`);
+      writeCachedJson("skaygames_heroSlides", next);
+
+      const result = await saveWebContentToSupabase("heroSlides", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Slide ${index + 1} guardado correctamente.`
+          : result.message
+      );
     };
 
-    const saveSingleCategory = (index) => {
+    const saveSingleCategory = async (index) => {
       const next = editableCategories.map((item, i) => (i === index ? draftCategories[index] : item));
       setEditableCategories(next);
-      setContentSaveMessage(`Botón ${index + 1} guardado correctamente.`);
+      writeCachedJson("skaygames_categories", next);
+
+      const result = await saveWebContentToSupabase("categories", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Botón ${index + 1} guardado correctamente.`
+          : result.message
+      );
     };
 
-    const saveCombos = () => {
+    const saveCombos = async () => {
       setEditableComboSlides(draftComboSlides);
-      setComboSaveMessage("Combos guardados correctamente.");
+      writeCachedJson("skaygames_comboSlides", draftComboSlides);
+
+      const result = await saveWebContentToSupabase("comboSlides", draftComboSlides);
+      setComboSaveMessage(result.ok ? "Combos guardados correctamente." : result.message);
     };
 
-    const saveSingleOffer = (index) => {
+    const saveSingleOffer = async (index) => {
       const next = draftOffers.map((offer, i, arr) => {
         const durationHours = Number(offer.durationHours) || 12;
 
@@ -1075,10 +1216,17 @@ export default function SkayGamesWeb() {
 
       setDraftOffers(next);
       setSavedOffers(next);
-      setOfferSaveMessage(`Oferta ${index + 1} guardada correctamente.`);
+      writeCachedJson("skaygames_offers", next);
+
+      const result = await saveWebContentToSupabase("offers", next);
+      setOfferSaveMessage(
+        result.ok
+          ? `Oferta ${index + 1} guardada correctamente.`
+          : result.message
+      );
     };
 
-    const resetEditableContent = () => {
+    const resetEditableContent = async () => {
       setDraftHeroSlides(heroSlides);
       setDraftCategories(categories);
       setDraftHeaderBackgrounds(headerBackgrounds);
@@ -1089,6 +1237,20 @@ export default function SkayGamesWeb() {
       setEditableHeaderBackgrounds(headerBackgrounds);
       setEditableComboSlides(comboSlides);
       setSavedOffers(defaultOffers);
+      writeCachedJson("skaygames_heroSlides", heroSlides);
+      writeCachedJson("skaygames_categories", categories);
+      writeCachedJson("skaygames_headerBackgrounds", headerBackgrounds);
+      writeCachedJson("skaygames_comboSlides", comboSlides);
+      writeCachedJson("skaygames_offers", defaultOffers);
+
+      await Promise.all([
+        saveWebContentToSupabase("heroSlides", heroSlides),
+        saveWebContentToSupabase("categories", categories),
+        saveWebContentToSupabase("headerBackgrounds", headerBackgrounds),
+        saveWebContentToSupabase("comboSlides", comboSlides),
+        saveWebContentToSupabase("offers", defaultOffers),
+      ]);
+
       setContentSaveMessage("Se restauró el contenido visual.");
       setComboSaveMessage("");
       setOfferSaveMessage("");
@@ -1287,7 +1449,7 @@ export default function SkayGamesWeb() {
       setRechargeFormMessage("");
     };
 
-    const handleAddOrUpdateRechargeItem = (e) => {
+    const handleAddOrUpdateRechargeItem = async (e) => {
       e.preventDefault();
       if (
         !newRechargeName.trim() ||
@@ -1311,15 +1473,20 @@ export default function SkayGamesWeb() {
         })),
       };
 
-      if (editingRechargeId) {
-        setEditableRechargeItems((prev) => prev.map((item) => (item.id === editingRechargeId ? payload : item)));
-        setRechargeFormMessage("Ítem actualizado correctamente.");
-      } else {
-        setEditableRechargeItems((prev) => [payload, ...prev]);
-        setRechargeFormMessage("Ítem agregado correctamente.");
-      }
+      const nextItems = editingRechargeId
+        ? editableRechargeItems.map((item) => (item.id === editingRechargeId ? payload : item))
+        : [payload, ...editableRechargeItems];
 
-      resetRechargeForm();
+      setEditableRechargeItems(nextItems);
+      writeCachedJson("skaygames_rechargeItems", nextItems);
+
+      const result = await saveWebContentToSupabase("rechargeItems", nextItems);
+      if (result.ok) {
+        resetRechargeForm();
+        setRechargeFormMessage(editingRechargeId ? "Ítem actualizado correctamente." : "Ítem agregado correctamente.");
+      } else {
+        setRechargeFormMessage(result.message);
+      }
     };
 
     const handleEditRechargeItem = (item) => {
@@ -1331,8 +1498,14 @@ export default function SkayGamesWeb() {
       setRechargeFormMessage("Editando ítem. Guardá para actualizar.");
     };
 
-    const handleDeleteRechargeItem = (id) => {
-      setEditableRechargeItems((prev) => prev.filter((item) => item.id !== id));
+    const handleDeleteRechargeItem = async (id) => {
+      const nextItems = editableRechargeItems.filter((item) => item.id !== id);
+      setEditableRechargeItems(nextItems);
+      writeCachedJson("skaygames_rechargeItems", nextItems);
+
+      const result = await saveWebContentToSupabase("rechargeItems", nextItems);
+      setRechargeFormMessage(result.ok ? "Ítem eliminado correctamente." : result.message);
+
       if (editingRechargeId === id) resetRechargeForm();
     };
 
