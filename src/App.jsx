@@ -278,6 +278,7 @@ export default function SkayGamesWeb() {
       subtitle: "Configurá el producto y elegí duración.",
       price: "Gs. 0",
       image: "https://i.imgur.com/msLP2KI.jpeg",
+      backgroundImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
       ...firstOfferDates,
     },
     {
@@ -286,6 +287,7 @@ export default function SkayGamesWeb() {
       subtitle: "Se activa automáticamente al terminar la oferta 1.",
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
       ...secondOfferDates,
     },
     {
@@ -294,6 +296,7 @@ export default function SkayGamesWeb() {
       subtitle: "Se activa automáticamente al terminar la oferta 2.",
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
       ...thirdOfferDates,
     },
   ];
@@ -351,6 +354,12 @@ export default function SkayGamesWeb() {
         offer.image ||
         defaultOffers[index]?.image ||
         "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage:
+        offer.backgroundImage ||
+        defaultOffers[index]?.backgroundImage ||
+        offer.image ||
+        defaultOffers[index]?.image ||
+        "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
     }));
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -1235,6 +1244,7 @@ export default function SkayGamesWeb() {
 
         return {
           ...offer,
+          backgroundImage: offer.backgroundImage || offer.image || defaultOffers[i]?.backgroundImage || defaultOffers[i]?.image || "",
           durationHours,
           startsAt: start.toISOString(),
           endsAt: end.toISOString(),
@@ -1731,7 +1741,8 @@ export default function SkayGamesWeb() {
                             <input value={offer.title} onChange={(e) => updateDraftOffer(index, "title", e.target.value)} placeholder={`Título de oferta ${index + 1}`} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={offer.price} onChange={(e) => updateDraftOffer(index, "price", e.target.value)} placeholder="Precio" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <textarea value={offer.subtitle} onChange={(e) => updateDraftOffer(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
-                            <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen de la oferta" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen del producto / consola" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <input value={offer.backgroundImage || ""} onChange={(e) => updateDraftOffer(index, "backgroundImage", e.target.value)} placeholder="URL de imagen de fondo de la burbuja (opcional)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                             <div>
                               <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Duración automática</label>
                               <select value={offer.durationHours || 12} onChange={(e) => updateDraftOffer(index, "durationHours", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
@@ -2030,22 +2041,34 @@ export default function SkayGamesWeb() {
             </section>
 
             <section className="max-w-7xl mx-auto px-6 mt-10">
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-purple-600/30 via-cyan-500/20 to-pink-500/30 p-8 shadow-2xl">
-                <div className="absolute inset-0 animate-pulse opacity-20 bg-[radial-gradient(circle_at_30%_30%,#22d3ee,transparent_40%),radial-gradient(circle_at_70%_70%,#a855f7,transparent_40%)]" />
-                <div className="relative z-10 grid gap-6 md:grid-cols-[280px_1fr] items-center">
-                  <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40">
+              <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black p-6 shadow-2xl md:p-8">
+                <img
+                  src={displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80"}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 h-full w-full object-cover opacity-65"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/35" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_25%,rgba(34,211,238,0.34),transparent_28%),radial-gradient(circle_at_82%_72%,rgba(168,85,247,0.34),transparent_34%)]" />
+                <div className="absolute inset-0 backdrop-blur-[1px]" />
+
+                <div className="relative z-10 grid gap-6 md:grid-cols-[300px_1fr] items-center">
+                  <div className="overflow-hidden rounded-[30px] border border-white/20 bg-black/45 shadow-2xl backdrop-blur-md">
                     <img
                       src={displayOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
                       alt={displayOffer?.title || "Oferta activa"}
-                      className="h-full w-full object-cover"
+                      className="h-72 w-full object-contain bg-black/35 p-4"
                     />
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                      <div className="inline-block rounded-full bg-red-500/20 px-4 py-2 text-xs font-bold text-red-300">{offerCountdown === "Sin oferta activa" ? offerCountdown : `Tiempo restante: ${offerCountdown}`}</div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white mt-4">{displayOffer?.title || "Sin oferta activa"}</h2>
-                      <p className="text-white/70 mt-2">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
-                      <p className="text-2xl font-bold text-green-400 mt-3">{displayOffer?.price || "Gs. 0"}</p>
+                      <div className="inline-block rounded-full border border-red-400/35 bg-red-500/25 px-4 py-2 text-xs font-bold text-red-100 shadow-lg backdrop-blur-md">
+                        {offerCountdown === "Sin oferta activa" ? offerCountdown : `Tiempo restante: ${offerCountdown}`}
+                      </div>
+                      <h2 className="text-3xl md:text-5xl font-black text-white mt-4 drop-shadow-[0_4px_18px_rgba(0,0,0,0.9)]">{displayOffer?.title || "Sin oferta activa"}</h2>
+                      <p className="text-white/85 mt-3 max-w-2xl drop-shadow-lg">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
+                      <p className="text-3xl font-black text-green-400 mt-4 drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">{displayOffer?.price || "Gs. 0"}</p>
                     </div>
                     <a href={whatsappLink} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
                   </div>
