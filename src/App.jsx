@@ -12,28 +12,36 @@ export default function SkayGamesWeb() {
     "subtitle": "Saldo, servicios y recargas para todos tus juegos. Consultá ahora.",
     "image": "https://i.imgur.com/LnLO32v.png",
     "buttonText": "Consultar recargas",
-    "message": "Hola! Quiero consultar por recargas disponibles."
+    "message": "Hola! Quiero consultar por recargas disponibles.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "🔥 YA DISPONIBLE",
     "subtitle": "Nuevos lanzamientos y novedades en juegos. Consultá lo último en SKAY GAMES.",
     "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar lanzamiento",
-    "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥"
+    "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "Juegos PS4 y PS5",
     "subtitle": "Encontrá títulos físicos y digitales para seguir jugando sin parar.",
     "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar juegos",
-    "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5."
+    "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "Consolas nuevas y usadas",
     "subtitle": "PS3, PS4, PS5 y más opciones para todos los presupuestos.",
     "image": "https://i.imgur.com/V7IWjBe.jpeg",
     "buttonText": "Consultar consolas",
-    "message": "Hola! Quiero consultar por consolas disponibles."
+    "message": "Hola! Quiero consultar por consolas disponibles.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   }
 ];
 
@@ -97,21 +105,27 @@ export default function SkayGamesWeb() {
     "title": "Combo Accesorios PS2",
     "subtitle": "Armá tu combo ideal con mandos, cables y accesorios esenciales.",
     "image": "https://i.imgur.com/sVQ0Bkz.png",
-    "message": "Hola! Quiero consultar por el combo de accesorios para PS2."
+    "message": "Hola! Quiero consultar por el combo de accesorios para PS2.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "id": 2,
     "title": "Combo Mesa + Silla Gamer",
     "subtitle": "Mejorá tu espacio con un combo gamer completo para jugar cómodo.",
     "image": "https://images.unsplash.com/photo-1616588589676-62b3bd0d0b2f?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer."
+    "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "id": 3,
     "title": "Combo PS4 + Juego + Control",
     "subtitle": "Llevate un combo listo para jugar desde el primer día.",
     "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo PS4 + juego + control."
+    "message": "Hola! Quiero consultar por el combo PS4 + juego + control.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   }
 ];
 
@@ -279,6 +293,10 @@ export default function SkayGamesWeb() {
       price: "Gs. 0",
       image: "https://i.imgur.com/msLP2KI.jpeg",
       backgroundImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...firstOfferDates,
     },
     {
@@ -288,6 +306,10 @@ export default function SkayGamesWeb() {
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
       backgroundImage: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...secondOfferDates,
     },
     {
@@ -297,6 +319,10 @@ export default function SkayGamesWeb() {
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
       backgroundImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...thirdOfferDates,
     },
   ];
@@ -360,6 +386,10 @@ export default function SkayGamesWeb() {
         offer.image ||
         defaultOffers[index]?.image ||
         "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      imagePositionX: offer.imagePositionX ?? defaultOffers[index]?.imagePositionX ?? 50,
+      imagePositionY: offer.imagePositionY ?? defaultOffers[index]?.imagePositionY ?? 50,
+      backgroundPositionX: offer.backgroundPositionX ?? defaultOffers[index]?.backgroundPositionX ?? 50,
+      backgroundPositionY: offer.backgroundPositionY ?? defaultOffers[index]?.backgroundPositionY ?? 50,
     }));
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -699,6 +729,58 @@ export default function SkayGamesWeb() {
     const text = String(value).trim();
     if (/^[0-9]+$/.test(text)) return Number(text).toLocaleString("es-PY");
     return text;
+  };
+
+  const getImagePositionStyle = (item, prefix = "image") => {
+    const x = item?.[`${prefix}PositionX`] ?? 50;
+    const y = item?.[`${prefix}PositionY`] ?? 50;
+    return { objectPosition: `${x}% ${y}%` };
+  };
+
+  const ImagePositionControls = ({ label = "Posición de imagen", item, onChange, prefix = "image" }) => {
+    const xKey = `${prefix}PositionX`;
+    const yKey = `${prefix}PositionY`;
+    const x = item?.[xKey] ?? 50;
+    const y = item?.[yKey] ?? 50;
+
+    return (
+      <div className="rounded-2xl border border-white/10 bg-black/30 p-4 md:col-span-2">
+        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-cyan-300">{label}</div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="text-xs font-bold text-white/65">
+            Horizontal: {x}%
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={x}
+              onChange={(e) => onChange(xKey, Number(e.target.value))}
+              className="mt-2 w-full accent-cyan-400"
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-white/35">
+              <span>Izq.</span><span>Centro</span><span>Der.</span>
+            </div>
+          </label>
+          <label className="text-xs font-bold text-white/65">
+            Vertical: {y}%
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={y}
+              onChange={(e) => onChange(yKey, Number(e.target.value))}
+              className="mt-2 w-full accent-cyan-400"
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-white/35">
+              <span>Arriba</span><span>Centro</span><span>Abajo</span>
+            </div>
+          </label>
+        </div>
+        <div className="mt-3 text-xs text-white/45">
+          Mové la imagen dentro del área sin cambiar el contador ni la estructura.
+        </div>
+      </div>
+    );
   };
 
   const pageContent = useMemo(() => {
@@ -1678,6 +1760,7 @@ export default function SkayGamesWeb() {
                             <input value={slide.title} onChange={(e) => updateHeroSlide(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={slide.buttonText} onChange={(e) => updateHeroSlide(index, "buttonText", e.target.value)} placeholder="Texto del botón" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={slide.image} onChange={(e) => updateHeroSlide(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <ImagePositionControls item={slide} onChange={(field, value) => updateHeroSlide(index, field, value)} />
                             <textarea value={slide.subtitle} onChange={(e) => updateHeroSlide(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[100px]" />
                             <textarea value={slide.message} onChange={(e) => updateHeroSlide(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
                           </div>
@@ -1743,6 +1826,8 @@ export default function SkayGamesWeb() {
                             <textarea value={offer.subtitle} onChange={(e) => updateDraftOffer(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
                             <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen del producto / consola" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                             <input value={offer.backgroundImage || ""} onChange={(e) => updateDraftOffer(index, "backgroundImage", e.target.value)} placeholder="URL de imagen de fondo de la burbuja (opcional)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <ImagePositionControls label="Posición imagen del producto" item={offer} onChange={(field, value) => updateDraftOffer(index, field, value)} prefix="image" />
+                            <ImagePositionControls label="Posición fondo de la burbuja" item={offer} onChange={(field, value) => updateDraftOffer(index, field, value)} prefix="background" />
                             <div>
                               <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Duración automática</label>
                               <select value={offer.durationHours || 12} onChange={(e) => updateDraftOffer(index, "durationHours", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
@@ -1838,6 +1923,7 @@ export default function SkayGamesWeb() {
                       <div className="grid gap-4 md:grid-cols-2">
                         <input value={combo.title} onChange={(e) => updateComboSlide(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                         <input value={combo.image} onChange={(e) => updateComboSlide(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                        <ImagePositionControls item={combo} onChange={(field, value) => updateComboSlide(index, field, value)} />
                         <textarea value={combo.subtitle} onChange={(e) => updateComboSlide(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[100px]" />
                         <textarea value={combo.message} onChange={(e) => updateComboSlide(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
                       </div>
@@ -2016,7 +2102,7 @@ export default function SkayGamesWeb() {
               <div className="relative h-[75vh] min-h-[520px] w-full">
                 {draftHeroSlides.map((slide, index) => (
                   <div key={slide.title} className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                    <img src={slide.image} alt={slide.title} className="h-full w-full object-cover object-[center_80%]" />
+                    <img src={slide.image} alt={slide.title} className="h-full w-full object-cover" style={getImagePositionStyle(slide, "image")} />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)]" />
                   </div>
@@ -2047,6 +2133,7 @@ export default function SkayGamesWeb() {
                   alt=""
                   aria-hidden="true"
                   className="absolute inset-0 h-full w-full object-cover opacity-65"
+                  style={getImagePositionStyle(displayOffer, "background")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/35" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
@@ -2059,6 +2146,7 @@ export default function SkayGamesWeb() {
                       src={displayOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
                       alt={displayOffer?.title || "Oferta activa"}
                       className="h-72 w-full object-contain bg-black/35 p-4"
+                      style={getImagePositionStyle(displayOffer, "image")}
                     />
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -2137,7 +2225,7 @@ export default function SkayGamesWeb() {
                 <div className="relative h-[420px] w-full md:h-[500px]">
                   {draftComboSlides.map((combo, index) => (
                     <div key={combo.id} className={`absolute inset-0 transition-all duration-1000 ${index === currentComboSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                      <img src={combo.image} alt={combo.title} className="h-full w-full object-cover" />
+                      <img src={combo.image} alt={combo.title} className="h-full w-full object-cover" style={getImagePositionStyle(combo, "image")} />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
                     </div>
                   ))}
