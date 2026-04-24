@@ -356,6 +356,7 @@ export default function SkayGamesWeb() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentComboSlide, setCurrentComboSlide] = useState(0);
   const [selectedGamePlatform, setSelectedGamePlatform] = useState("all");
+  const [selectedGameCondition, setSelectedGameCondition] = useState("all");
   const [selectedAccessoryPlatform, setSelectedAccessoryPlatform] = useState("all");
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = useState(false);
   const [headerBackgroundIndex, setHeaderBackgroundIndex] = useState(0);
@@ -381,12 +382,15 @@ export default function SkayGamesWeb() {
   const [draftCategories, setDraftCategories] = useState(categories);
   const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(headerBackgrounds);
   const [draftComboSlides, setDraftComboSlides] = useState(comboSlides);
+  const [editableGamePlatforms, setEditableGamePlatforms] = useState(gamePlatforms);
+  const [draftGamePlatforms, setDraftGamePlatforms] = useState(gamePlatforms);
 
   const [newProductName, setNewProductName] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
   const [newProductOriginalPrice, setNewProductOriginalPrice] = useState("");
   const [newProductCategory, setNewProductCategory] = useState("juegos");
   const [newProductPlatform, setNewProductPlatform] = useState("ps4");
+  const [newProductCondition, setNewProductCondition] = useState("Nuevo");
   const [newProductImage, setNewProductImage] = useState("");
   const [newProductFeatured, setNewProductFeatured] = useState(false);
   const [newProductRecent, setNewProductRecent] = useState(true);
@@ -443,6 +447,14 @@ export default function SkayGamesWeb() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  const normalizeCondition = (value) => {
+    const text = String(value || "Nuevo").trim().toLowerCase();
+    if (text.includes("usado")) return "Usado";
+    if (text.includes("nuevo")) return "Nuevo";
+    if (text.includes("disponible")) return "Nuevo";
+    return value || "Nuevo";
+  };
+
   const mapSupabaseProduct = (item) => ({
     id: item.id,
     name: item.nombre || "Sin nombre",
@@ -456,7 +468,7 @@ export default function SkayGamesWeb() {
     isRecent: Boolean(item.recent),
     createdAt: item.created_at ? String(item.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10),
     originalPrice: item.precio_anterior != null ? String(item.precio_anterior) : "",
-    condition: item.condicion || "Disponible",
+    condition: normalizeCondition(item.condicion || "Nuevo"),
     stock: item.stock ?? 0,
   });
 
@@ -527,6 +539,11 @@ export default function SkayGamesWeb() {
     if (Array.isArray(byKey.comboSlides)) {
       setEditableComboSlides(byKey.comboSlides);
       setDraftComboSlides(byKey.comboSlides);
+    }
+
+    if (Array.isArray(byKey.gamePlatforms)) {
+      setEditableGamePlatforms(byKey.gamePlatforms);
+      setDraftGamePlatforms(byKey.gamePlatforms);
     }
 
     if (Array.isArray(byKey.offers)) {
@@ -719,8 +736,10 @@ export default function SkayGamesWeb() {
       : productsData.filter((product) => {
           if (product.category !== activePage) return false;
           if (activePage === "juegos") {
-            if (selectedGamePlatform === "all") return true;
-            return product.platform === selectedGamePlatform;
+            const matchesPlatform = selectedGamePlatform === "all" || product.platform === selectedGamePlatform;
+            const productCondition = normalizeCondition(product.condition);
+            const matchesCondition = selectedGameCondition === "all" || productCondition.toLowerCase() === selectedGameCondition;
+            return matchesPlatform && matchesCondition;
           }
           if (activePage === "accesorios") {
             if (selectedAccessoryPlatform === "all") return true;
@@ -773,6 +792,11 @@ export default function SkayGamesWeb() {
                 {selectedProduct.platform && (
                   <span className="rounded-full border border-purple-400/20 bg-purple-500/15 px-3 py-1 text-xs font-bold text-purple-300">
                     {selectedProduct.platform.toUpperCase()}
+                  </span>
+                )}
+                {selectedProduct.category === "juegos" && selectedProduct.condition && (
+                  <span className={`rounded-full border px-3 py-1 text-xs font-bold ${normalizeCondition(selectedProduct.condition) === "Nuevo" ? "border-emerald-400/25 bg-emerald-500/15 text-emerald-300" : "border-amber-400/25 bg-amber-500/15 text-amber-300"}`}>
+                    {normalizeCondition(selectedProduct.condition)}
                   </span>
                 )}
               </div>
@@ -866,6 +890,11 @@ export default function SkayGamesWeb() {
               OFERTA
             </span>
           )}
+          {product.category === "juegos" && product.condition && (
+            <span className={`rounded-full px-3 py-1 text-xs font-bold border ${normalizeCondition(product.condition) === "Nuevo" ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20" : "bg-amber-500/15 text-amber-300 border-amber-400/20"}`}>
+              {normalizeCondition(product.condition)}
+            </span>
+          )}
         </div>
         <div className="mt-5 flex flex-col gap-3">
           <button
@@ -897,25 +926,46 @@ export default function SkayGamesWeb() {
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h3 className="text-3xl font-black md:text-4xl">Elegí tu categoría</h3>
-          <p className="mt-3 text-white/65">Entrá directo al catálogo según la consola que buscás.</p>
+          <p className="mt-3 text-white/65">Entrá directo al catálogo según consola y estado del juego.</p>
         </div>
-        <button
-          onClick={() => setSelectedGamePlatform("all")}
-          className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
-            selectedGamePlatform === "all"
-              ? "border-cyan-400/50 bg-cyan-400 text-black"
-              : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
-          }`}
-        >
-          Ver todos
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setSelectedGamePlatform("all")}
+            className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
+              selectedGamePlatform === "all"
+                ? "border-cyan-400/50 bg-cyan-400 text-black"
+                : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            Todas las consolas
+          </button>
+          {[
+            ["all", "Todos"],
+            ["nuevo", "Juegos nuevos"],
+            ["usado", "Juegos usados"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setSelectedGameCondition(value)}
+              className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
+                selectedGameCondition === value
+                  ? "border-emerald-400/50 bg-emerald-400 text-black"
+                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        {gamePlatforms.map((platform) => (
+        {editableGamePlatforms.map((platform) => (
           <button
             key={platform.id}
             onClick={() => setSelectedGamePlatform(platform.id)}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-2xl transition hover:-translate-y-1"
+            className={`overflow-hidden rounded-3xl border text-left shadow-2xl transition hover:-translate-y-1 ${
+              selectedGamePlatform === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
+            }`}
           >
             <img src={platform.image} alt={platform.title} className="h-64 w-full object-contain bg-black p-4" />
             <div className="p-6">
@@ -1077,6 +1127,10 @@ export default function SkayGamesWeb() {
       setDraftCategories((prev) => prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
     };
 
+    const updateGamePlatform = (index, field, value) => {
+      setDraftGamePlatforms((prev) => prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
+    };
+
     const updateHeaderImage = (index, value) => {
       setDraftHeaderBackgrounds((prev) => prev.map((item, i) => (i === index ? value : item)));
     };
@@ -1149,6 +1203,18 @@ export default function SkayGamesWeb() {
       );
     };
 
+    const saveSingleGamePlatform = async (index) => {
+      const next = editableGamePlatforms.map((item, i) => (i === index ? draftGamePlatforms[index] : item));
+      setEditableGamePlatforms(next);
+
+      const result = await saveWebContentToSupabase("gamePlatforms", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Subcategoría de juegos ${index + 1} guardada correctamente.`
+          : result.message
+      );
+    };
+
     const saveCombos = async () => {
       setEditableComboSlides(draftComboSlides);
 
@@ -1191,11 +1257,13 @@ export default function SkayGamesWeb() {
       setDraftCategories(categories);
       setDraftHeaderBackgrounds(headerBackgrounds);
       setDraftComboSlides(comboSlides);
+      setDraftGamePlatforms(gamePlatforms);
       setDraftOffers(defaultOffers);
       setEditableHeroSlides(heroSlides);
       setEditableCategories(categories);
       setEditableHeaderBackgrounds(headerBackgrounds);
       setEditableComboSlides(comboSlides);
+      setEditableGamePlatforms(gamePlatforms);
       setSavedOffers(defaultOffers);
 
       await Promise.all([
@@ -1203,6 +1271,7 @@ export default function SkayGamesWeb() {
         saveWebContentToSupabase("categories", categories),
         saveWebContentToSupabase("headerBackgrounds", headerBackgrounds),
         saveWebContentToSupabase("comboSlides", comboSlides),
+        saveWebContentToSupabase("gamePlatforms", gamePlatforms),
         saveWebContentToSupabase("offers", defaultOffers),
       ]);
 
@@ -1242,7 +1311,7 @@ export default function SkayGamesWeb() {
         ...payloadBasico,
         plataforma: usaPlataforma ? newProductPlatform : null,
         precio_anterior: parseNumericPrice(newProductOriginalPrice),
-        condicion: "Disponible",
+        condicion: categoria === "juegos" ? newProductCondition : "Disponible",
       };
 
       try {
@@ -1301,6 +1370,7 @@ export default function SkayGamesWeb() {
         setNewProductOriginalPrice("");
         setNewProductCategory("juegos");
         setNewProductPlatform("ps4");
+        setNewProductCondition("Nuevo");
         setNewProductImage("");
         setNewProductFeatured(false);
         setNewProductRecent(true);
@@ -1317,6 +1387,7 @@ export default function SkayGamesWeb() {
       setNewProductOriginalPrice(product.originalPrice || "");
       setNewProductCategory(product.category || "juegos");
       setNewProductPlatform(product.platform || "ps4");
+      setNewProductCondition(normalizeCondition(product.condition || "Nuevo"));
       setNewProductImage(product.image || "");
       setNewProductFeatured(!!product.isFeatured);
       setNewProductRecent(!!product.isRecent);
@@ -1375,6 +1446,7 @@ export default function SkayGamesWeb() {
       setNewProductOriginalPrice("");
       setNewProductCategory("juegos");
       setNewProductPlatform("ps4");
+      setNewProductCondition("Nuevo");
       setNewProductImage("");
       setNewProductFeatured(false);
       setNewProductRecent(true);
@@ -1525,6 +1597,10 @@ export default function SkayGamesWeb() {
                         <option value="ps5">PS5</option>
                         <option value="gamer">Gamer</option>
                       </select>
+                      <select value={newProductCondition} onChange={(e) => setNewProductCondition(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                        <option value="Nuevo">Juego nuevo</option>
+                        <option value="Usado">Juego usado</option>
+                      </select>
                       <input value={newProductImage} onChange={(e) => setNewProductImage(e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                     </div>
                     <div className="mt-4 flex flex-wrap gap-6">
@@ -1617,6 +1693,28 @@ export default function SkayGamesWeb() {
                           </div>
                           <div className="mt-4 flex justify-end">
                             <button type="button" onClick={() => saveSingleCategory(index)} className="rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-black text-black">Guardar botón</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
+                    <div className="mb-4 text-sm font-black text-cyan-300">Subcategorías de juegos</div>
+                    <p className="mb-5 text-sm text-white/55">Editá los botones que aparecen dentro de la página Juegos, por ejemplo Juegos PS4 y Juegos PS5.</p>
+                    <div className="space-y-5">
+                      {draftGamePlatforms.map((item, index) => (
+                        <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                          <div className="mb-3 text-sm font-bold text-white">{item.title}</div>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <input value={item.title} onChange={(e) => updateGamePlatform(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                            <input value={item.id} disabled className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-white/50 outline-none" />
+                            <input value={item.image} onChange={(e) => updateGamePlatform(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <textarea value={item.description} onChange={(e) => updateGamePlatform(index, "description", e.target.value)} placeholder="Descripción" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
+                            <textarea value={item.message || ""} onChange={(e) => updateGamePlatform(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
+                          </div>
+                          <div className="mt-4 flex justify-end">
+                            <button type="button" onClick={() => saveSingleGamePlatform(index)} className="rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-black text-black">Guardar subcategoría</button>
                           </div>
                         </div>
                       ))}
