@@ -2203,7 +2203,7 @@ export default function SkayGamesWeb() {
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                   <div>
                     <h3 className="text-3xl font-black md:text-4xl">Productos destacados</h3>
-                    <p className="mt-3 text-white/65">Estos son los productos que vos elegís destacar para vender más rápido desde el panel admin.</p>
+                    
                   </div>
                   <a href={whatsappLink} target="_blank" rel="noreferrer" className="rounded-2xl border border-green-400/40 bg-green-400/10 px-5 py-3 font-bold text-green-300 transition hover:bg-green-400/20">Consultar catálogo completo</a>
                 </div>
@@ -2217,7 +2217,7 @@ export default function SkayGamesWeb() {
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
                   <h3 className="text-3xl font-black md:text-4xl">Combos destacados</h3>
-                  <p className="mt-3 text-white/65">Mostrá tus combos más llamativos con imágenes grandes que cambian automáticamente.</p>
+                  
                 </div>
                 <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Ideal para combos y promos</div>
               </div>
@@ -2248,7 +2248,7 @@ export default function SkayGamesWeb() {
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
                   <h3 className="text-3xl font-black md:text-4xl">Recién llegados</h3>
-                  <p className="mt-3 text-white/65">Acá se muestran automáticamente los últimos productos que vas cargando en el sistema.</p>
+                  
                 </div>
                 <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Controlado desde el panel admin</div>
               </div>
