@@ -462,6 +462,17 @@ export default function SkayGamesWeb() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const getHeroSlideTargetPage = (slide) => {
+    const text = `${slide?.title || ""} ${slide?.subtitle || ""} ${slide?.buttonText || ""} ${slide?.message || ""}`.toLowerCase();
+
+    if (text.includes("recarga") || text.includes("servicio") || text.includes("streaming")) return "recargas-servicios";
+    if (text.includes("juego") || text.includes("ps4") || text.includes("ps5") || text.includes("lanzamiento")) return "juegos";
+    if (text.includes("consola") || text.includes("ps3")) return "consolas";
+    if (text.includes("accesorio") || text.includes("mando") || text.includes("auricular")) return "accesorios";
+
+    return "juegos";
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % editableHeroSlides.length);
@@ -2240,7 +2251,13 @@ export default function SkayGamesWeb() {
                     <p className="mt-5 text-lg text-white/75 md:text-xl">{editableHeroSlides[currentSlide].subtitle}</p>
                     <div className="mt-8 flex flex-wrap gap-4">
                       <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(editableHeroSlides[currentSlide].message)}`} target="_blank" rel="noreferrer" className="rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">{editableHeroSlides[currentSlide].buttonText}</a>
-                      <a href="#productos" className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-bold transition hover:bg-white/10">Ver productos</a>
+                      <button
+                        type="button"
+                        onClick={() => navigateTo(getHeroSlideTargetPage(editableHeroSlides[currentSlide]))}
+                        className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-bold transition hover:bg-white/10"
+                      >
+                        Ver sección
+                      </button>
                     </div>
                   </div>
                 </div>
