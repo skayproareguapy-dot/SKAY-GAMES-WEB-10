@@ -1074,24 +1074,122 @@ export default function SkayGamesWeb() {
     const recargas = editableRechargeItems.filter((item) => item.type === "recarga");
     const streaming = editableRechargeItems.filter((item) => item.type === "streaming");
 
-    const renderOptionList = (item) => (
-      <div className="mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
-        <h5 className="text-sm font-bold uppercase tracking-tighter text-cyan-300">Opciones disponibles</h5>
-        <div className="mt-3 grid gap-3">
+    const getServiceTheme = (item, type) => {
+      const name = String(item?.name || "").toLowerCase();
+
+      if (name.includes("netflix")) {
+        return {
+          accent: "red",
+          card: "border-red-500/35 from-red-950/25 via-slate-950 to-black",
+          glow: "from-red-500/20 via-transparent to-red-500/10",
+          logoBorder: "border-red-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(239,68,68,0.35)]",
+          badge: "bg-red-500/20 text-red-200 border-red-400/35",
+          button: "border-red-400/45 text-red-100 hover:bg-red-500/15",
+        };
+      }
+
+      if (name.includes("disney")) {
+        return {
+          accent: "cyan",
+          card: "border-cyan-400/35 from-cyan-950/25 via-slate-950 to-black",
+          glow: "from-cyan-400/20 via-transparent to-blue-500/10",
+          logoBorder: "border-cyan-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(34,211,238,0.35)]",
+          badge: "bg-cyan-400/20 text-cyan-200 border-cyan-300/35",
+          button: "border-cyan-300/45 text-cyan-100 hover:bg-cyan-400/15",
+        };
+      }
+
+      if (name.includes("max")) {
+        return {
+          accent: "blue",
+          card: "border-blue-500/35 from-blue-950/25 via-slate-950 to-black",
+          glow: "from-blue-500/20 via-transparent to-indigo-500/10",
+          logoBorder: "border-blue-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(59,130,246,0.35)]",
+          badge: "bg-blue-500/20 text-blue-200 border-blue-400/35",
+          button: "border-blue-400/45 text-blue-100 hover:bg-blue-500/15",
+        };
+      }
+
+      if (name.includes("prime")) {
+        return {
+          accent: "sky",
+          card: "border-sky-400/35 from-sky-950/25 via-slate-950 to-black",
+          glow: "from-sky-400/20 via-transparent to-cyan-500/10",
+          logoBorder: "border-sky-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(56,189,248,0.35)]",
+          badge: "bg-sky-400/20 text-sky-200 border-sky-300/35",
+          button: "border-sky-300/45 text-sky-100 hover:bg-sky-400/15",
+        };
+      }
+
+      if (name.includes("crunchy")) {
+        return {
+          accent: "orange",
+          card: "border-orange-500/35 from-orange-950/25 via-slate-950 to-black",
+          glow: "from-orange-500/20 via-transparent to-orange-400/10",
+          logoBorder: "border-orange-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(249,115,22,0.35)]",
+          badge: "bg-orange-500/20 text-orange-200 border-orange-400/35",
+          button: "border-orange-400/45 text-orange-100 hover:bg-orange-500/15",
+        };
+      }
+
+      if (name.includes("flujo")) {
+        return {
+          accent: "orange",
+          card: "border-orange-500/35 from-orange-950/25 via-slate-950 to-black",
+          glow: "from-orange-500/20 via-transparent to-red-500/10",
+          logoBorder: "border-orange-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(249,115,22,0.35)]",
+          badge: "bg-orange-500/20 text-orange-200 border-orange-400/35",
+          button: "border-orange-400/45 text-orange-100 hover:bg-orange-500/15",
+        };
+      }
+
+      if (type === "recarga") {
+        return {
+          accent: "cyan",
+          card: "border-cyan-400/35 from-cyan-950/25 via-slate-950 to-black",
+          glow: "from-cyan-400/20 via-transparent to-purple-500/10",
+          logoBorder: "border-cyan-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(34,211,238,0.32)]",
+          badge: "bg-cyan-400/20 text-cyan-200 border-cyan-300/35",
+          button: "border-cyan-300/45 text-cyan-100 hover:bg-cyan-400/15",
+        };
+      }
+
+      return {
+        accent: "purple",
+        card: "border-purple-500/35 from-purple-950/25 via-slate-950 to-black",
+        glow: "from-purple-500/20 via-transparent to-pink-500/10",
+        logoBorder: "border-purple-500/45",
+        logoGlow: "shadow-[0_0_38px_rgba(168,85,247,0.35)]",
+        badge: "bg-purple-500/20 text-purple-200 border-purple-400/35",
+        button: "border-purple-400/45 text-purple-100 hover:bg-purple-500/15",
+      };
+    };
+
+    const renderOptionList = (item, theme) => (
+      <div className="mt-5 rounded-3xl border border-white/10 bg-black/45 p-4 backdrop-blur-md">
+        <h5 className="text-xs font-black uppercase tracking-[0.18em] text-white/55">Opciones disponibles</h5>
+        <div className="mt-4 grid gap-3">
           {item.options.map((option) => {
             const message = `Hola! Quiero ${item.name} - ${option.label} por ${option.price}.`;
             return (
-              <div key={option.id} className="rounded-xl border border-white/10 bg-black/30 p-3">
+              <div key={option.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 transition hover:border-white/20 hover:bg-white/[0.07]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <div className="text-sm font-bold text-white">{option.label}</div>
-                    <div className="mt-1 text-sm text-cyan-300">{option.price}</div>
+                    <div className="text-sm font-black text-white">{option.label}</div>
+                    <div className="mt-1 text-sm font-bold text-cyan-300">{option.price}</div>
                   </div>
                   <a
                     href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-xl bg-green-500 px-4 py-3 text-center text-sm font-bold text-black transition hover:scale-[1.02]"
+                    className="rounded-xl bg-green-500 px-4 py-3 text-center text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400"
                   >
                     Pedir por WhatsApp
                   </a>
@@ -1103,30 +1201,57 @@ export default function SkayGamesWeb() {
       </div>
     );
 
-    const renderCard = (item, type) => (
-      <div key={item.id} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-black/80 via-slate-900 to-black shadow-2xl transition duration-300 hover:-translate-y-1">
-        <div className="relative flex h-56 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-black to-black">
-          <div className={`absolute top-4 right-4 rounded-full px-3 py-1 text-[11px] font-bold ${type === "recarga" ? "bg-cyan-400/15 text-cyan-300 border border-cyan-400/20" : "bg-purple-500/15 text-purple-300 border border-purple-400/20"}`}>
-            {type === "recarga" ? "Entrega inmediata" : "Servicio digital"}
-          </div>
-          <div className="flex h-28 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-5 backdrop-blur-sm">
-            <img src={item.image} alt={item.name} className="h-16 w-auto object-contain mx-auto" />
+    const renderCard = (item, type) => {
+      const theme = getServiceTheme(item, type);
+
+      return (
+        <div
+          key={item.id}
+          className={`group relative overflow-hidden rounded-[30px] border bg-gradient-to-br ${theme.card} p-[1px] shadow-2xl transition duration-500 hover:-translate-y-2 hover:scale-[1.015]`}
+        >
+          <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-80 blur-2xl transition duration-500 group-hover:opacity-100`} />
+          <div className="relative h-full overflow-hidden rounded-[29px] bg-black/70 backdrop-blur-xl">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_90%_80%,rgba(34,211,238,0.10),transparent_28%)]" />
+            <div className="relative flex h-64 w-full items-center justify-center p-6">
+              <div className={`absolute left-5 top-5 rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-tight ${theme.badge}`}>
+                {type === "recarga" ? "Recarga" : "Streaming"}
+              </div>
+              <div className={`absolute right-5 top-5 rounded-full border px-3 py-1 text-[11px] font-bold ${theme.badge}`}>
+                {type === "recarga" ? "Entrega inmediata" : "Servicio digital"}
+              </div>
+
+              <div className={`flex h-36 w-full max-w-[260px] items-center justify-center rounded-[28px] border bg-black/45 px-6 py-5 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="max-h-24 w-full object-contain transition duration-500 group-hover:scale-110"
+                />
+              </div>
+            </div>
+
+            <div className="relative p-6 pt-2">
+              <div className="mb-4 h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <h4 className="text-2xl font-black tracking-tight text-white">{item.name}</h4>
+              <p className="mt-2 min-h-[44px] text-sm leading-6 text-white/65">
+                {type === "recarga"
+                  ? "Elegí el paquete y pedilo directo por WhatsApp."
+                  : "Planes disponibles, renovación y cuentas nuevas."}
+              </p>
+
+              <button
+                onClick={() => setSelectedRechargeItem(selectedRechargeItem === item.id ? null : item.id)}
+                className={`mt-5 flex w-full items-center justify-between rounded-2xl border bg-black/35 px-5 py-4 text-sm font-black transition duration-300 ${theme.button}`}
+              >
+                <span>{selectedRechargeItem === item.id ? "Ocultar opciones" : "Ver opciones"}</span>
+                <span className="text-lg">›</span>
+              </button>
+
+              {selectedRechargeItem === item.id && renderOptionList(item, theme)}
+            </div>
           </div>
         </div>
-        <div className="p-5">
-          <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
-          <div className={`mb-3 inline-block rounded-full px-3 py-1 text-xs font-bold ${type === "recarga" ? "bg-cyan-400/15 text-cyan-300" : "bg-purple-500/15 text-purple-300"}`}>
-            {type === "recarga" ? "Recarga" : "Streaming"}
-          </div>
-          <h4 className="text-xl font-bold tracking-tighter">{item.name}</h4>
-          <p className="mt-2 text-sm text-white/60">{type === "recarga" ? "Elegí una opción y pedila directo por WhatsApp." : "Elegí un plan y consultalo directo por WhatsApp."}</p>
-          <button onClick={() => setSelectedRechargeItem(selectedRechargeItem === item.id ? null : item.id)} className={`mt-4 w-full rounded-xl px-4 py-3 font-bold text-black ${type === "recarga" ? "bg-cyan-400" : "bg-purple-400"}`}>
-            {selectedRechargeItem === item.id ? "Ocultar opciones" : "Ver opciones"}
-          </button>
-          {selectedRechargeItem === item.id && renderOptionList(item)}
-        </div>
-      </div>
-    );
+      );
+    };
 
     return (
       <>
@@ -1138,6 +1263,7 @@ export default function SkayGamesWeb() {
             <p className="mt-4 text-xl text-white/75">Cada opción tiene su propio botón de WhatsApp.</p>
           </div>
         </section>
+
         <section className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex flex-wrap gap-3">
             {[["all", "Todos"], ["recargas", "Recargas"], ["streaming", "Streaming"]].map(([value, label]) => (
@@ -1147,22 +1273,22 @@ export default function SkayGamesWeb() {
             ))}
           </div>
         </section>
+
         {(rechargeFilter === "all" || rechargeFilter === "recargas") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
               <h3 className="text-3xl font-black md:text-4xl">Recargas para juegos</h3>
-              <p className="mt-3 text-white/65">Elegí exactamente la opción que querés y pedila directo.</p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{recargas.map((item) => renderCard(item, "recarga"))}</div>
           </section>
         )}
+
         {(rechargeFilter === "all" || rechargeFilter === "streaming") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
               <h3 className="text-3xl font-black md:text-4xl">Servicios streaming</h3>
-              <p className="mt-3 text-white/65">Cada plan se puede consultar directo por WhatsApp.</p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{streaming.map((item) => renderCard(item, "streaming"))}</div>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{streaming.map((item) => renderCard(item, "streaming"))}</div>
           </section>
         )}
       </>
