@@ -12,28 +12,36 @@ export default function SkayGamesWeb() {
     "subtitle": "Saldo, servicios y recargas para todos tus juegos. Consultá ahora.",
     "image": "https://i.imgur.com/LnLO32v.png",
     "buttonText": "Consultar recargas",
-    "message": "Hola! Quiero consultar por recargas disponibles."
+    "message": "Hola! Quiero consultar por recargas disponibles.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "🔥 YA DISPONIBLE",
     "subtitle": "Nuevos lanzamientos y novedades en juegos. Consultá lo último en SKAY GAMES.",
     "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar lanzamiento",
-    "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥"
+    "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "Juegos PS4 y PS5",
     "subtitle": "Encontrá títulos físicos y digitales para seguir jugando sin parar.",
     "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar juegos",
-    "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5."
+    "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "title": "Consolas nuevas y usadas",
     "subtitle": "PS3, PS4, PS5 y más opciones para todos los presupuestos.",
     "image": "https://i.imgur.com/V7IWjBe.jpeg",
     "buttonText": "Consultar consolas",
-    "message": "Hola! Quiero consultar por consolas disponibles."
+    "message": "Hola! Quiero consultar por consolas disponibles.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   }
 ];
 
@@ -97,21 +105,27 @@ export default function SkayGamesWeb() {
     "title": "Combo Accesorios PS2",
     "subtitle": "Armá tu combo ideal con mandos, cables y accesorios esenciales.",
     "image": "https://i.imgur.com/sVQ0Bkz.png",
-    "message": "Hola! Quiero consultar por el combo de accesorios para PS2."
+    "message": "Hola! Quiero consultar por el combo de accesorios para PS2.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "id": 2,
     "title": "Combo Mesa + Silla Gamer",
     "subtitle": "Mejorá tu espacio con un combo gamer completo para jugar cómodo.",
     "image": "https://images.unsplash.com/photo-1616588589676-62b3bd0d0b2f?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer."
+    "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   },
   {
     "id": 3,
     "title": "Combo PS4 + Juego + Control",
     "subtitle": "Llevate un combo listo para jugar desde el primer día.",
     "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo PS4 + juego + control."
+    "message": "Hola! Quiero consultar por el combo PS4 + juego + control.",
+    "imagePositionX": 50,
+    "imagePositionY": 50
   }
 ];
 
@@ -278,6 +292,11 @@ export default function SkayGamesWeb() {
       subtitle: "Configurá el producto y elegí duración.",
       price: "Gs. 0",
       image: "https://i.imgur.com/msLP2KI.jpeg",
+      backgroundImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...firstOfferDates,
     },
     {
@@ -286,6 +305,11 @@ export default function SkayGamesWeb() {
       subtitle: "Se activa automáticamente al terminar la oferta 1.",
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...secondOfferDates,
     },
     {
@@ -294,6 +318,11 @@ export default function SkayGamesWeb() {
       subtitle: "Se activa automáticamente al terminar la oferta 2.",
       price: "Gs. 0",
       image: "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1600&q=80",
+      backgroundPositionX: 50,
+      backgroundPositionY: 50,
+      imagePositionX: 50,
+      imagePositionY: 50,
       ...thirdOfferDates,
     },
   ];
@@ -306,9 +335,67 @@ export default function SkayGamesWeb() {
     { id: "respaldo", title: "Respaldo y restauración", description: "Exportar e importar copias de seguridad.", stats: ["Exportar", "Importar", "Último backup", "Restaurar"] },
   ];
 
+  const WEB_CONTENT_TABLE = "web_content";
+
+  const defaultRechargeItems = [
+    {
+      id: 1,
+      type: "recarga",
+      name: "Free Fire",
+      image: "https://i.imgur.com/QLBhjxz.png",
+      options: [
+        { id: 1, label: "100 💎", price: "Gs. 10.000" },
+        { id: 2, label: "310 💎", price: "Gs. 30.000" },
+        { id: 3, label: "520 💎", price: "Gs. 50.000" },
+        { id: 1776717350986.0034, label: "600 💎", price: "Gs. 60.000" },
+      ],
+    },
+    {
+      id: 2,
+      type: "recarga",
+      name: "Call of Duty Mobile",
+      image: "https://i.imgur.com/YRrshz6.png",
+      options: [
+        { id: 1, label: "80 CP", price: "Gs. 10.000" },
+        { id: 2, label: "420 CP", price: "Gs. 35.000" },
+        { id: 3, label: "880 CP", price: "Gs. 70.000" },
+      ],
+    },
+    {
+      id: 3,
+      type: "streaming",
+      name: "Netflix",
+      image: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+      options: [
+        { id: 1, label: "Plan mensual", price: "Consultar" },
+        { id: 2, label: "Cuenta compartida", price: "Consultar" },
+      ],
+    },
+  ];
+
+  const normalizeOffers = (offers = []) =>
+    offers.map((offer, index) => ({
+      ...offer,
+      image:
+        offer.image ||
+        defaultOffers[index]?.image ||
+        "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+      backgroundImage:
+        offer.backgroundImage ||
+        defaultOffers[index]?.backgroundImage ||
+        offer.image ||
+        defaultOffers[index]?.image ||
+        "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+      imagePositionX: offer.imagePositionX ?? defaultOffers[index]?.imagePositionX ?? 50,
+      imagePositionY: offer.imagePositionY ?? defaultOffers[index]?.imagePositionY ?? 50,
+      backgroundPositionX: offer.backgroundPositionX ?? defaultOffers[index]?.backgroundPositionX ?? 50,
+      backgroundPositionY: offer.backgroundPositionY ?? defaultOffers[index]?.backgroundPositionY ?? 50,
+    }));
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentComboSlide, setCurrentComboSlide] = useState(0);
   const [selectedGamePlatform, setSelectedGamePlatform] = useState("all");
+  const [selectedGameCondition, setSelectedGameCondition] = useState("all");
   const [selectedAccessoryPlatform, setSelectedAccessoryPlatform] = useState("all");
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = useState(false);
   const [headerBackgroundIndex, setHeaderBackgroundIndex] = useState(0);
@@ -320,202 +407,35 @@ export default function SkayGamesWeb() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-  const [savedOffers, setSavedOffers] = useState(() => {
-    const normalizeOffers = (offers) =>
-      offers.map((offer, index) => ({
-        ...offer,
-        image: offer.image || defaultOffers[index]?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-      }));
-    if (typeof window === "undefined") return defaultOffers;
-    try {
-      const saved = window.localStorage.getItem("skaygames_offers");
-      return saved ? normalizeOffers(JSON.parse(saved)) : defaultOffers;
-    } catch {
-      return defaultOffers;
-    }
-  });
-  const [draftOffers, setDraftOffers] = useState(() => {
-    const normalizeOffers = (offers) =>
-      offers.map((offer, index) => ({
-        ...offer,
-        image: offer.image || defaultOffers[index]?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-      }));
-    if (typeof window === "undefined") return defaultOffers;
-    try {
-      const saved = window.localStorage.getItem("skaygames_offers");
-      return saved ? normalizeOffers(JSON.parse(saved)) : defaultOffers;
-    } catch {
-      return defaultOffers;
-    }
-  });
+  const [savedOffers, setSavedOffers] = useState(defaultOffers);
+  const [draftOffers, setDraftOffers] = useState(defaultOffers);
   const [offerCountdown, setOfferCountdown] = useState("");
   const [contentSaveMessage, setContentSaveMessage] = useState("");
   const [comboSaveMessage, setComboSaveMessage] = useState("");
   const [offerSaveMessage, setOfferSaveMessage] = useState("");
-  const [editableHeroSlides, setEditableHeroSlides] = useState(() => {
-    if (typeof window === "undefined") return heroSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_heroSlides");
-      return saved ? JSON.parse(saved) : heroSlides;
-    } catch {
-      return heroSlides;
-    }
-  });
-  const [editableCategories, setEditableCategories] = useState(() => {
-    if (typeof window === "undefined") return categories;
-    try {
-      const saved = window.localStorage.getItem("skaygames_categories");
-      return saved ? JSON.parse(saved) : categories;
-    } catch {
-      return categories;
-    }
-  });
-  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(() => {
-    if (typeof window === "undefined") return headerBackgrounds;
-    try {
-      const saved = window.localStorage.getItem("skaygames_headerBackgrounds");
-      return saved ? JSON.parse(saved) : headerBackgrounds;
-    } catch {
-      return headerBackgrounds;
-    }
-  });
-  const [editableComboSlides, setEditableComboSlides] = useState(() => {
-    if (typeof window === "undefined") return comboSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_comboSlides");
-      return saved ? JSON.parse(saved) : comboSlides;
-    } catch {
-      return comboSlides;
-    }
-  });
-
-  const [draftHeroSlides, setDraftHeroSlides] = useState(() => {
-    if (typeof window === "undefined") return heroSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_heroSlides");
-      return saved ? JSON.parse(saved) : heroSlides;
-    } catch {
-      return heroSlides;
-    }
-  });
-  const [draftCategories, setDraftCategories] = useState(() => {
-    if (typeof window === "undefined") return categories;
-    try {
-      const saved = window.localStorage.getItem("skaygames_categories");
-      return saved ? JSON.parse(saved) : categories;
-    } catch {
-      return categories;
-    }
-  });
-  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(() => {
-    if (typeof window === "undefined") return headerBackgrounds;
-    try {
-      const saved = window.localStorage.getItem("skaygames_headerBackgrounds");
-      return saved ? JSON.parse(saved) : headerBackgrounds;
-    } catch {
-      return headerBackgrounds;
-    }
-  });
-  const [draftComboSlides, setDraftComboSlides] = useState(() => {
-    if (typeof window === "undefined") return comboSlides;
-    try {
-      const saved = window.localStorage.getItem("skaygames_comboSlides");
-      return saved ? JSON.parse(saved) : comboSlides;
-    } catch {
-      return comboSlides;
-    }
-  });
+  const [editableHeroSlides, setEditableHeroSlides] = useState(heroSlides);
+  const [editableCategories, setEditableCategories] = useState(categories);
+  const [editableHeaderBackgrounds, setEditableHeaderBackgrounds] = useState(headerBackgrounds);
+  const [editableComboSlides, setEditableComboSlides] = useState(comboSlides);
+  const [draftHeroSlides, setDraftHeroSlides] = useState(heroSlides);
+  const [draftCategories, setDraftCategories] = useState(categories);
+  const [draftHeaderBackgrounds, setDraftHeaderBackgrounds] = useState(headerBackgrounds);
+  const [draftComboSlides, setDraftComboSlides] = useState(comboSlides);
+  const [editableGamePlatforms, setEditableGamePlatforms] = useState(gamePlatforms);
+  const [draftGamePlatforms, setDraftGamePlatforms] = useState(gamePlatforms);
 
   const [newProductName, setNewProductName] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
   const [newProductOriginalPrice, setNewProductOriginalPrice] = useState("");
   const [newProductCategory, setNewProductCategory] = useState("juegos");
   const [newProductPlatform, setNewProductPlatform] = useState("ps4");
+  const [newProductCondition, setNewProductCondition] = useState("Nuevo");
   const [newProductImage, setNewProductImage] = useState("");
   const [newProductFeatured, setNewProductFeatured] = useState(false);
   const [newProductRecent, setNewProductRecent] = useState(true);
   const [productFormMessage, setProductFormMessage] = useState("");
   const [editingProductId, setEditingProductId] = useState(null);
-  const [editableRechargeItems, setEditableRechargeItems] = useState(() => {
-    const defaults = [
-  {
-    "id": 1,
-    "type": "recarga",
-    "name": "Free Fire",
-    "image": "https://i.imgur.com/QLBhjxz.png",
-    "options": [
-      {
-        "id": 1,
-        "label": "100 💎",
-        "price": "Gs. 10.000"
-      },
-      {
-        "id": 2,
-        "label": "310 💎",
-        "price": "Gs. 30.000"
-      },
-      {
-        "id": 3,
-        "label": "520 💎",
-        "price": "Gs. 50.000"
-      },
-      {
-        "id": 1776717350986.0034,
-        "label": "600 💎",
-        "price": "Gs. 60.000"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "type": "recarga",
-    "name": "Call of Duty Mobile",
-    "image": "https://i.imgur.com/YRrshz6.png",
-    "options": [
-      {
-        "id": 1,
-        "label": "80 CP",
-        "price": "Gs. 10.000"
-      },
-      {
-        "id": 2,
-        "label": "420 CP",
-        "price": "Gs. 35.000"
-      },
-      {
-        "id": 3,
-        "label": "880 CP",
-        "price": "Gs. 70.000"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "type": "streaming",
-    "name": "Netflix",
-    "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-    "options": [
-      {
-        "id": 1,
-        "label": "Plan mensual",
-        "price": "Consultar"
-      },
-      {
-        "id": 2,
-        "label": "Cuenta compartida",
-        "price": "Consultar"
-      }
-    ]
-  }
-];
-    if (typeof window === "undefined") return defaults;
-    try {
-      const saved = window.localStorage.getItem("skaygames_rechargeItems");
-      return saved ? JSON.parse(saved) : defaults;
-    } catch {
-      return defaults;
-    }
-  });
+  const [editableRechargeItems, setEditableRechargeItems] = useState(defaultRechargeItems);
   const [newRechargeName, setNewRechargeName] = useState("");
   const [newRechargeImage, setNewRechargeImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
@@ -531,16 +451,7 @@ export default function SkayGamesWeb() {
 
   const [activePage, setActivePage] = useState(getPageFromHash());
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [productsData, setProductsData] = useState(() => {
-    if (typeof window === "undefined") return initialProducts;
-    try {
-      const saved = window.localStorage.getItem("skaygames_products");
-      return saved ? JSON.parse(saved) : initialProducts;
-    } catch {
-      return initialProducts;
-    }
-  });
-
+  const [productsData, setProductsData] = useState(initialProducts);
 
   const navigateTo = (page) => {
     if (page !== "admin") setAdminLoginError("");
@@ -549,6 +460,17 @@ export default function SkayGamesWeb() {
     setActivePage(page);
     setSelectedProduct(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getHeroSlideTargetPage = (slide) => {
+    const text = `${slide?.title || ""} ${slide?.subtitle || ""} ${slide?.buttonText || ""} ${slide?.message || ""}`.toLowerCase();
+
+    if (text.includes("recarga") || text.includes("servicio") || text.includes("streaming")) return "recargas-servicios";
+    if (text.includes("juego") || text.includes("ps4") || text.includes("ps5") || text.includes("lanzamiento")) return "juegos";
+    if (text.includes("consola") || text.includes("ps3")) return "consolas";
+    if (text.includes("accesorio") || text.includes("mando") || text.includes("auricular")) return "accesorios";
+
+    return "juegos";
   };
 
   useEffect(() => {
@@ -575,10 +497,13 @@ export default function SkayGamesWeb() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try { window.localStorage.setItem("skaygames_products", JSON.stringify(productsData)); } catch {}
-  }, [productsData]);
+  const normalizeCondition = (value) => {
+    const text = String(value || "Nuevo").trim().toLowerCase();
+    if (text.includes("usado")) return "Usado";
+    if (text.includes("nuevo")) return "Nuevo";
+    if (text.includes("disponible")) return "Nuevo";
+    return value || "Nuevo";
+  };
 
   const mapSupabaseProduct = (item) => ({
     id: item.id,
@@ -593,7 +518,7 @@ export default function SkayGamesWeb() {
     isRecent: Boolean(item.recent),
     createdAt: item.created_at ? String(item.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10),
     originalPrice: item.precio_anterior != null ? String(item.precio_anterior) : "",
-    condition: item.condicion || "Disponible",
+    condition: normalizeCondition(item.condicion || "Nuevo"),
     stock: item.stock ?? 0,
   });
 
@@ -625,14 +550,132 @@ export default function SkayGamesWeb() {
     }
   };
 
-  useEffect(() => {
-    loadProductsFromSupabase();
-  }, []);
+  const parseWebContentValue = (value, fallback) => {
+    if (value === null || value === undefined) return fallback;
+
+    if (typeof value === "string") {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return fallback;
+      }
+    }
+
+    return value;
+  };
+
+  const applyWebContentFromRemote = (rows = []) => {
+    const byKey = Object.fromEntries(
+      rows
+        .filter((row) => row?.clave)
+        .map((row) => [row.clave, parseWebContentValue(row.valor, null)])
+    );
+
+    if (Array.isArray(byKey.heroSlides)) {
+      setEditableHeroSlides(byKey.heroSlides);
+      setDraftHeroSlides(byKey.heroSlides);
+    }
+
+    if (Array.isArray(byKey.categories)) {
+      setEditableCategories(byKey.categories);
+      setDraftCategories(byKey.categories);
+    }
+
+    if (Array.isArray(byKey.headerBackgrounds)) {
+      setEditableHeaderBackgrounds(byKey.headerBackgrounds);
+      setDraftHeaderBackgrounds(byKey.headerBackgrounds);
+    }
+
+    if (Array.isArray(byKey.comboSlides)) {
+      setEditableComboSlides(byKey.comboSlides);
+      setDraftComboSlides(byKey.comboSlides);
+    }
+
+    if (Array.isArray(byKey.gamePlatforms)) {
+      setEditableGamePlatforms(byKey.gamePlatforms);
+      setDraftGamePlatforms(byKey.gamePlatforms);
+    }
+
+    if (Array.isArray(byKey.offers)) {
+      const normalized = normalizeOffers(byKey.offers);
+      setSavedOffers(normalized);
+      setDraftOffers(normalized);
+    }
+
+    if (Array.isArray(byKey.rechargeItems)) {
+      setEditableRechargeItems(byKey.rechargeItems);
+    }
+  };
+
+  const loadWebContentFromSupabase = async () => {
+    if (!supabase) return;
+
+    try {
+      const { data, error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .select("clave, valor");
+
+      if (error) {
+        console.error("Error cargando contenido web desde Supabase:", error);
+        return;
+      }
+
+      if (Array.isArray(data) && data.length > 0) {
+        applyWebContentFromRemote(data);
+      }
+    } catch (err) {
+      console.error("Error inesperado cargando contenido web:", err);
+    }
+  };
+
+  const saveWebContentToSupabase = async (clave, valor) => {
+    if (!supabase) {
+      return { ok: false, message: "Supabase no está configurado." };
+    }
+
+    try {
+      const payload = typeof valor === "string" ? valor : JSON.stringify(valor);
+
+      const { error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .upsert(
+          [{ clave, valor: payload, updated_at: new Date().toISOString() }],
+          { onConflict: "clave" }
+        );
+
+      if (error) {
+        console.error(`Error guardando ${clave} en Supabase:`, error);
+        return { ok: false, message: `No se pudo guardar ${clave} en Supabase.` };
+      }
+
+      return { ok: true };
+    } catch (err) {
+      console.error(`Error inesperado guardando ${clave}:`, err);
+      return { ok: false, message: `Ocurrió un error guardando ${clave}.` };
+    }
+  };
+
+  const deleteWebContentFromSupabase = async (clave) => {
+    if (!supabase) return;
+
+    try {
+      const { error } = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .delete()
+        .eq("clave", clave);
+
+      if (error) {
+        console.error(`Error eliminando ${clave} de Supabase:`, error);
+      }
+    } catch (err) {
+      console.error(`Error inesperado eliminando ${clave}:`, err);
+    }
+  };
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    try { window.localStorage.setItem("skaygames_rechargeItems", JSON.stringify(editableRechargeItems)); } catch {}
-  }, [editableRechargeItems]);
+    loadProductsFromSupabase();
+    loadWebContentFromSupabase();
+  }, []);
 
   const getActiveOffer = (offers) => {
     const now = Date.now();
@@ -699,6 +742,58 @@ export default function SkayGamesWeb() {
     return text;
   };
 
+  const getImagePositionStyle = (item, prefix = "image") => {
+    const x = item?.[`${prefix}PositionX`] ?? 50;
+    const y = item?.[`${prefix}PositionY`] ?? 50;
+    return { objectPosition: `${x}% ${y}%` };
+  };
+
+  const ImagePositionControls = ({ label = "Posición de imagen", item, onChange, prefix = "image" }) => {
+    const xKey = `${prefix}PositionX`;
+    const yKey = `${prefix}PositionY`;
+    const x = item?.[xKey] ?? 50;
+    const y = item?.[yKey] ?? 50;
+
+    return (
+      <div className="rounded-2xl border border-white/10 bg-black/30 p-4 md:col-span-2">
+        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-cyan-300">{label}</div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="text-xs font-bold text-white/65">
+            Horizontal: {x}%
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={x}
+              onChange={(e) => onChange(xKey, Number(e.target.value))}
+              className="mt-2 w-full accent-cyan-400"
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-white/35">
+              <span>Izq.</span><span>Centro</span><span>Der.</span>
+            </div>
+          </label>
+          <label className="text-xs font-bold text-white/65">
+            Vertical: {y}%
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={y}
+              onChange={(e) => onChange(yKey, Number(e.target.value))}
+              className="mt-2 w-full accent-cyan-400"
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-white/35">
+              <span>Arriba</span><span>Centro</span><span>Abajo</span>
+            </div>
+          </label>
+        </div>
+        <div className="mt-3 text-xs text-white/45">
+          Mové la imagen dentro del área sin cambiar el contador ni la estructura.
+        </div>
+      </div>
+    );
+  };
+
   const pageContent = useMemo(() => {
     const pages = {
       consolas: {
@@ -743,8 +838,10 @@ export default function SkayGamesWeb() {
       : productsData.filter((product) => {
           if (product.category !== activePage) return false;
           if (activePage === "juegos") {
-            if (selectedGamePlatform === "all") return true;
-            return product.platform === selectedGamePlatform;
+            const matchesPlatform = selectedGamePlatform === "all" || product.platform === selectedGamePlatform;
+            const productCondition = normalizeCondition(product.condition);
+            const matchesCondition = selectedGameCondition === "all" || productCondition.toLowerCase() === selectedGameCondition;
+            return matchesPlatform && matchesCondition;
           }
           if (activePage === "accesorios") {
             if (selectedAccessoryPlatform === "all") return true;
@@ -797,6 +894,11 @@ export default function SkayGamesWeb() {
                 {selectedProduct.platform && (
                   <span className="rounded-full border border-purple-400/20 bg-purple-500/15 px-3 py-1 text-xs font-bold text-purple-300">
                     {selectedProduct.platform.toUpperCase()}
+                  </span>
+                )}
+                {selectedProduct.category === "juegos" && selectedProduct.condition && (
+                  <span className={`rounded-full border px-3 py-1 text-xs font-bold ${normalizeCondition(selectedProduct.condition) === "Nuevo" ? "border-emerald-400/25 bg-emerald-500/15 text-emerald-300" : "border-amber-400/25 bg-amber-500/15 text-amber-300"}`}>
+                    {normalizeCondition(selectedProduct.condition)}
                   </span>
                 )}
               </div>
@@ -890,6 +992,11 @@ export default function SkayGamesWeb() {
               OFERTA
             </span>
           )}
+          {product.category === "juegos" && product.condition && (
+            <span className={`rounded-full px-3 py-1 text-xs font-bold border ${normalizeCondition(product.condition) === "Nuevo" ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20" : "bg-amber-500/15 text-amber-300 border-amber-400/20"}`}>
+              {normalizeCondition(product.condition)}
+            </span>
+          )}
         </div>
         <div className="mt-5 flex flex-col gap-3">
           <button
@@ -921,25 +1028,46 @@ export default function SkayGamesWeb() {
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h3 className="text-3xl font-black md:text-4xl">Elegí tu categoría</h3>
-          <p className="mt-3 text-white/65">Entrá directo al catálogo según la consola que buscás.</p>
+          <p className="mt-3 text-white/65">Entrá directo al catálogo según consola y estado del juego.</p>
         </div>
-        <button
-          onClick={() => setSelectedGamePlatform("all")}
-          className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
-            selectedGamePlatform === "all"
-              ? "border-cyan-400/50 bg-cyan-400 text-black"
-              : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
-          }`}
-        >
-          Ver todos
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setSelectedGamePlatform("all")}
+            className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
+              selectedGamePlatform === "all"
+                ? "border-cyan-400/50 bg-cyan-400 text-black"
+                : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+            }`}
+          >
+            Todas las consolas
+          </button>
+          {[
+            ["all", "Todos"],
+            ["nuevo", "Juegos nuevos"],
+            ["usado", "Juegos usados"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setSelectedGameCondition(value)}
+              className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
+                selectedGameCondition === value
+                  ? "border-emerald-400/50 bg-emerald-400 text-black"
+                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        {gamePlatforms.map((platform) => (
+        {editableGamePlatforms.map((platform) => (
           <button
             key={platform.id}
             onClick={() => setSelectedGamePlatform(platform.id)}
-            className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-2xl transition hover:-translate-y-1"
+            className={`overflow-hidden rounded-3xl border text-left shadow-2xl transition hover:-translate-y-1 ${
+              selectedGamePlatform === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
+            }`}
           >
             <img src={platform.image} alt={platform.title} className="h-64 w-full object-contain bg-black p-4" />
             <div className="p-6">
@@ -957,24 +1085,122 @@ export default function SkayGamesWeb() {
     const recargas = editableRechargeItems.filter((item) => item.type === "recarga");
     const streaming = editableRechargeItems.filter((item) => item.type === "streaming");
 
-    const renderOptionList = (item) => (
-      <div className="mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-4">
-        <h5 className="text-sm font-bold uppercase tracking-tighter text-cyan-300">Opciones disponibles</h5>
-        <div className="mt-3 grid gap-3">
+    const getServiceTheme = (item, type) => {
+      const name = String(item?.name || "").toLowerCase();
+
+      if (name.includes("netflix")) {
+        return {
+          accent: "red",
+          card: "border-red-500/35 from-red-950/25 via-slate-950 to-black",
+          glow: "from-red-500/20 via-transparent to-red-500/10",
+          logoBorder: "border-red-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(239,68,68,0.35)]",
+          badge: "bg-red-500/20 text-red-200 border-red-400/35",
+          button: "border-red-400/45 text-red-100 hover:bg-red-500/15",
+        };
+      }
+
+      if (name.includes("disney")) {
+        return {
+          accent: "cyan",
+          card: "border-cyan-400/35 from-cyan-950/25 via-slate-950 to-black",
+          glow: "from-cyan-400/20 via-transparent to-blue-500/10",
+          logoBorder: "border-cyan-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(34,211,238,0.35)]",
+          badge: "bg-cyan-400/20 text-cyan-200 border-cyan-300/35",
+          button: "border-cyan-300/45 text-cyan-100 hover:bg-cyan-400/15",
+        };
+      }
+
+      if (name.includes("max")) {
+        return {
+          accent: "blue",
+          card: "border-blue-500/35 from-blue-950/25 via-slate-950 to-black",
+          glow: "from-blue-500/20 via-transparent to-indigo-500/10",
+          logoBorder: "border-blue-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(59,130,246,0.35)]",
+          badge: "bg-blue-500/20 text-blue-200 border-blue-400/35",
+          button: "border-blue-400/45 text-blue-100 hover:bg-blue-500/15",
+        };
+      }
+
+      if (name.includes("prime")) {
+        return {
+          accent: "sky",
+          card: "border-sky-400/35 from-sky-950/25 via-slate-950 to-black",
+          glow: "from-sky-400/20 via-transparent to-cyan-500/10",
+          logoBorder: "border-sky-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(56,189,248,0.35)]",
+          badge: "bg-sky-400/20 text-sky-200 border-sky-300/35",
+          button: "border-sky-300/45 text-sky-100 hover:bg-sky-400/15",
+        };
+      }
+
+      if (name.includes("crunchy")) {
+        return {
+          accent: "orange",
+          card: "border-orange-500/35 from-orange-950/25 via-slate-950 to-black",
+          glow: "from-orange-500/20 via-transparent to-orange-400/10",
+          logoBorder: "border-orange-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(249,115,22,0.35)]",
+          badge: "bg-orange-500/20 text-orange-200 border-orange-400/35",
+          button: "border-orange-400/45 text-orange-100 hover:bg-orange-500/15",
+        };
+      }
+
+      if (name.includes("flujo")) {
+        return {
+          accent: "orange",
+          card: "border-orange-500/35 from-orange-950/25 via-slate-950 to-black",
+          glow: "from-orange-500/20 via-transparent to-red-500/10",
+          logoBorder: "border-orange-500/45",
+          logoGlow: "shadow-[0_0_38px_rgba(249,115,22,0.35)]",
+          badge: "bg-orange-500/20 text-orange-200 border-orange-400/35",
+          button: "border-orange-400/45 text-orange-100 hover:bg-orange-500/15",
+        };
+      }
+
+      if (type === "recarga") {
+        return {
+          accent: "cyan",
+          card: "border-cyan-400/35 from-cyan-950/25 via-slate-950 to-black",
+          glow: "from-cyan-400/20 via-transparent to-purple-500/10",
+          logoBorder: "border-cyan-400/45",
+          logoGlow: "shadow-[0_0_38px_rgba(34,211,238,0.32)]",
+          badge: "bg-cyan-400/20 text-cyan-200 border-cyan-300/35",
+          button: "border-cyan-300/45 text-cyan-100 hover:bg-cyan-400/15",
+        };
+      }
+
+      return {
+        accent: "purple",
+        card: "border-purple-500/35 from-purple-950/25 via-slate-950 to-black",
+        glow: "from-purple-500/20 via-transparent to-pink-500/10",
+        logoBorder: "border-purple-500/45",
+        logoGlow: "shadow-[0_0_38px_rgba(168,85,247,0.35)]",
+        badge: "bg-purple-500/20 text-purple-200 border-purple-400/35",
+        button: "border-purple-400/45 text-purple-100 hover:bg-purple-500/15",
+      };
+    };
+
+    const renderOptionList = (item, theme) => (
+      <div className="mt-5 rounded-3xl border border-white/10 bg-black/45 p-4 backdrop-blur-md">
+        <h5 className="text-xs font-black uppercase tracking-[0.18em] text-white/55">Opciones disponibles</h5>
+        <div className="mt-4 grid gap-3">
           {item.options.map((option) => {
             const message = `Hola! Quiero ${item.name} - ${option.label} por ${option.price}.`;
             return (
-              <div key={option.id} className="rounded-xl border border-white/10 bg-black/30 p-3">
+              <div key={option.id} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 transition hover:border-white/20 hover:bg-white/[0.07]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <div className="text-sm font-bold text-white">{option.label}</div>
-                    <div className="mt-1 text-sm text-cyan-300">{option.price}</div>
+                    <div className="text-sm font-black text-white">{option.label}</div>
+                    <div className="mt-1 text-sm font-bold text-cyan-300">{option.price}</div>
                   </div>
                   <a
                     href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-xl bg-green-500 px-4 py-3 text-center text-sm font-bold text-black transition hover:scale-[1.02]"
+                    className="rounded-xl bg-green-500 px-4 py-3 text-center text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400"
                   >
                     Pedir por WhatsApp
                   </a>
@@ -986,30 +1212,57 @@ export default function SkayGamesWeb() {
       </div>
     );
 
-    const renderCard = (item, type) => (
-      <div key={item.id} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-black/80 via-slate-900 to-black shadow-2xl transition duration-300 hover:-translate-y-1">
-        <div className="relative flex h-56 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-black to-black">
-          <div className={`absolute top-4 right-4 rounded-full px-3 py-1 text-[11px] font-bold ${type === "recarga" ? "bg-cyan-400/15 text-cyan-300 border border-cyan-400/20" : "bg-purple-500/15 text-purple-300 border border-purple-400/20"}`}>
-            {type === "recarga" ? "Entrega inmediata" : "Servicio digital"}
-          </div>
-          <div className="flex h-28 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-5 backdrop-blur-sm">
-            <img src={item.image} alt={item.name} className="h-16 w-auto object-contain mx-auto" />
+    const renderCard = (item, type) => {
+      const theme = getServiceTheme(item, type);
+
+      return (
+        <div
+          key={item.id}
+          className={`group relative overflow-hidden rounded-[30px] border bg-gradient-to-br ${theme.card} p-[1px] shadow-2xl transition duration-500 hover:-translate-y-2 hover:scale-[1.015]`}
+        >
+          <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-80 blur-2xl transition duration-500 group-hover:opacity-100`} />
+          <div className="relative h-full overflow-hidden rounded-[29px] bg-black/70 backdrop-blur-xl">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.12),transparent_22%),radial-gradient(circle_at_90%_80%,rgba(34,211,238,0.10),transparent_28%)]" />
+            <div className="relative flex h-64 w-full items-center justify-center p-6">
+              <div className={`absolute left-5 top-5 rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-tight ${theme.badge}`}>
+                {type === "recarga" ? "Recarga" : "Streaming"}
+              </div>
+              <div className={`absolute right-5 top-5 rounded-full border px-3 py-1 text-[11px] font-bold ${theme.badge}`}>
+                {type === "recarga" ? "Entrega inmediata" : "Servicio digital"}
+              </div>
+
+              <div className={`flex h-36 w-full max-w-[260px] items-center justify-center rounded-[28px] border bg-black/45 px-6 py-5 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="max-h-24 w-full object-contain transition duration-500 group-hover:scale-110"
+                />
+              </div>
+            </div>
+
+            <div className="relative p-6 pt-2">
+              <div className="mb-4 h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <h4 className="text-2xl font-black tracking-tight text-white">{item.name}</h4>
+              <p className="mt-2 min-h-[44px] text-sm leading-6 text-white/65">
+                {type === "recarga"
+                  ? "Elegí el paquete y pedilo directo por WhatsApp."
+                  : "Planes disponibles, renovación y cuentas nuevas."}
+              </p>
+
+              <button
+                onClick={() => setSelectedRechargeItem(selectedRechargeItem === item.id ? null : item.id)}
+                className={`mt-5 flex w-full items-center justify-between rounded-2xl border bg-black/35 px-5 py-4 text-sm font-black transition duration-300 ${theme.button}`}
+              >
+                <span>{selectedRechargeItem === item.id ? "Ocultar opciones" : "Ver opciones"}</span>
+                <span className="text-lg">›</span>
+              </button>
+
+              {selectedRechargeItem === item.id && renderOptionList(item, theme)}
+            </div>
           </div>
         </div>
-        <div className="p-5">
-          <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
-          <div className={`mb-3 inline-block rounded-full px-3 py-1 text-xs font-bold ${type === "recarga" ? "bg-cyan-400/15 text-cyan-300" : "bg-purple-500/15 text-purple-300"}`}>
-            {type === "recarga" ? "Recarga" : "Streaming"}
-          </div>
-          <h4 className="text-xl font-bold tracking-tighter">{item.name}</h4>
-          <p className="mt-2 text-sm text-white/60">{type === "recarga" ? "Elegí una opción y pedila directo por WhatsApp." : "Elegí un plan y consultalo directo por WhatsApp."}</p>
-          <button onClick={() => setSelectedRechargeItem(selectedRechargeItem === item.id ? null : item.id)} className={`mt-4 w-full rounded-xl px-4 py-3 font-bold text-black ${type === "recarga" ? "bg-cyan-400" : "bg-purple-400"}`}>
-            {selectedRechargeItem === item.id ? "Ocultar opciones" : "Ver opciones"}
-          </button>
-          {selectedRechargeItem === item.id && renderOptionList(item)}
-        </div>
-      </div>
-    );
+      );
+    };
 
     return (
       <>
@@ -1021,6 +1274,7 @@ export default function SkayGamesWeb() {
             <p className="mt-4 text-xl text-white/75">Cada opción tiene su propio botón de WhatsApp.</p>
           </div>
         </section>
+
         <section className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex flex-wrap gap-3">
             {[["all", "Todos"], ["recargas", "Recargas"], ["streaming", "Streaming"]].map(([value, label]) => (
@@ -1030,22 +1284,22 @@ export default function SkayGamesWeb() {
             ))}
           </div>
         </section>
+
         {(rechargeFilter === "all" || rechargeFilter === "recargas") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
               <h3 className="text-3xl font-black md:text-4xl">Recargas para juegos</h3>
-              <p className="mt-3 text-white/65">Elegí exactamente la opción que querés y pedila directo.</p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{recargas.map((item) => renderCard(item, "recarga"))}</div>
           </section>
         )}
+
         {(rechargeFilter === "all" || rechargeFilter === "streaming") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
               <h3 className="text-3xl font-black md:text-4xl">Servicios streaming</h3>
-              <p className="mt-3 text-white/65">Cada plan se puede consultar directo por WhatsApp.</p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{streaming.map((item) => renderCard(item, "streaming"))}</div>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{streaming.map((item) => renderCard(item, "streaming"))}</div>
           </section>
         )}
       </>
@@ -1101,6 +1355,10 @@ export default function SkayGamesWeb() {
       setDraftCategories((prev) => prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
     };
 
+    const updateGamePlatform = (index, field, value) => {
+      setDraftGamePlatforms((prev) => prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
+    };
+
     const updateHeaderImage = (index, value) => {
       setDraftHeaderBackgrounds((prev) => prev.map((item, i) => (i === index ? value : item)));
     };
@@ -1137,42 +1395,62 @@ export default function SkayGamesWeb() {
       );
     };
 
-    const saveSingleHeaderImage = (index) => {
+    const saveSingleHeaderImage = async (index) => {
       const next = editableHeaderBackgrounds.map((item, i) => (i === index ? draftHeaderBackgrounds[index] : item));
       setEditableHeaderBackgrounds(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_headerBackgrounds", JSON.stringify(next));
-      }
-      setContentSaveMessage(`Imagen de header ${index + 1} guardada correctamente.`);
+
+      const result = await saveWebContentToSupabase("headerBackgrounds", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Imagen de header ${index + 1} guardada correctamente.`
+          : result.message
+      );
     };
 
-    const saveSingleHeroSlide = (index) => {
+    const saveSingleHeroSlide = async (index) => {
       const next = editableHeroSlides.map((slide, i) => (i === index ? draftHeroSlides[index] : slide));
       setEditableHeroSlides(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_heroSlides", JSON.stringify(next));
-      }
-      setContentSaveMessage(`Slide ${index + 1} guardado correctamente.`);
+
+      const result = await saveWebContentToSupabase("heroSlides", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Slide ${index + 1} guardado correctamente.`
+          : result.message
+      );
     };
 
-    const saveSingleCategory = (index) => {
+    const saveSingleCategory = async (index) => {
       const next = editableCategories.map((item, i) => (i === index ? draftCategories[index] : item));
       setEditableCategories(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_categories", JSON.stringify(next));
-      }
-      setContentSaveMessage(`Botón ${index + 1} guardado correctamente.`);
+
+      const result = await saveWebContentToSupabase("categories", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Botón ${index + 1} guardado correctamente.`
+          : result.message
+      );
     };
 
-    const saveCombos = () => {
+    const saveSingleGamePlatform = async (index) => {
+      const next = editableGamePlatforms.map((item, i) => (i === index ? draftGamePlatforms[index] : item));
+      setEditableGamePlatforms(next);
+
+      const result = await saveWebContentToSupabase("gamePlatforms", next);
+      setContentSaveMessage(
+        result.ok
+          ? `Subcategoría de juegos ${index + 1} guardada correctamente.`
+          : result.message
+      );
+    };
+
+    const saveCombos = async () => {
       setEditableComboSlides(draftComboSlides);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_comboSlides", JSON.stringify(draftComboSlides));
-      }
-      setComboSaveMessage("Combos guardados correctamente.");
+
+      const result = await saveWebContentToSupabase("comboSlides", draftComboSlides);
+      setComboSaveMessage(result.ok ? "Combos guardados correctamente." : result.message);
     };
 
-    const saveSingleOffer = (index) => {
+    const saveSingleOffer = async (index) => {
       const next = draftOffers.map((offer, i, arr) => {
         const durationHours = Number(offer.durationHours) || 12;
 
@@ -1185,6 +1463,7 @@ export default function SkayGamesWeb() {
 
         return {
           ...offer,
+          backgroundImage: offer.backgroundImage || offer.image || defaultOffers[i]?.backgroundImage || defaultOffers[i]?.image || "",
           durationHours,
           startsAt: start.toISOString(),
           endsAt: end.toISOString(),
@@ -1193,30 +1472,38 @@ export default function SkayGamesWeb() {
 
       setDraftOffers(next);
       setSavedOffers(next);
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("skaygames_offers", JSON.stringify(next));
-      }
-      setOfferSaveMessage(`Oferta ${index + 1} guardada correctamente.`);
+
+      const result = await saveWebContentToSupabase("offers", next);
+      setOfferSaveMessage(
+        result.ok
+          ? `Oferta ${index + 1} guardada correctamente.`
+          : result.message
+      );
     };
 
-    const resetEditableContent = () => {
+    const resetEditableContent = async () => {
       setDraftHeroSlides(heroSlides);
       setDraftCategories(categories);
       setDraftHeaderBackgrounds(headerBackgrounds);
       setDraftComboSlides(comboSlides);
+      setDraftGamePlatforms(gamePlatforms);
       setDraftOffers(defaultOffers);
       setEditableHeroSlides(heroSlides);
       setEditableCategories(categories);
       setEditableHeaderBackgrounds(headerBackgrounds);
       setEditableComboSlides(comboSlides);
+      setEditableGamePlatforms(gamePlatforms);
       setSavedOffers(defaultOffers);
-      if (typeof window !== "undefined") {
-        window.localStorage.removeItem("skaygames_heroSlides");
-        window.localStorage.removeItem("skaygames_categories");
-        window.localStorage.removeItem("skaygames_headerBackgrounds");
-        window.localStorage.removeItem("skaygames_comboSlides");
-        window.localStorage.removeItem("skaygames_offers");
-      }
+
+      await Promise.all([
+        saveWebContentToSupabase("heroSlides", heroSlides),
+        saveWebContentToSupabase("categories", categories),
+        saveWebContentToSupabase("headerBackgrounds", headerBackgrounds),
+        saveWebContentToSupabase("comboSlides", comboSlides),
+        saveWebContentToSupabase("gamePlatforms", gamePlatforms),
+        saveWebContentToSupabase("offers", defaultOffers),
+      ]);
+
       setContentSaveMessage("Se restauró el contenido visual.");
       setComboSaveMessage("");
       setOfferSaveMessage("");
@@ -1253,7 +1540,7 @@ export default function SkayGamesWeb() {
         ...payloadBasico,
         plataforma: usaPlataforma ? newProductPlatform : null,
         precio_anterior: parseNumericPrice(newProductOriginalPrice),
-        condicion: "Disponible",
+        condicion: categoria === "juegos" ? newProductCondition : "Disponible",
       };
 
       try {
@@ -1312,6 +1599,7 @@ export default function SkayGamesWeb() {
         setNewProductOriginalPrice("");
         setNewProductCategory("juegos");
         setNewProductPlatform("ps4");
+        setNewProductCondition("Nuevo");
         setNewProductImage("");
         setNewProductFeatured(false);
         setNewProductRecent(true);
@@ -1328,6 +1616,7 @@ export default function SkayGamesWeb() {
       setNewProductOriginalPrice(product.originalPrice || "");
       setNewProductCategory(product.category || "juegos");
       setNewProductPlatform(product.platform || "ps4");
+      setNewProductCondition(normalizeCondition(product.condition || "Nuevo"));
       setNewProductImage(product.image || "");
       setNewProductFeatured(!!product.isFeatured);
       setNewProductRecent(!!product.isRecent);
@@ -1386,6 +1675,7 @@ export default function SkayGamesWeb() {
       setNewProductOriginalPrice("");
       setNewProductCategory("juegos");
       setNewProductPlatform("ps4");
+      setNewProductCondition("Nuevo");
       setNewProductImage("");
       setNewProductFeatured(false);
       setNewProductRecent(true);
@@ -1415,7 +1705,7 @@ export default function SkayGamesWeb() {
       setRechargeFormMessage("");
     };
 
-    const handleAddOrUpdateRechargeItem = (e) => {
+    const handleAddOrUpdateRechargeItem = async (e) => {
       e.preventDefault();
       if (
         !newRechargeName.trim() ||
@@ -1439,15 +1729,19 @@ export default function SkayGamesWeb() {
         })),
       };
 
-      if (editingRechargeId) {
-        setEditableRechargeItems((prev) => prev.map((item) => (item.id === editingRechargeId ? payload : item)));
-        setRechargeFormMessage("Ítem actualizado correctamente.");
-      } else {
-        setEditableRechargeItems((prev) => [payload, ...prev]);
-        setRechargeFormMessage("Ítem agregado correctamente.");
-      }
+      const nextItems = editingRechargeId
+        ? editableRechargeItems.map((item) => (item.id === editingRechargeId ? payload : item))
+        : [payload, ...editableRechargeItems];
 
-      resetRechargeForm();
+      setEditableRechargeItems(nextItems);
+
+      const result = await saveWebContentToSupabase("rechargeItems", nextItems);
+      if (result.ok) {
+        resetRechargeForm();
+        setRechargeFormMessage(editingRechargeId ? "Ítem actualizado correctamente." : "Ítem agregado correctamente.");
+      } else {
+        setRechargeFormMessage(result.message);
+      }
     };
 
     const handleEditRechargeItem = (item) => {
@@ -1459,8 +1753,13 @@ export default function SkayGamesWeb() {
       setRechargeFormMessage("Editando ítem. Guardá para actualizar.");
     };
 
-    const handleDeleteRechargeItem = (id) => {
-      setEditableRechargeItems((prev) => prev.filter((item) => item.id !== id));
+    const handleDeleteRechargeItem = async (id) => {
+      const nextItems = editableRechargeItems.filter((item) => item.id !== id);
+      setEditableRechargeItems(nextItems);
+
+      const result = await saveWebContentToSupabase("rechargeItems", nextItems);
+      setRechargeFormMessage(result.ok ? "Ítem eliminado correctamente." : result.message);
+
       if (editingRechargeId === id) resetRechargeForm();
     };
 
@@ -1526,6 +1825,10 @@ export default function SkayGamesWeb() {
                         <option value="ps4">PS4</option>
                         <option value="ps5">PS5</option>
                         <option value="gamer">Gamer</option>
+                      </select>
+                      <select value={newProductCondition} onChange={(e) => setNewProductCondition(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                        <option value="Nuevo">Juego nuevo</option>
+                        <option value="Usado">Juego usado</option>
                       </select>
                       <input value={newProductImage} onChange={(e) => setNewProductImage(e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                     </div>
@@ -1594,6 +1897,7 @@ export default function SkayGamesWeb() {
                             <input value={slide.title} onChange={(e) => updateHeroSlide(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={slide.buttonText} onChange={(e) => updateHeroSlide(index, "buttonText", e.target.value)} placeholder="Texto del botón" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={slide.image} onChange={(e) => updateHeroSlide(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <ImagePositionControls item={slide} onChange={(field, value) => updateHeroSlide(index, field, value)} />
                             <textarea value={slide.subtitle} onChange={(e) => updateHeroSlide(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[100px]" />
                             <textarea value={slide.message} onChange={(e) => updateHeroSlide(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
                           </div>
@@ -1626,6 +1930,28 @@ export default function SkayGamesWeb() {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
+                    <div className="mb-4 text-sm font-black text-cyan-300">Subcategorías de juegos</div>
+                    <p className="mb-5 text-sm text-white/55">Editá los botones que aparecen dentro de la página Juegos, por ejemplo Juegos PS4 y Juegos PS5.</p>
+                    <div className="space-y-5">
+                      {draftGamePlatforms.map((item, index) => (
+                        <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                          <div className="mb-3 text-sm font-bold text-white">{item.title}</div>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <input value={item.title} onChange={(e) => updateGamePlatform(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                            <input value={item.id} disabled className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-white/50 outline-none" />
+                            <input value={item.image} onChange={(e) => updateGamePlatform(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <textarea value={item.description} onChange={(e) => updateGamePlatform(index, "description", e.target.value)} placeholder="Descripción" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
+                            <textarea value={item.message || ""} onChange={(e) => updateGamePlatform(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
+                          </div>
+                          <div className="mt-4 flex justify-end">
+                            <button type="button" onClick={() => saveSingleGamePlatform(index)} className="rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-black text-black">Guardar subcategoría</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
                     <div className="mb-4 text-sm font-black text-cyan-300">Ofertas encadenadas / temporizadores</div>
                     <div className="space-y-6">
                       {draftOffers.map((offer, index) => (
@@ -1635,7 +1961,10 @@ export default function SkayGamesWeb() {
                             <input value={offer.title} onChange={(e) => updateDraftOffer(index, "title", e.target.value)} placeholder={`Título de oferta ${index + 1}`} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <input value={offer.price} onChange={(e) => updateDraftOffer(index, "price", e.target.value)} placeholder="Precio" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                             <textarea value={offer.subtitle} onChange={(e) => updateDraftOffer(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[90px]" />
-                            <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen de la oferta" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <input value={offer.image || ""} onChange={(e) => updateDraftOffer(index, "image", e.target.value)} placeholder="URL de imagen del producto / consola" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <input value={offer.backgroundImage || ""} onChange={(e) => updateDraftOffer(index, "backgroundImage", e.target.value)} placeholder="URL de imagen de fondo de la burbuja (opcional)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                            <ImagePositionControls label="Posición imagen del producto" item={offer} onChange={(field, value) => updateDraftOffer(index, field, value)} prefix="image" />
+                            <ImagePositionControls label="Posición fondo de la burbuja" item={offer} onChange={(field, value) => updateDraftOffer(index, field, value)} prefix="background" />
                             <div>
                               <label className="mb-2 block text-xs font-bold uppercase tracking-[0.15em] text-white/45">Duración automática</label>
                               <select value={offer.durationHours || 12} onChange={(e) => updateDraftOffer(index, "durationHours", e.target.value)} className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
@@ -1731,6 +2060,7 @@ export default function SkayGamesWeb() {
                       <div className="grid gap-4 md:grid-cols-2">
                         <input value={combo.title} onChange={(e) => updateComboSlide(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                         <input value={combo.image} onChange={(e) => updateComboSlide(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                        <ImagePositionControls item={combo} onChange={(field, value) => updateComboSlide(index, field, value)} />
                         <textarea value={combo.subtitle} onChange={(e) => updateComboSlide(index, "subtitle", e.target.value)} placeholder="Subtítulo" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[100px]" />
                         <textarea value={combo.message} onChange={(e) => updateComboSlide(index, "message", e.target.value)} placeholder="Mensaje de WhatsApp" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2 min-h-[80px]" />
                       </div>
@@ -1909,7 +2239,7 @@ export default function SkayGamesWeb() {
               <div className="relative h-[75vh] min-h-[520px] w-full">
                 {draftHeroSlides.map((slide, index) => (
                   <div key={slide.title} className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                    <img src={slide.image} alt={slide.title} className="h-full w-full object-cover object-[center_80%]" />
+                    <img src={slide.image} alt={slide.title} className="h-full w-full object-cover" style={getImagePositionStyle(slide, "image")} />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)]" />
                   </div>
@@ -1921,7 +2251,13 @@ export default function SkayGamesWeb() {
                     <p className="mt-5 text-lg text-white/75 md:text-xl">{editableHeroSlides[currentSlide].subtitle}</p>
                     <div className="mt-8 flex flex-wrap gap-4">
                       <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(editableHeroSlides[currentSlide].message)}`} target="_blank" rel="noreferrer" className="rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">{editableHeroSlides[currentSlide].buttonText}</a>
-                      <a href="#productos" className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-bold transition hover:bg-white/10">Ver productos</a>
+                      <button
+                        type="button"
+                        onClick={() => navigateTo(getHeroSlideTargetPage(editableHeroSlides[currentSlide]))}
+                        className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-bold transition hover:bg-white/10"
+                      >
+                        Ver sección
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1934,22 +2270,36 @@ export default function SkayGamesWeb() {
             </section>
 
             <section className="max-w-7xl mx-auto px-6 mt-10">
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-purple-600/30 via-cyan-500/20 to-pink-500/30 p-8 shadow-2xl">
-                <div className="absolute inset-0 animate-pulse opacity-20 bg-[radial-gradient(circle_at_30%_30%,#22d3ee,transparent_40%),radial-gradient(circle_at_70%_70%,#a855f7,transparent_40%)]" />
-                <div className="relative z-10 grid gap-6 md:grid-cols-[280px_1fr] items-center">
-                  <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/40">
+              <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black p-6 shadow-2xl md:p-8">
+                <img
+                  src={displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80"}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 h-full w-full object-cover opacity-65"
+                  style={getImagePositionStyle(displayOffer, "background")}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/35" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_25%,rgba(34,211,238,0.34),transparent_28%),radial-gradient(circle_at_82%_72%,rgba(168,85,247,0.34),transparent_34%)]" />
+                <div className="absolute inset-0 backdrop-blur-[1px]" />
+
+                <div className="relative z-10 grid gap-6 md:grid-cols-[300px_1fr] items-center">
+                  <div className="overflow-hidden rounded-[30px] border border-white/20 bg-black/45 shadow-2xl backdrop-blur-md">
                     <img
                       src={displayOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
                       alt={displayOffer?.title || "Oferta activa"}
-                      className="h-full w-full object-cover"
+                      className="h-72 w-full object-contain bg-black/35 p-4"
+                      style={getImagePositionStyle(displayOffer, "image")}
                     />
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                      <div className="inline-block rounded-full bg-red-500/20 px-4 py-2 text-xs font-bold text-red-300">{offerCountdown === "Sin oferta activa" ? offerCountdown : `Tiempo restante: ${offerCountdown}`}</div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white mt-4">{displayOffer?.title || "Sin oferta activa"}</h2>
-                      <p className="text-white/70 mt-2">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
-                      <p className="text-2xl font-bold text-green-400 mt-3">{displayOffer?.price || "Gs. 0"}</p>
+                      <div className="inline-block rounded-full border border-red-400/35 bg-red-500/25 px-4 py-2 text-xs font-bold text-red-100 shadow-lg backdrop-blur-md">
+                        {offerCountdown === "Sin oferta activa" ? offerCountdown : `Tiempo restante: ${offerCountdown}`}
+                      </div>
+                      <h2 className="text-3xl md:text-5xl font-black text-white mt-4 drop-shadow-[0_4px_18px_rgba(0,0,0,0.9)]">{displayOffer?.title || "Sin oferta activa"}</h2>
+                      <p className="text-white/85 mt-3 max-w-2xl drop-shadow-lg">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
+                      <p className="text-3xl font-black text-green-400 mt-4 drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">{displayOffer?.price || "Gs. 0"}</p>
                     </div>
                     <a href={whatsappLink} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
                   </div>
@@ -1996,7 +2346,7 @@ export default function SkayGamesWeb() {
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                   <div>
                     <h3 className="text-3xl font-black md:text-4xl">Productos destacados</h3>
-                    <p className="mt-3 text-white/65">Estos son los productos que vos elegís destacar para vender más rápido desde el panel admin.</p>
+                    
                   </div>
                   <a href={whatsappLink} target="_blank" rel="noreferrer" className="rounded-2xl border border-green-400/40 bg-green-400/10 px-5 py-3 font-bold text-green-300 transition hover:bg-green-400/20">Consultar catálogo completo</a>
                 </div>
@@ -2010,7 +2360,7 @@ export default function SkayGamesWeb() {
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
                   <h3 className="text-3xl font-black md:text-4xl">Combos destacados</h3>
-                  <p className="mt-3 text-white/65">Mostrá tus combos más llamativos con imágenes grandes que cambian automáticamente.</p>
+                  
                 </div>
                 <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Ideal para combos y promos</div>
               </div>
@@ -2018,7 +2368,7 @@ export default function SkayGamesWeb() {
                 <div className="relative h-[420px] w-full md:h-[500px]">
                   {draftComboSlides.map((combo, index) => (
                     <div key={combo.id} className={`absolute inset-0 transition-all duration-1000 ${index === currentComboSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                      <img src={combo.image} alt={combo.title} className="h-full w-full object-cover" />
+                      <img src={combo.image} alt={combo.title} className="h-full w-full object-cover" style={getImagePositionStyle(combo, "image")} />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
                     </div>
                   ))}
@@ -2041,7 +2391,7 @@ export default function SkayGamesWeb() {
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
                   <h3 className="text-3xl font-black md:text-4xl">Recién llegados</h3>
-                  <p className="mt-3 text-white/65">Acá se muestran automáticamente los últimos productos que vas cargando en el sistema.</p>
+                  
                 </div>
                 <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Controlado desde el panel admin</div>
               </div>
