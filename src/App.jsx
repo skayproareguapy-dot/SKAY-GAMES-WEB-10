@@ -99,6 +99,41 @@ export default function SkayGamesWeb() {
     { id: "gamer", title: "Accesorios Gamer" },
   ];
 
+  const catalogPageIds = ["consolas", "juegos", "accesorios", "recargas-servicios"];
+
+  const catalogCategoryOptions = [
+    { value: "all", label: "Todos" },
+    { value: "consolas", label: "Consolas" },
+    { value: "juegos", label: "Juegos" },
+    { value: "accesorios", label: "Accesorios" },
+    { value: "recargas-servicios", label: "Recargas y servicios" },
+  ];
+
+  const catalogPlatformOptions = [
+    { value: "all", label: "Todos" },
+    { value: "ps2", label: "PS2" },
+    { value: "ps3", label: "PS3" },
+    { value: "ps4", label: "PS4" },
+    { value: "ps5", label: "PS5" },
+    { value: "xbox", label: "Xbox" },
+    { value: "nintendo", label: "Nintendo" },
+    { value: "pc", label: "PC" },
+    { value: "gamer", label: "Gamer" },
+  ];
+
+  const catalogConditionOptions = [
+    { value: "all", label: "Todos" },
+    { value: "nuevo", label: "Nuevo" },
+    { value: "usado", label: "Usado" },
+  ];
+
+  const catalogSortOptions = [
+    { value: "recent", label: "Más recientes" },
+    { value: "price-asc", label: "Menor precio" },
+    { value: "price-desc", label: "Mayor precio" },
+    { value: "featured", label: "Destacados primero" },
+  ];
+
   const comboSlides = [
   {
     "id": 1,
@@ -397,6 +432,11 @@ export default function SkayGamesWeb() {
   const [selectedGamePlatform, setSelectedGamePlatform] = useState("all");
   const [selectedGameCondition, setSelectedGameCondition] = useState("all");
   const [selectedAccessoryPlatform, setSelectedAccessoryPlatform] = useState("all");
+  const [catalogSearchTerm, setCatalogSearchTerm] = useState("");
+  const [catalogCategoryFilter, setCatalogCategoryFilter] = useState("all");
+  const [catalogPlatformFilter, setCatalogPlatformFilter] = useState("all");
+  const [catalogConditionFilter, setCatalogConditionFilter] = useState("all");
+  const [catalogSortOrder, setCatalogSortOrder] = useState("recent");
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = useState(false);
   const [headerBackgroundIndex, setHeaderBackgroundIndex] = useState(0);
   const [rechargeFilter, setRechargeFilter] = useState("all");
@@ -406,6 +446,8 @@ export default function SkayGamesWeb() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
+  const [adminUserEmail, setAdminUserEmail] = useState("");
+  const [isAdminLoginLoading, setIsAdminLoginLoading] = useState(false);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const [savedOffers, setSavedOffers] = useState(defaultOffers);
   const [draftOffers, setDraftOffers] = useState(defaultOffers);
@@ -431,6 +473,7 @@ export default function SkayGamesWeb() {
   const [newProductPlatform, setNewProductPlatform] = useState("ps4");
   const [newProductCondition, setNewProductCondition] = useState("Nuevo");
   const [newProductImage, setNewProductImage] = useState("");
+  const [newProductDescription, setNewProductDescription] = useState("");
   const [newProductFeatured, setNewProductFeatured] = useState(false);
   const [newProductRecent, setNewProductRecent] = useState(true);
   const [productFormMessage, setProductFormMessage] = useState("");
@@ -443,20 +486,64 @@ export default function SkayGamesWeb() {
   const [rechargeFormMessage, setRechargeFormMessage] = useState("");
   const [editingRechargeId, setEditingRechargeId] = useState(null);
 
-  const getPageFromHash = () => {
+  const PRODUCT_ROUTE_PREFIX = "producto/";
+
+  const getLegacyHashRoute = () => {
     if (typeof window === "undefined") return "home";
-    const hash = window.location.hash.replace("#/", "").trim();
-    return hash || "home";
+    const hash = window.location.hash || "";
+    if (!hash.startsWith("#/")) return "";
+
+    return hash.replace("#/", "").trim() || "home";
   };
 
-  const [activePage, setActivePage] = useState(getPageFromHash());
+  const getPathRoute = () => {
+    if (typeof window === "undefined") return "home";
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, "").trim();
+    return path || "home";
+  };
+
+  const getRouteFromLocation = () => getLegacyHashRoute() || getPathRoute();
+
+  const replaceLegacyHashRoute = () => {
+    if (typeof window === "undefined") return;
+
+    const legacyRoute = getLegacyHashRoute();
+    if (!legacyRoute) return;
+
+    const nextPath = legacyRoute === "home" ? "/" : `/${legacyRoute}`;
+    window.history.replaceState(null, "", nextPath);
+  };
+
+  const getProductSlugFromLocation = () => {
+    const route = getRouteFromLocation();
+    return route.startsWith(PRODUCT_ROUTE_PREFIX) ? route.replace(PRODUCT_ROUTE_PREFIX, "").trim() : "";
+  };
+
+  const getPageFromLocation = () => {
+    const route = getRouteFromLocation();
+    return route.startsWith(PRODUCT_ROUTE_PREFIX) ? "home" : route;
+  };
+
+  const [activePage, setActivePage] = useState(getPageFromLocation());
+  const [activeProductSlug, setActiveProductSlug] = useState(getProductSlugFromLocation());
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [productsData, setProductsData] = useState(initialProducts);
 
+  useEffect(() => {
+    if (!catalogPageIds.includes(activePage)) return;
+
+    setCatalogSearchTerm("");
+    setCatalogCategoryFilter(activePage);
+    setCatalogPlatformFilter("all");
+    setCatalogConditionFilter("all");
+    setCatalogSortOrder("recent");
+  }, [activePage]);
+
   const navigateTo = (page) => {
     if (page !== "admin") setAdminLoginError("");
-    const nextHash = page === "home" ? "#/" : `#/${page}`;
-    window.location.hash = nextHash;
+    const nextPath = page === "home" ? "/" : `/${page}`;
+    setActiveProductSlug("");
+    window.history.pushState(null, "", nextPath);
     setActivePage(page);
     setSelectedProduct(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -481,6 +568,40 @@ export default function SkayGamesWeb() {
   }, [editableHeroSlides.length]);
 
   useEffect(() => {
+    if (!supabase?.auth) return undefined;
+
+    let isMounted = true;
+
+    const applySession = (session) => {
+      if (!isMounted) return;
+
+      const email = session?.user?.email || "";
+      setIsAdminAuthenticated(Boolean(session));
+      setAdminUserEmail(email);
+      if (email) setAdminEmail(email);
+      if (!session) setAdminPassword("");
+    };
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        console.error("Error leyendo sesión admin:", error);
+        return;
+      }
+
+      applySession(data?.session);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session);
+    });
+
+    return () => {
+      isMounted = false;
+      authListener?.subscription?.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     const comboInterval = setInterval(() => {
       setCurrentComboSlide((prev) => (prev + 1) % editableComboSlides.length);
     }, 3000);
@@ -488,13 +609,23 @@ export default function SkayGamesWeb() {
   }, [editableComboSlides.length]);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setActivePage(getPageFromHash());
-      setSelectedProduct(null);
+    const handleRouteChange = () => {
+      replaceLegacyHashRoute();
+
+      const nextProductSlug = getProductSlugFromLocation();
+      setActiveProductSlug(nextProductSlug);
+      setActivePage(getPageFromLocation());
+      if (!nextProductSlug) setSelectedProduct(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+
+    replaceLegacyHashRoute();
+    window.addEventListener("popstate", handleRouteChange);
+    window.addEventListener("hashchange", handleRouteChange);
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+      window.removeEventListener("hashchange", handleRouteChange);
+    };
   }, []);
 
   const normalizeCondition = (value) => {
@@ -527,6 +658,125 @@ export default function SkayGamesWeb() {
     return onlyDigits ? Number(onlyDigits) : null;
   };
 
+  const parseSafePrice = (value) => {
+    const text = String(value ?? "").trim();
+    if (!text || /consultar|disponible|promo|combo|plan/i.test(text)) return null;
+
+    const onlyDigits = text.replace(/[^\d]/g, "");
+    return onlyDigits ? Number(onlyDigits) : null;
+  };
+
+  const normalizeCatalogText = (value) =>
+    String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+
+  const slugify = (value) =>
+    String(value ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  const getProductCategorySlug = (category) => {
+    if (category === "recargas-servicios") return "recargas";
+    return category || "producto";
+  };
+
+  const getComparableCategory = (category) => {
+    const normalized = normalizeCatalogText(category).replace(/\s+/g, "-");
+    if (["recargas", "servicios", "recargas-servicios", "recargas-y-servicios"].includes(normalized)) {
+      return "recargas-servicios";
+    }
+    return normalized;
+  };
+
+  const getProductCategoryLabel = (category) => {
+    const labels = {
+      juegos: "juegos",
+      consolas: "consolas",
+      accesorios: "accesorios",
+      "recargas-servicios": "recargas y servicios",
+    };
+    return labels[getComparableCategory(category)] || "productos";
+  };
+
+  const getCategoryCtaLabel = (category) => {
+    const labels = {
+      consolas: "Ver consolas",
+      juegos: "Ver juegos",
+      accesorios: "Ver accesorios",
+      "recargas-servicios": "Ver recargas",
+    };
+    return labels[category] || "Ver productos";
+  };
+
+  const getProductRouteSlug = (product = {}) => {
+    const idSlug = slugify(product.id || "producto");
+    const platformOrCategory = product.platform || getProductCategorySlug(product.category);
+    const textSlug = slugify([product.name, platformOrCategory].filter(Boolean).join(" "));
+    return `${idSlug}-${textSlug || "producto"}`;
+  };
+
+  const getProductSearchText = (product = {}) =>
+    normalizeCatalogText(
+      [
+        product.name,
+        product.description,
+        product.category,
+        getProductCategoryLabel(product.category),
+        product.platform,
+        product.condition,
+        product.slug,
+        product.url,
+        getProductRouteSlug(product),
+        `/producto/${getProductRouteSlug(product)}`,
+      ]
+        .filter(Boolean)
+        .join(" ")
+    );
+
+  const matchesPlatformFilter = (product, platformFilter) => {
+    if (platformFilter === "all") return true;
+
+    const platformText = normalizeCatalogText(product?.platform || "");
+    const aliases = {
+      ps2: ["ps2", "playstation 2"],
+      ps3: ["ps3", "playstation 3"],
+      ps4: ["ps4", "playstation 4"],
+      ps5: ["ps5", "playstation 5"],
+      xbox: ["xbox"],
+      nintendo: ["nintendo", "switch"],
+      pc: ["pc", "computadora"],
+      gamer: ["gamer"],
+    };
+
+    return (aliases[platformFilter] || [platformFilter]).some((alias) => platformText.includes(alias));
+  };
+
+  const getProductTimestamp = (product) => {
+    const timestamp = new Date(product?.createdAt || 0).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+  };
+
+  const getFeaturedScore = (product) => (product?.isFeatured || product?.featured ? 1 : 0);
+
+  const findProductByRouteSlug = (routeSlug) =>
+    productsData.find((product) => {
+      const productSlug = getProductRouteSlug(product);
+      const idSlug = slugify(product.id || "");
+      return productSlug === routeSlug || (idSlug && routeSlug.startsWith(`${idSlug}-`));
+    });
+
+  const getProductSeoTitle = (product = {}) => {
+    const platformText = product.platform ? ` para ${String(product.platform).toUpperCase()}` : "";
+    const categoryText = !product.platform && product.category ? ` - ${getProductCategoryLabel(product.category)}` : "";
+    return `${product.name || "Producto"}${platformText}${categoryText} en SKAY GAMES`;
+  };
+
   const loadProductsFromSupabase = async () => {
     if (!supabase) return;
 
@@ -549,6 +799,16 @@ export default function SkayGamesWeb() {
       console.error("Error inesperado con Supabase:", err);
     }
   };
+
+  useEffect(() => {
+    if (!activeProductSlug) return;
+
+    const product = findProductByRouteSlug(activeProductSlug);
+    if (!product) return;
+
+    setSelectedProduct(product);
+    setActivePage(product.category || "home");
+  }, [activeProductSlug, productsData]);
 
   const parseWebContentValue = (value, fallback) => {
     if (value === null || value === undefined) return fallback;
@@ -748,6 +1008,113 @@ export default function SkayGamesWeb() {
     return { objectPosition: `${x}% ${y}%` };
   };
 
+  const loadImageFromFile = (file) =>
+    new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const image = new Image();
+
+      image.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(image);
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("No se pudo leer la imagen."));
+      };
+
+      image.src = url;
+    });
+
+  const removeWhiteBackgroundFromFile = async (file) => {
+    if (!file || !file.type.startsWith("image/")) {
+      throw new Error("Seleccioná un archivo de imagen válido.");
+    }
+
+    const image = await loadImageFromFile(file);
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    const maxSide = 1200;
+    const scale = Math.min(1, maxSide / Math.max(sourceWidth, sourceHeight));
+    const width = Math.max(1, Math.round(sourceWidth * scale));
+    const height = Math.max(1, Math.round(sourceHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) throw new Error("No se pudo procesar la imagen.");
+
+    context.drawImage(image, 0, 0, width, height);
+
+    const imageData = context.getImageData(0, 0, width, height);
+    const { data } = imageData;
+    const totalPixels = width * height;
+    const visited = new Uint8Array(totalPixels);
+    const queue = new Int32Array(totalPixels);
+    let head = 0;
+    let tail = 0;
+
+    const isWhiteBackgroundPixel = (pixelIndex) => {
+      const offset = pixelIndex * 4;
+      const alpha = data[offset + 3];
+      if (alpha === 0) return true;
+
+      const red = data[offset];
+      const green = data[offset + 1];
+      const blue = data[offset + 2];
+      const max = Math.max(red, green, blue);
+      const min = Math.min(red, green, blue);
+      const brightness = (red + green + blue) / 3;
+
+      return brightness >= 224 && max - min <= 48;
+    };
+
+    const enqueue = (x, y) => {
+      if (x < 0 || x >= width || y < 0 || y >= height) return;
+
+      const pixelIndex = y * width + x;
+      if (visited[pixelIndex] || !isWhiteBackgroundPixel(pixelIndex)) return;
+
+      visited[pixelIndex] = 1;
+      queue[tail] = pixelIndex;
+      tail += 1;
+    };
+
+    for (let x = 0; x < width; x += 1) {
+      enqueue(x, 0);
+      enqueue(x, height - 1);
+    }
+
+    for (let y = 0; y < height; y += 1) {
+      enqueue(0, y);
+      enqueue(width - 1, y);
+    }
+
+    while (head < tail) {
+      const pixelIndex = queue[head];
+      head += 1;
+
+      const x = pixelIndex % width;
+      const y = Math.floor(pixelIndex / width);
+
+      enqueue(x + 1, y);
+      enqueue(x - 1, y);
+      enqueue(x, y + 1);
+      enqueue(x, y - 1);
+    }
+
+    for (let pixelIndex = 0; pixelIndex < totalPixels; pixelIndex += 1) {
+      if (visited[pixelIndex]) {
+        data[pixelIndex * 4 + 3] = 0;
+      }
+    }
+
+    context.putImageData(imageData, 0, 0);
+    return canvas.toDataURL("image/png");
+  };
+
   const ImagePositionControls = ({ label = "Posición de imagen", item, onChange, prefix = "image" }) => {
     const xKey = `${prefix}PositionX`;
     const yKey = `${prefix}PositionY`;
@@ -820,9 +1187,36 @@ export default function SkayGamesWeb() {
     return pages[activePage] ?? null;
   }, [activePage]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const metaDescription =
+      document.querySelector('meta[name="description"]') ||
+      document.head.appendChild(document.createElement("meta"));
+
+    metaDescription.setAttribute("name", "description");
+
+    if (selectedProduct) {
+      const seoTitle = getProductSeoTitle(selectedProduct);
+      document.title = `${seoTitle} | SKAY GAMES`;
+      metaDescription.setAttribute(
+        "content",
+        (selectedProduct.description || `Consultá por ${seoTitle}, precio, stock y disponibilidad en SKAY GAMES.`).slice(0, 160)
+      );
+      return;
+    }
+
+    document.title = "SKAY GAMES";
+    metaDescription.setAttribute(
+      "content",
+      pageContent?.description || "SKAY GAMES - videojuegos, consolas, accesorios, recargas y servicios."
+    );
+  }, [selectedProduct, pageContent]);
+
   const featuredProducts = productsData
     .filter((product) => product.isFeatured || product.featured)
     .slice(0, 4);
+
   const latestProducts = [...productsData]
     .filter(
       (product) =>
@@ -832,30 +1226,66 @@ export default function SkayGamesWeb() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 8);
 
-  const productsToShow =
-    activePage === "home"
-      ? featuredProducts
-      : productsData.filter((product) => {
-          if (product.category !== activePage) return false;
-          if (activePage === "juegos") {
-            const matchesPlatform = selectedGamePlatform === "all" || product.platform === selectedGamePlatform;
-            const productCondition = normalizeCondition(product.condition);
-            const matchesCondition = selectedGameCondition === "all" || productCondition.toLowerCase() === selectedGameCondition;
-            return matchesPlatform && matchesCondition;
-          }
-          if (activePage === "accesorios") {
-            if (selectedAccessoryPlatform === "all") return true;
-            return product.platform === selectedAccessoryPlatform;
-          }
-          return true;
-        });
+  const catalogProducts = useMemo(() => {
+    const searchText = normalizeCatalogText(catalogSearchTerm);
+
+    return [...productsData]
+      .filter((product) => {
+        const productCategory = getComparableCategory(product?.category);
+        const productCondition = normalizeCondition(product?.condition).toLowerCase();
+        const matchesCategory = catalogCategoryFilter === "all" || productCategory === catalogCategoryFilter;
+        const matchesPlatform = matchesPlatformFilter(product, catalogPlatformFilter);
+        const matchesCondition = catalogConditionFilter === "all" || productCondition === catalogConditionFilter;
+        const matchesSearch = !searchText || getProductSearchText(product).includes(searchText);
+
+        return matchesCategory && matchesPlatform && matchesCondition && matchesSearch;
+      })
+      .sort((a, b) => {
+        if (catalogSortOrder === "featured") {
+          const featuredDiff = getFeaturedScore(b) - getFeaturedScore(a);
+          if (featuredDiff !== 0) return featuredDiff;
+          return getProductTimestamp(b) - getProductTimestamp(a);
+        }
+
+        if (catalogSortOrder === "price-asc" || catalogSortOrder === "price-desc") {
+          const priceA = parseSafePrice(a?.price);
+          const priceB = parseSafePrice(b?.price);
+
+          if (priceA === null && priceB === null) return getProductTimestamp(b) - getProductTimestamp(a);
+          if (priceA === null) return 1;
+          if (priceB === null) return -1;
+
+          return catalogSortOrder === "price-asc" ? priceA - priceB : priceB - priceA;
+        }
+
+        return getProductTimestamp(b) - getProductTimestamp(a);
+      });
+  }, [productsData, catalogSearchTerm, catalogCategoryFilter, catalogPlatformFilter, catalogConditionFilter, catalogSortOrder]);
+
+  const productsToShow = activePage === "home" ? featuredProducts : catalogProducts;
 
   const openProductDetail = (product) => {
+    const productSlug = getProductRouteSlug(product);
     setSelectedProduct(product);
+    setActiveProductSlug(productSlug);
+    setActivePage(product.category || activePage);
+
+    if (typeof window !== "undefined") {
+      const nextPath = `/producto/${productSlug}`;
+      if (window.location.pathname !== nextPath) {
+        window.history.pushState(null, "", nextPath);
+      }
+    }
   };
 
   const closeProductDetail = () => {
+    const fallbackPage = selectedProduct?.category || activePage || "home";
     setSelectedProduct(null);
+    setActiveProductSlug("");
+
+    if (typeof window !== "undefined" && getProductSlugFromLocation()) {
+      navigateTo(fallbackPage);
+    }
   };
 
   const renderProductDetailModal = () => {
@@ -950,7 +1380,25 @@ export default function SkayGamesWeb() {
   };
 
   const productCardClass =
-    "group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-black/80 via-slate-900 to-black shadow-2xl transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-cyan-400/25";
+    "group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-black/80 via-slate-900 to-black shadow-2xl shadow-cyan-400/5 transition duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:border-cyan-400/25 hover:shadow-cyan-400/20";
+
+  const catalogControlClass =
+    "w-full rounded-2xl border border-cyan-400/20 bg-black/65 px-4 py-3 text-sm font-bold text-white outline-none transition duration-300 placeholder:text-white/35 focus:border-cyan-300 focus:bg-black focus:shadow-[0_0_22px_rgba(34,211,238,0.22)]";
+
+  const renderCategoryCtaContent = (category) => {
+    const [action, ...mainWords] = getCategoryCtaLabel(category).split(" ");
+
+    return (
+      <>
+        <span>
+          {action} <span className="text-cyan-300">{mainWords.join(" ")}</span>
+        </span>
+        <span className="text-cyan-300 transition duration-300 group-hover:translate-x-1" aria-hidden="true">
+          →
+        </span>
+      </>
+    );
+  };
 
   const renderProductCard = (product, buttonLabel = "Pedir por WhatsApp") => (
     <div
@@ -959,10 +1407,13 @@ export default function SkayGamesWeb() {
       onClick={() => openProductDetail(product)}
     >
       <div className="relative overflow-hidden bg-black">
+        <div className="pointer-events-none absolute inset-8 rounded-[32px] bg-cyan-400/20 blur-3xl opacity-55 transition duration-500 group-hover:opacity-85" />
+        <div className="pointer-events-none absolute inset-x-12 bottom-8 h-10 rounded-full bg-cyan-300/25 blur-2xl opacity-70 transition duration-500 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-x-10 top-8 h-12 rounded-full bg-purple-500/15 blur-2xl opacity-45 transition duration-500 group-hover:opacity-70" />
         <img
           src={product.image}
           alt={product.name}
-          className="h-64 w-full object-contain bg-black p-4 transition duration-500 group-hover:scale-110"
+          className="relative z-10 h-64 w-full object-contain bg-transparent p-4 drop-shadow-[0_0_18px_rgba(34,211,238,0.22)] transition duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_28px_rgba(34,211,238,0.36)]"
           onError={(e) => {
             e.currentTarget.src = "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
           }}
@@ -1021,6 +1472,103 @@ export default function SkayGamesWeb() {
         </div>
       </div>
     </div>
+  );
+
+  const clearCatalogFilters = () => {
+    setCatalogSearchTerm("");
+    setCatalogCategoryFilter("all");
+    setCatalogPlatformFilter("all");
+    setCatalogConditionFilter("all");
+    setCatalogSortOrder("recent");
+  };
+
+  const renderCatalogFilters = () => (
+    <section className="mx-auto max-w-7xl px-6 pt-10">
+      <div className="relative overflow-hidden rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-black via-slate-950 to-black p-5 shadow-[0_0_45px_rgba(34,211,238,0.08)] md:p-6">
+        <div className="pointer-events-none absolute inset-x-8 -top-20 h-40 rounded-full bg-cyan-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 right-6 h-44 w-44 rounded-full bg-purple-500/15 blur-3xl" />
+        <div className="relative z-10">
+          <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Buscador gamer</p>
+              <h3 className="mt-2 text-2xl font-black md:text-3xl">Encontrá productos al toque</h3>
+            </div>
+            <p className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
+              {productsToShow.length} resultado{productsToShow.length === 1 ? "" : "s"}
+            </p>
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_auto]">
+            <input
+              type="search"
+              value={catalogSearchTerm}
+              onChange={(e) => setCatalogSearchTerm(e.target.value)}
+              placeholder="Buscar juegos, consolas, accesorios, recargas..."
+              className={catalogControlClass}
+            />
+            <select value={catalogCategoryFilter} onChange={(e) => setCatalogCategoryFilter(e.target.value)} className={catalogControlClass}>
+              {catalogCategoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select value={catalogPlatformFilter} onChange={(e) => setCatalogPlatformFilter(e.target.value)} className={catalogControlClass}>
+              {catalogPlatformOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select value={catalogConditionFilter} onChange={(e) => setCatalogConditionFilter(e.target.value)} className={catalogControlClass}>
+              {catalogConditionOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select value={catalogSortOrder} onChange={(e) => setCatalogSortOrder(e.target.value)} className={catalogControlClass}>
+              {catalogSortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={clearCatalogFilters}
+              className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-black text-white transition duration-300 hover:border-cyan-300/60 hover:bg-cyan-400/10 hover:text-cyan-100 hover:shadow-[0_0_22px_rgba(34,211,238,0.18)]"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderCatalogProductsSection = () => (
+    <section className="mx-auto max-w-7xl px-6 py-16">
+      {productsToShow.length > 0 ? (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {productsToShow.map((product) => renderProductCard(product))}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-black via-slate-950 to-black px-6 py-12 text-center shadow-[0_0_36px_rgba(34,211,238,0.08)]">
+          <p className="mx-auto max-w-2xl text-lg font-bold text-white/80">
+            No encontramos productos con esos filtros. Probá con otra búsqueda o consultanos por WhatsApp.
+          </p>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-6 inline-flex rounded-2xl bg-green-500 px-5 py-3 font-bold text-black transition hover:scale-105"
+          >
+            Consultar por WhatsApp
+          </a>
+        </div>
+      )}
+    </section>
   );
 
   const renderGamesPlatformSelector = () => (
@@ -1269,7 +1817,7 @@ export default function SkayGamesWeb() {
         <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)] py-20">
           <div className="mx-auto max-w-7xl px-6">
             <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
-            <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: #/recargas-servicios</span>
+            <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: /recargas-servicios</span>
             <h2 className="mt-5 text-4xl font-black md:text-6xl">Recargas y servicios</h2>
             <p className="mt-4 text-xl text-white/75">Cada opción tiene su propio botón de WhatsApp.</p>
           </div>
@@ -1306,12 +1854,68 @@ export default function SkayGamesWeb() {
     );
   };
 
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setAdminLoginError("");
+
+    const email = adminEmail.trim();
+    if (!email || !adminPassword) {
+      setAdminLoginError("Ingresá correo y contraseña.");
+      return;
+    }
+
+    if (!supabase?.auth) {
+      setAdminLoginError("Supabase Auth no está configurado.");
+      return;
+    }
+
+    setIsAdminLoginLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: adminPassword,
+      });
+
+      if (error) {
+        console.error("Error iniciando sesión admin:", error);
+        setAdminLoginError("Correo o contraseña incorrectos.");
+        return;
+      }
+
+      setIsAdminAuthenticated(Boolean(data.session));
+      setAdminUserEmail(data.user?.email || email);
+      setAdminPassword("");
+    } catch (err) {
+      console.error("Error inesperado iniciando sesión admin:", err);
+      setAdminLoginError("No se pudo iniciar sesión. Probá de nuevo.");
+    } finally {
+      setIsAdminLoginLoading(false);
+    }
+  };
+
+  const handleAdminLogout = async () => {
+    try {
+      if (supabase?.auth) {
+        await supabase.auth.signOut();
+      }
+    } catch (err) {
+      console.error("Error cerrando sesión admin:", err);
+    }
+
+    setIsAdminAuthenticated(false);
+    setAdminUserEmail("");
+    setAdminEmail("");
+    setAdminPassword("");
+    setAdminLoginError("");
+  };
+
   const renderAdminLoginPage = () => (
     <>
       <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)] py-20">
         <div className="mx-auto max-w-7xl px-6">
           <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
-          <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta privada: #/admin</span>
+          <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta privada: /admin</span>
           <h2 className="mt-5 text-4xl font-black md:text-6xl">Acceso Admin</h2>
           <p className="mt-4 max-w-3xl text-xl text-white/75">Ingresá con tu correo y contraseña para administrar la web.</p>
         </div>
@@ -1323,22 +1927,15 @@ export default function SkayGamesWeb() {
             <h3 className="text-3xl font-black md:text-4xl">Panel de control de SKAY GAMES</h3>
             <p className="mt-4 text-white/70">Desde acá vas a poder cargar productos, administrar recargas y respaldos.</p>
           </div>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            if (adminEmail.trim().toLowerCase() === "admin@skaygames.com.py" && adminPassword === "SkayGames2026") {
-              setIsAdminAuthenticated(true);
-              setAdminLoginError("");
-              setAdminPassword("");
-              return;
-            }
-            setAdminLoginError("Correo o contraseña incorrectos.");
-          }} className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
+          <form onSubmit={handleAdminLogin} className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
             <h3 className="text-3xl font-black">Iniciar sesión</h3>
             <div className="mt-8 grid gap-4">
-              <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="admin@skaygames.com.py" className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 text-white outline-none placeholder:text-white/35" />
+              <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="Correo admin" className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 text-white outline-none placeholder:text-white/35" />
               <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 text-white outline-none placeholder:text-white/35" />
               {adminLoginError && <div className="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">{adminLoginError}</div>}
-              <button type="submit" className="mt-2 rounded-2xl bg-cyan-400 px-6 py-4 font-black text-black">Ingresar al panel</button>
+              <button type="submit" disabled={isAdminLoginLoading} className="mt-2 rounded-2xl bg-cyan-400 px-6 py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-60">
+                {isAdminLoginLoading ? "Ingresando..." : "Ingresar al panel"}
+              </button>
             </div>
           </form>
         </div>
@@ -1509,6 +2106,23 @@ export default function SkayGamesWeb() {
       setOfferSaveMessage("");
     };
 
+    const handleProductImageFileChange = async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      try {
+        setProductFormMessage("Procesando imagen y eliminando fondo blanco...");
+        const processedImage = await removeWhiteBackgroundFromFile(file);
+        setNewProductImage(processedImage);
+        setProductFormMessage("Imagen cargada con fondo blanco eliminado. Guardá el producto para aplicar.");
+      } catch (err) {
+        console.error("Error procesando imagen:", err);
+        setProductFormMessage(err?.message || "No se pudo procesar la imagen.");
+      } finally {
+        event.target.value = "";
+      }
+    };
+
         const handleAddOrUpdateProduct = async (e) => {
       e.preventDefault();
       if (!newProductName.trim() || !newProductPrice.trim()) {
@@ -1529,7 +2143,7 @@ export default function SkayGamesWeb() {
         precio: parseNumericPrice(newProductPrice) ?? 0,
         categoria,
         imagen: newProductImage.trim() || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-        descripcion: "",
+        descripcion: newProductDescription.trim(),
         stock: 0,
         activo: true,
         featured: newProductFeatured,
@@ -1601,6 +2215,7 @@ export default function SkayGamesWeb() {
         setNewProductPlatform("ps4");
         setNewProductCondition("Nuevo");
         setNewProductImage("");
+        setNewProductDescription("");
         setNewProductFeatured(false);
         setNewProductRecent(true);
       } catch (err) {
@@ -1618,6 +2233,7 @@ export default function SkayGamesWeb() {
       setNewProductPlatform(product.platform || "ps4");
       setNewProductCondition(normalizeCondition(product.condition || "Nuevo"));
       setNewProductImage(product.image || "");
+      setNewProductDescription(product.description || "");
       setNewProductFeatured(!!product.isFeatured);
       setNewProductRecent(!!product.isRecent);
       setProductFormMessage("Editando producto. Guardá para actualizar.");
@@ -1677,6 +2293,7 @@ export default function SkayGamesWeb() {
       setNewProductPlatform("ps4");
       setNewProductCondition("Nuevo");
       setNewProductImage("");
+      setNewProductDescription("");
       setNewProductFeatured(false);
       setNewProductRecent(true);
       setProductFormMessage("");
@@ -1776,7 +2393,7 @@ export default function SkayGamesWeb() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <button onClick={() => navigateTo("home")} className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-bold text-white/85 transition hover:bg-white/10">← Ver web pública</button>
-                <button onClick={() => { setIsAdminAuthenticated(false); setAdminEmail(""); setAdminPassword(""); setAdminLoginError(""); }} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/20">Cerrar sesión</button>
+                <button onClick={handleAdminLogout} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-5 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/20">Cerrar sesión</button>
               </div>
             </div>
           </div>
@@ -1787,8 +2404,8 @@ export default function SkayGamesWeb() {
             <aside className="rounded-[28px] border border-white/10 bg-white/5 p-4 shadow-2xl">
               <div className="mb-4 rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Acceso</p>
-                <p className="mt-2 text-lg font-black">admin@skaygames.com.py</p>
-                <p className="mt-1 text-sm text-white/55">Ruta privada: #/admin</p>
+                <p className="mt-2 break-words text-lg font-black">{adminUserEmail || "Sesión admin"}</p>
+                <p className="mt-1 text-sm text-white/55">Ruta privada: /admin</p>
               </div>
               <div className="space-y-2">
                 {adminSections.map((section) => (
@@ -1830,12 +2447,68 @@ export default function SkayGamesWeb() {
                         <option value="Nuevo">Juego nuevo</option>
                         <option value="Usado">Juego usado</option>
                       </select>
-                      <input value={newProductImage} onChange={(e) => setNewProductImage(e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                      <textarea
+                        value={newProductDescription}
+                        onChange={(e) => setNewProductDescription(e.target.value)}
+                        placeholder="Detalles / descripción para SEO. Se muestra solo al tocar Ver detalles."
+                        className="min-h-[120px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2"
+                      />
+                      <div className="space-y-3 md:col-span-2">
+                        <input
+                          value={newProductImage.startsWith("data:image/") ? "Imagen subida y procesada con fondo transparente" : newProductImage}
+                          onChange={(e) => setNewProductImage(e.target.value)}
+                          placeholder="URL de imagen o subí un archivo"
+                          className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none"
+                        />
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="cursor-pointer rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20">
+                            Subir imagen y quitar fondo blanco
+                            <input type="file" accept="image/*" onChange={handleProductImageFileChange} className="hidden" />
+                          </label>
+                          <span className="text-xs text-white/45">Ideal para cajas con fondo blanco liso.</span>
+                        </div>
+                        {newProductImage && (
+                          <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-black/40 p-3">
+                            <img src={newProductImage} alt="Vista previa del producto" className="h-28 w-28 rounded-xl bg-black object-contain p-2" />
+                            <div className="text-xs text-white/55">
+                              Vista previa sobre fondo negro. Si queda algún borde blanco, probá con una foto más limpia o con fondo bien liso.
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-6">
                       <label className="flex items-center gap-2 text-sm text-white/80"><input type="checkbox" checked={newProductFeatured} onChange={(e) => setNewProductFeatured(e.target.checked)} /> Agregar a destacados</label>
                       <label className="flex items-center gap-2 text-sm text-white/80"><input type="checkbox" checked={newProductRecent} onChange={(e) => setNewProductRecent(e.target.checked)} /> Agregar a recién llegados</label>
                     </div>
+                    {newProductImage && (
+                      <div className="mt-5 rounded-3xl border border-cyan-400/20 bg-black/40 p-4">
+                        <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                          <div>
+                            <div className="text-sm font-black text-cyan-300">Vista previa pública</div>
+                            <p className="mt-1 text-xs text-white/50">Así se vería la tarjeta del producto para los clientes, sin guardar nada.</p>
+                          </div>
+                          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-white/55">Solo prueba local</div>
+                        </div>
+                        <div className="max-w-sm">
+                          {renderProductCard(
+                            {
+                              id: "preview-product",
+                              name: newProductName.trim() || "Nombre del producto",
+                              price: newProductPrice.trim() || "Gs. 0",
+                              originalPrice: newProductOriginalPrice.trim(),
+                              category: newProductCategory,
+                              platform: ["juegos", "accesorios"].includes(newProductCategory) ? newProductPlatform : undefined,
+                              condition: newProductCategory === "juegos" ? newProductCondition : "Disponible",
+                              image: newProductImage,
+                              description: newProductDescription.trim(),
+                              message: `Hola! Quiero consultar por ${newProductName.trim() || "este producto"}.`,
+                            },
+                            "Vista previa"
+                          )}
+                        </div>
+                      </div>
+                    )}
                     {productFormMessage && <div className="mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-bold text-cyan-300">{productFormMessage}</div>}
                     <div className="mt-5 flex flex-wrap gap-3">
                       <button type="submit" className="rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-black text-black">{editingProductId ? "Actualizar producto" : "Guardar producto"}</button>
@@ -1850,7 +2523,7 @@ export default function SkayGamesWeb() {
                       {productsData.map((item) => (
                         <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 md:flex-row md:items-center md:justify-between">
                           <div className="flex items-center gap-4">
-                            <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-cover bg-black" />
+                            <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-contain bg-black p-1" />
                             <div>
                               <div className="text-base font-bold text-white">{item.name}</div>
                               <div className="mt-1 text-sm text-white/60">{item.category}{item.platform ? ` · ${item.platform.toUpperCase()}` : ""}</div>
@@ -2099,7 +2772,8 @@ export default function SkayGamesWeb() {
             <img
               key={background}
               src={background}
-              alt="background"
+              alt=""
+              aria-hidden="true"
               className={`absolute inset-0 h-full w-full object-cover object-[center_41%] blur-[1px] scale-110 transition-all duration-700 ${
                 headerBackgroundIndex === index ? "opacity-90" : "opacity-0"
               }`}
@@ -2202,36 +2876,24 @@ export default function SkayGamesWeb() {
         {activePage === "admin" ? (
           renderAdminPage()
         ) : activePage === "recargas-servicios" ? (
-          renderRechargeServicesPage()
+          <>
+            {renderRechargeServicesPage()}
+            {renderCatalogFilters()}
+            {renderCatalogProductsSection()}
+          </>
         ) : activePage !== "home" ? (
           <>
             <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)] py-20">
               <div className="mx-auto max-w-7xl px-6">
                 <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
-                <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: {activePage === "home" ? "#/" : `#/${activePage}`}</span>
+                <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: {activePage === "home" ? "/" : `/${activePage}`}</span>
                 <h2 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h2>
                 <p className="mt-4 text-xl text-white/75">{pageContent?.subtitle}</p>
                 <p className="mt-4 max-w-3xl text-white/65">{pageContent?.description}</p>
               </div>
             </section>
-            {activePage === "juegos" && renderGamesPlatformSelector()}
-            {activePage === "accesorios" && (
-              <section className="mx-auto max-w-7xl px-6 pt-10">
-                <div className="mb-8">
-                  <h3 className="text-3xl font-black md:text-4xl">Elegí tu consola</h3>
-                  <p className="mt-3 text-white/65">Filtrá accesorios según la consola o por accesorios gamer.</p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <button onClick={() => setSelectedAccessoryPlatform("all")} className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${selectedAccessoryPlatform === "all" ? "border-cyan-400/50 bg-cyan-400 text-black" : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"}`}>Todos</button>
-                  {accessoryPlatforms.map((p) => (
-                    <button key={p.id} onClick={() => setSelectedAccessoryPlatform(p.id)} className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${selectedAccessoryPlatform === p.id ? "border-cyan-400/50 bg-cyan-400 text-black" : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"}`}>{p.title}</button>
-                  ))}
-                </div>
-              </section>
-            )}
-            <section className="mx-auto max-w-7xl px-6 py-16">
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{productsToShow.map((product) => renderProductCard(product))}</div>
-            </section>
+            {renderCatalogFilters()}
+            {renderCatalogProductsSection()}
           </>
         ) : (
           <>
@@ -2314,7 +2976,7 @@ export default function SkayGamesWeb() {
               </div>
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 {editableCategories.map((item) => (
-                  <button key={item.id} onClick={() => navigateTo(item.id)} className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-xl transition hover:-translate-y-1">
+                  <button key={item.id} onClick={() => navigateTo(item.id)} className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/35 hover:shadow-[0_0_32px_rgba(34,211,238,0.16)]">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -2334,7 +2996,9 @@ export default function SkayGamesWeb() {
                       <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Página</div>
                       <h4 className="text-xl font-bold">{item.title}</h4>
                       <p className="mt-2 text-sm text-white/70">{item.description}</p>
-                      <div className="mt-4 inline-block rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-bold text-black">Ir a la página</div>
+                      <div className="mt-4 inline-flex w-full items-center justify-between gap-3 rounded-2xl border border-cyan-300/55 bg-gradient-to-r from-slate-950 via-black to-cyan-950/40 px-4 py-3 text-sm font-black text-white shadow-[0_0_18px_rgba(34,211,238,0.18)] transition duration-300 group-hover:border-cyan-200 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.35)] sm:w-auto">
+                        {renderCategoryCtaContent(item.id)}
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -2362,7 +3026,6 @@ export default function SkayGamesWeb() {
                   <h3 className="text-3xl font-black md:text-4xl">Combos destacados</h3>
                   
                 </div>
-                <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Ideal para combos y promos</div>
               </div>
               <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl">
                 <div className="relative h-[420px] w-full md:h-[500px]">
@@ -2393,7 +3056,6 @@ export default function SkayGamesWeb() {
                   <h3 className="text-3xl font-black md:text-4xl">Recién llegados</h3>
                   
                 </div>
-                <div className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Controlado desde el panel admin</div>
               </div>
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 {latestProducts.map((product) => renderProductCard(product, "Consultar ahora"))}
