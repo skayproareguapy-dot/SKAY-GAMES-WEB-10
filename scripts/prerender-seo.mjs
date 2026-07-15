@@ -335,6 +335,15 @@ const getPublicImageUrl = (image) => {
   return `${siteUrl}/${value.replace(/^\/+/, "")}`;
 };
 
+const isPublicHttpImage = (image) => /^https?:\/\//i.test(String(image || "").trim());
+
+const getProductSeoImageUrl = (product = {}) => {
+  const explicitSeoImage = product.seoImageUrl || product.publicImageUrl || product.seo_image_url || product.public_image_url;
+  if (isPublicHttpImage(explicitSeoImage)) return getPublicImageUrl(explicitSeoImage);
+  if (isPublicHttpImage(product.image)) return getPublicImageUrl(product.image);
+  return defaultSeoImage;
+};
+
 const getCanonicalUrl = (route = "/") => `${siteUrl}${route.startsWith("/") ? route : `/${route}`}`;
 
 const getRechargeMethodValue = (item = {}) => {
@@ -421,7 +430,7 @@ const buildProductStructuredData = (product, url) => ({
   "@type": "Product",
   name: product.name || "Producto SKAY GAMES",
   description: getProductAutomaticSeoText(product),
-  image: [getPublicImageUrl(product.image)],
+  image: [getProductSeoImageUrl(product)],
   brand: { "@type": "Brand", name: siteName },
   category: getSeoCategoryName(product.category),
   offers: buildOfferSchema(product.price, url),
@@ -462,6 +471,8 @@ const mapSupabaseProduct = (item) => ({
   category: (item.categoria || "juegos").toLowerCase(),
   platform: item.plataforma ? String(item.plataforma).toLowerCase() : undefined,
   image: item.imagen || defaultSeoImage,
+  seoImageUrl: item.seo_image_url || item.public_image_url || "",
+  publicImageUrl: item.public_image_url || item.seo_image_url || "",
   description: item.descripcion || "",
   condition: normalizeCondition(item.condicion || "Nuevo"),
   rawCondition: item.condicion || "Nuevo",
@@ -680,7 +691,7 @@ const main = async () => {
         title,
         description,
         canonicalUrl,
-        image: product.image,
+        image: getProductSeoImageUrl(product),
         type: "product",
         primarySchema: buildProductStructuredData(product, canonicalUrl),
         breadcrumbSchema: buildBreadcrumbStructuredData(breadcrumbs),

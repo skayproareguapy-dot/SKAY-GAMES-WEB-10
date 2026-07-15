@@ -11,6 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node scripts/prerender-seo.mjs",
+    "backfill:seo-images": "node scripts/backfill-seo-images.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
