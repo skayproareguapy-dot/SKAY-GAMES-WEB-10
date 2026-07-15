@@ -497,6 +497,7 @@ export default function SkayGamesWeb() {
   const [newProductFormat, setNewProductFormat] = useState("fisico");
   const [newProductDigitalOffer, setNewProductDigitalOffer] = useState(false);
   const [newProductImage, setNewProductImage] = useState("");
+  const [newProductSeoImageUrl, setNewProductSeoImageUrl] = useState("");
   const [newProductDescription, setNewProductDescription] = useState("");
   const [newProductFeatured, setNewProductFeatured] = useState(false);
   const [newProductRecent, setNewProductRecent] = useState(true);
@@ -724,6 +725,8 @@ export default function SkayGamesWeb() {
     category: (item.categoria || "juegos").toLowerCase(),
     platform: item.plataforma ? String(item.plataforma).toLowerCase() : undefined,
     image: item.imagen || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+    seoImageUrl: item.seo_image_url || item.public_image_url || "",
+    publicImageUrl: item.public_image_url || item.seo_image_url || "",
     description: item.descripcion || "",
     message: `Hola! Quiero consultar por ${item.nombre || "este producto"}.`,
     isFeatured: Boolean(item.featured ?? item.destacado),
@@ -975,6 +978,15 @@ export default function SkayGamesWeb() {
     if (/^https?:\/\//i.test(value)) return value.replace(/^http:\/\//i, "https://");
     if (value.startsWith("/")) return `${siteUrl}${value}`;
     return `${siteUrl}/${value.replace(/^\/+/, "")}`;
+  };
+
+  const isPublicHttpImage = (image) => /^https?:\/\//i.test(String(image || "").trim());
+
+  const getProductSeoImageUrl = (product = {}) => {
+    const explicitSeoImage = product.seoImageUrl || product.publicImageUrl || product.seo_image_url || product.public_image_url;
+    if (isPublicHttpImage(explicitSeoImage)) return getPublicImageUrl(explicitSeoImage);
+    if (isPublicHttpImage(product.image)) return getPublicImageUrl(product.image);
+    return defaultSeoImage;
   };
 
   const getDisplayImageUrl = (image) => {
@@ -1774,7 +1786,7 @@ export default function SkayGamesWeb() {
     "@type": "Product",
     name: product.name || "Producto SKAY GAMES",
     description: getProductAutomaticSeoText(product),
-    image: [getPublicImageUrl(product.image)],
+    image: [getProductSeoImageUrl(product)],
     brand: {
       "@type": "Brand",
       name: siteName,
@@ -1880,7 +1892,7 @@ export default function SkayGamesWeb() {
       title = getProductSeoTitle(selectedProduct);
       description = getProductAutomaticSeoText(selectedProduct);
       canonicalUrl = getCanonicalUrl(`/producto/${getProductRouteSlug(selectedProduct)}`);
-      image = getPublicImageUrl(selectedProduct.image);
+      image = getProductSeoImageUrl(selectedProduct);
       structuredData = buildProductStructuredData(selectedProduct, canonicalUrl);
     } else if (activeRechargeItem) {
       if (activeRechargeOption) {
@@ -3176,6 +3188,50 @@ export default function SkayGamesWeb() {
       }
     };
 
+    const dataUrlToBlob = async (dataUrl) => {
+      const response = await fetch(dataUrl);
+      return response.blob();
+    };
+
+    const uploadProductSeoImageCopy = async (dataUrl, productName, productId = "nuevo") => {
+      if (!supabase?.storage || !dataUrl?.startsWith("data:image/")) return "";
+
+      const blob = await dataUrlToBlob(dataUrl);
+      const extension = blob.type.includes("webp") ? "webp" : blob.type.includes("jpeg") ? "jpg" : "png";
+      const filePath = `productos/${slugify(productName || "producto")}-${productId}-${Date.now()}.${extension}`;
+      const { error } = await supabase.storage
+        .from("seo-images")
+        .upload(filePath, blob, {
+          contentType: blob.type || "image/webp",
+          upsert: true,
+        });
+
+      if (error) throw error;
+
+      const { data } = supabase.storage.from("seo-images").getPublicUrl(filePath);
+      return data?.publicUrl || "";
+    };
+
+    const resolveProductSeoImageUrl = async ({ visualImage, productName, productId }) => {
+      const cleanVisualImage = String(visualImage || "").trim();
+      const existingSeoImage = String(newProductSeoImageUrl || "").trim();
+
+      if (isPublicHttpImage(cleanVisualImage)) return getPublicImageUrl(cleanVisualImage);
+      if (isPublicHttpImage(existingSeoImage)) return getPublicImageUrl(existingSeoImage);
+      if (!cleanVisualImage) return "";
+
+      if (cleanVisualImage.startsWith("data:image/")) {
+        try {
+          return await uploadProductSeoImageCopy(cleanVisualImage, productName, productId);
+        } catch (error) {
+          console.warn("No se pudo crear copia pública SEO de la imagen. Se mantiene la imagen visual intacta.", error);
+          return "";
+        }
+      }
+
+      return "";
+    };
+
     const getDigitalOfferPlatform = (platform) => {
       const normalizedPlatform = normalizeCatalogText(platform);
       return ["ps4", "ps5"].includes(normalizedPlatform) ? normalizedPlatform : "ps4";
@@ -3306,12 +3362,18 @@ export default function SkayGamesWeb() {
       const usaPlataforma = ["juegos", "accesorios"].includes(categoria);
       const productPlatform = newProductDigitalOffer ? getDigitalOfferPlatform(newProductPlatform) : newProductPlatform;
       const productFormat = newProductDigitalOffer ? "digital" : newProductFormat;
+      const visualProductImage = newProductImage.trim() || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
+      const seoImageUrl = await resolveProductSeoImageUrl({
+        visualImage: visualProductImage,
+        productName: newProductName.trim(),
+        productId: editingProductId || "nuevo",
+      });
 
       const payloadBasico = {
         nombre: newProductName.trim(),
         precio: parseNumericPrice(newProductPrice) ?? 0,
         categoria,
-        imagen: newProductImage.trim() || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
+        imagen: visualProductImage,
         descripcion: newProductDescription.trim(),
         stock: 0,
         activo: true,
@@ -3328,23 +3390,36 @@ export default function SkayGamesWeb() {
         condicion: productCondition,
       };
 
+      const payloadConSeo = {
+        ...payloadCompleto,
+        seo_image_url: seoImageUrl || null,
+      };
+
       try {
         let error = null;
 
         if (editingProductId) {
           let result = await supabase
             .from("productos")
-            .update(payloadCompleto)
+            .update(payloadConSeo)
             .eq("id", editingProductId);
 
           error = result.error;
 
           if (error) {
-            const fallback = await supabase
+            const fallbackCompleto = await supabase
+              .from("productos")
+              .update(payloadCompleto)
+              .eq("id", editingProductId);
+            error = fallbackCompleto.error;
+          }
+
+          if (error) {
+            const fallbackBasico = await supabase
               .from("productos")
               .update(payloadBasico)
               .eq("id", editingProductId);
-            error = fallback.error;
+            error = fallbackBasico.error;
           }
 
           if (error) {
@@ -3357,15 +3432,22 @@ export default function SkayGamesWeb() {
         } else {
           let result = await supabase
             .from("productos")
-            .insert([payloadCompleto]);
+            .insert([payloadConSeo]);
 
           error = result.error;
 
           if (error) {
-            const fallback = await supabase
+            const fallbackCompleto = await supabase
+              .from("productos")
+              .insert([payloadCompleto]);
+            error = fallbackCompleto.error;
+          }
+
+          if (error) {
+            const fallbackBasico = await supabase
               .from("productos")
               .insert([payloadBasico]);
-            error = fallback.error;
+            error = fallbackBasico.error;
           }
 
           if (error) {
@@ -3388,6 +3470,7 @@ export default function SkayGamesWeb() {
         setNewProductFormat("fisico");
         setNewProductDigitalOffer(false);
         setNewProductImage("");
+        setNewProductSeoImageUrl("");
         setNewProductDescription("");
         setNewProductFeatured(false);
         setNewProductRecent(true);
@@ -3408,6 +3491,7 @@ export default function SkayGamesWeb() {
       setNewProductFormat(product.format || getProductFormat(product.rawCondition, product.condition, product.description, product.name) || "fisico");
       setNewProductDigitalOffer(isDigitalOfferProduct(product));
       setNewProductImage(product.image || "");
+      setNewProductSeoImageUrl(product.seoImageUrl || product.publicImageUrl || "");
       setNewProductDescription(product.description || "");
       setNewProductFeatured(!!product.isFeatured);
       setNewProductRecent(!!product.isRecent);
