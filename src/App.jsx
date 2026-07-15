@@ -2471,6 +2471,71 @@ export default function SkayGamesWeb() {
       return ["ps4", "ps5"].includes(normalizedPlatform) ? normalizedPlatform : "ps4";
     };
 
+    const adminProductCategoryOptions = [
+      { value: "juegos", label: "Juegos" },
+      { value: "consolas", label: "Consolas" },
+      { value: "accesorios", label: "Accesorios" },
+      { value: "recargas-servicios", label: "Recargas y servicios (usar sección Recargas)" },
+    ];
+
+    const adminAccessoryPlatformOptions = [
+      { value: "ps2", label: "Accesorios PS2" },
+      { value: "ps3", label: "Accesorios PS3" },
+      { value: "ps4", label: "Accesorios PS4" },
+      { value: "ps5", label: "Accesorios PS5" },
+      { value: "xbox", label: "Accesorios Xbox" },
+      { value: "nintendo", label: "Accesorios Nintendo" },
+      { value: "pc", label: "Accesorios PC" },
+      { value: "gamer", label: "Accesorios Gamer" },
+    ];
+
+    const adminGameSubcategoryOptions = [
+      { value: "ps4", label: "Juegos PS4", platform: "ps4", digitalOffer: false },
+      { value: "ps5", label: "Juegos PS5", platform: "ps5", digitalOffer: false },
+      { value: "digital-offer-ps4", label: "Juegos digitales en oferta PS4", platform: "ps4", digitalOffer: true },
+      { value: "digital-offer-ps5", label: "Juegos digitales en oferta PS5", platform: "ps5", digitalOffer: true },
+    ];
+
+    const getAdminProductSubcategoryOptions = (category) => {
+      if (category === "juegos") return adminGameSubcategoryOptions;
+      if (category === "accesorios") return adminAccessoryPlatformOptions;
+      return [];
+    };
+
+    const getCurrentProductSubcategoryValue = () => {
+      if (newProductCategory === "juegos") {
+        const platform = getDigitalOfferPlatform(newProductPlatform);
+        return newProductDigitalOffer ? `digital-offer-${platform}` : platform;
+      }
+
+      if (newProductCategory === "accesorios") {
+        const allowed = adminAccessoryPlatformOptions.map((option) => option.value);
+        return allowed.includes(newProductPlatform) ? newProductPlatform : "ps4";
+      }
+
+      return "";
+    };
+
+    const applyProductSubcategory = (value) => {
+      if (newProductCategory === "juegos") {
+        const option = adminGameSubcategoryOptions.find((item) => item.value === value) || adminGameSubcategoryOptions[0];
+        setNewProductPlatform(option.platform);
+        setNewProductDigitalOffer(option.digitalOffer);
+        if (option.digitalOffer) {
+          setNewProductFormat("digital");
+        } else if (newProductFormat === "digital") {
+          setNewProductFormat("fisico");
+        }
+        return;
+      }
+
+      if (newProductCategory === "accesorios") {
+        const allowed = adminAccessoryPlatformOptions.map((option) => option.value);
+        setNewProductPlatform(allowed.includes(value) ? value : "ps4");
+        setNewProductDigitalOffer(false);
+      }
+    };
+
     const applyProductDigitalOffer = (checked) => {
       setNewProductDigitalOffer(checked);
 
@@ -2483,7 +2548,19 @@ export default function SkayGamesWeb() {
 
     const handleProductCategoryChange = (value) => {
       setNewProductCategory(value);
-      if (value !== "juegos") setNewProductDigitalOffer(false);
+      setNewProductDigitalOffer(false);
+
+      if (value === "juegos") {
+        setNewProductPlatform((prev) => getDigitalOfferPlatform(prev));
+        setNewProductFormat("fisico");
+        setNewProductCondition("Nuevo");
+      } else if (value === "accesorios") {
+        setNewProductPlatform((prev) => {
+          const allowed = adminAccessoryPlatformOptions.map((option) => option.value);
+          return allowed.includes(prev) ? prev : "ps4";
+        });
+        setNewProductFormat("fisico");
+      }
     };
 
     const handleProductPlatformChange = (value) => {
@@ -2825,44 +2902,42 @@ export default function SkayGamesWeb() {
                       <input value={newProductPrice} onChange={(e) => setNewProductPrice(e.target.value)} placeholder="Precio actual (ej: Gs. 150.000)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <input value={newProductOriginalPrice} onChange={(e) => setNewProductOriginalPrice(e.target.value)} placeholder="Precio anterior / normal (marca En oferta)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <select value={newProductCategory} onChange={(e) => handleProductCategoryChange(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
-                        <option value="juegos">Juegos</option>
-                        <option value="consolas">Consolas</option>
-                        <option value="accesorios">Accesorios</option>
-                        <option value="recargas-servicios">Recargas y servicios</option>
+                        {adminProductCategoryOptions.map((option) => (
+                          <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
                       </select>
-                      <select value={newProductPlatform} onChange={(e) => handleProductPlatformChange(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
-                        <option value="ps2">PS2</option>
-                        <option value="ps3">PS3</option>
-                        <option value="ps4">PS4</option>
-                        <option value="ps5">PS5</option>
-                        <option value="gamer">Gamer</option>
-                      </select>
-                      <select value={newProductCondition} onChange={(e) => setNewProductCondition(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
-                        <option value="Nuevo">Juego nuevo</option>
-                        <option value="Usado">Juego usado</option>
-                      </select>
-                      <select value={newProductFormat} onChange={(e) => handleProductFormatChange(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
-                        <option value="fisico">Formato físico</option>
-                        <option value="digital">Formato digital</option>
-                      </select>
-                      <label className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-4 text-sm md:col-span-2 ${
-                        newProductDigitalOffer
-                          ? "border-cyan-300/45 bg-cyan-400/15 text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,0.14)]"
-                          : "border-cyan-400/15 bg-cyan-400/10 text-cyan-100"
-                      }`}>
-                        <input
-                          type="checkbox"
-                          checked={newProductDigitalOffer}
-                          onChange={(e) => applyProductDigitalOffer(e.target.checked)}
-                          className="mt-1"
-                        />
-                        <span>
-                          <span className="block font-black">Agregar a Juegos digitales en oferta</span>
+                      {["juegos", "accesorios"].includes(newProductCategory) && (
+                        <select value={getCurrentProductSubcategoryValue()} onChange={(e) => applyProductSubcategory(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                          {getAdminProductSubcategoryOptions(newProductCategory).map((option) => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                          ))}
+                        </select>
+                      )}
+                      {newProductCategory === "juegos" && (
+                        <select value={newProductCondition} onChange={(e) => setNewProductCondition(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                          <option value="Nuevo">Juego nuevo</option>
+                          <option value="Usado">Juego usado</option>
+                        </select>
+                      )}
+                      {newProductCategory === "juegos" && !newProductDigitalOffer && (
+                        <select value={newProductFormat} onChange={(e) => handleProductFormatChange(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                          <option value="fisico">Formato físico</option>
+                          <option value="digital">Formato digital</option>
+                        </select>
+                      )}
+                      {newProductDigitalOffer && (
+                        <div className="rounded-2xl border border-cyan-300/35 bg-cyan-400/15 px-4 py-4 text-sm text-cyan-50 shadow-[0_0_24px_rgba(34,211,238,0.14)] md:col-span-2">
+                          <span className="block font-black">Este producto irá a Juegos digitales en oferta</span>
                           <span className="mt-1 block text-xs text-white/60">
-                            Activa Juegos + PS4/PS5 + formato digital. Para que figure como oferta, cargá también el precio anterior / normal.
+                            Se guardará como Juego + {newProductPlatform.toUpperCase()} + formato digital. Para que figure como oferta, cargá el precio anterior / normal.
                           </span>
-                        </span>
-                      </label>
+                        </div>
+                      )}
+                      {newProductCategory === "recargas-servicios" && (
+                        <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 px-4 py-4 text-sm text-amber-100 md:col-span-2">
+                          Para recargas y streaming conviene usar la sección <span className="font-black">Recargas y streaming</span>, porque ahí se crean URLs SEO individuales.
+                        </div>
+                      )}
                       <textarea
                         value={newProductDescription}
                         onChange={(e) => setNewProductDescription(e.target.value)}
