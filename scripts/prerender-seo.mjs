@@ -7,10 +7,9 @@ const rootDir = path.resolve(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
 const siteName = "SKAY GAMES";
 const brandName = "SKAY GAMES Paraguay";
-const siteUrl = "https://skaygames.com.py";
+const siteUrl = "https://www.skaygames.com.py";
 const today = new Date().toISOString().slice(0, 10);
-const defaultSeoImage =
-  "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
+const defaultSeoImage = `${siteUrl}/og-skay-games.svg`;
 const DIGITAL_OFFERS_PAGE_ID = "juegos-digitales-oferta";
 const RECHARGE_ROUTE_PREFIX = "recargas-servicios/";
 
@@ -329,9 +328,11 @@ const getProductImageAlt = (product = {}) =>
 const getPublicImageUrl = (image) => {
   const value = String(image || "").trim();
   if (!value) return defaultSeoImage;
-  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith("data:image/")) return defaultSeoImage;
+  if (value.startsWith("//")) return `https:${value}`;
+  if (/^https?:\/\//i.test(value)) return value.replace(/^http:\/\//i, "https://");
   if (value.startsWith("/")) return `${siteUrl}${value}`;
-  return defaultSeoImage;
+  return `${siteUrl}/${value.replace(/^\/+/, "")}`;
 };
 
 const getCanonicalUrl = (route = "/") => `${siteUrl}${route.startsWith("/") ? route : `/${route}`}`;

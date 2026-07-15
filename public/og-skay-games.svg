@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">SKAY GAMES Paraguay</title>
+  <desc id="desc">Imagen por defecto para compartir SKAY GAMES</desc>
+  <defs>
+    <radialGradient id="cyanGlow" cx="24%" cy="28%" r="60%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45"/>
+      <stop offset="45%" stop-color="#0f172a" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pinkGlow" cx="78%" cy="72%" r="55%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.42"/>
+      <stop offset="50%" stop-color="#111827" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#020617"/>
+  <rect width="1200" height="630" fill="url(#cyanGlow)"/>
+  <rect width="1200" height="630" fill="url(#pinkGlow)"/>
+  <rect x="46" y="46" width="1108" height="538" rx="42" fill="none" stroke="url(#border)" stroke-width="4" opacity="0.85"/>
+  <rect x="76" y="76" width="1048" height="478" rx="34" fill="#020617" opacity="0.66"/>
+  <text x="600" y="260" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="900" text-anchor="middle" letter-spacing="2">SKAY GAMES</text>
+  <text x="600" y="340" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" text-anchor="middle">Videojuegos, consolas, accesorios y recargas</text>
+  <text x="600" y="405" fill="#cbd5e1" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="600" text-anchor="middle">Paraguay</text>
+  <circle cx="178" cy="486" r="9" fill="#22d3ee"/>
+  <circle cx="1022" cy="144" r="9" fill="#a855f7"/>
+  <path d="M178 486 C340 430 444 516 600 476 C766 433 862 500 1022 144" fill="none" stroke="#22d3ee" stroke-width="3" opacity="0.35"/>
+</svg>
