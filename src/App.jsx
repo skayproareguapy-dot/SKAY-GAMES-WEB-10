@@ -977,6 +977,16 @@ export default function SkayGamesWeb() {
     return `${siteUrl}/${value.replace(/^\/+/, "")}`;
   };
 
+  const getDisplayImageUrl = (image) => {
+    const value = String(image || "").trim();
+    if (!value) return defaultSeoImage;
+    if (value.startsWith("data:image/")) return value;
+    if (value.startsWith("//")) return `https:${value}`;
+    if (/^https?:\/\//i.test(value)) return value.replace(/^http:\/\//i, "https://");
+    if (value.startsWith("/")) return `${siteUrl}${value}`;
+    return `${siteUrl}/${value.replace(/^\/+/, "")}`;
+  };
+
   const getOptimizedImageUrl = (image) => {
     const value = String(image || "").trim();
     if (!value) return defaultSeoImage;
@@ -989,7 +999,7 @@ export default function SkayGamesWeb() {
   };
 
   const getResponsiveImageUrl = (image, { width, format, quality = 80 } = {}) => {
-    const value = getPublicImageUrl(image);
+    const value = getDisplayImageUrl(image);
     if (!value || value.startsWith("data:image/") || value.endsWith(".svg")) return value;
 
     if (value.includes("images.unsplash.com")) {
@@ -3652,11 +3662,19 @@ export default function SkayGamesWeb() {
                       />
                       <div className="space-y-3 md:col-span-2">
                         <input
-                          value={newProductImage.startsWith("data:image/") ? "Imagen subida y procesada con fondo transparente" : newProductImage}
+                          value={newProductImage.startsWith("data:image/") ? "" : newProductImage}
                           onChange={(e) => setNewProductImage(e.target.value)}
-                          placeholder="URL de imagen o subí un archivo"
+                          placeholder={newProductImage.startsWith("data:image/") ? "Imagen procesada activa. Pegá una URL acá para reemplazarla." : "URL de imagen o subí un archivo"}
                           className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none"
                         />
+                        {newProductImage.startsWith("data:image/") && (
+                          <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-xs text-cyan-100">
+                            <span className="font-bold">Imagen subida y procesada con fondo transparente.</span>
+                            <button type="button" onClick={() => setNewProductImage("")} className="rounded-xl border border-white/15 bg-black/30 px-3 py-2 font-black text-white transition hover:bg-white/10">
+                              Quitar y cargar URL
+                            </button>
+                          </div>
+                        )}
                         <div className="flex flex-wrap items-center gap-3">
                           <label className="cursor-pointer rounded-2xl border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-300 transition hover:bg-cyan-400/20">
                             Subir imagen y quitar fondo blanco
