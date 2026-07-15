@@ -500,6 +500,7 @@ export default function SkayGamesWeb() {
   const [newRechargeName, setNewRechargeName] = useState("");
   const [newRechargeDescription, setNewRechargeDescription] = useState("");
   const [newRechargeImage, setNewRechargeImage] = useState("");
+  const [newRechargeOptionImage, setNewRechargeOptionImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
   const [newRechargeOptions, setNewRechargeOptions] = useState([{ id: Date.now(), label: "", price: "", description: "" }]);
   const [rechargeFormMessage, setRechargeFormMessage] = useState("");
@@ -2010,24 +2011,47 @@ export default function SkayGamesWeb() {
     const getRechargeWhatsappMessage = (item, option) =>
       `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${option.price}` : ""}.`;
 
-    const renderRechargeOptionCard = (item, option, theme) => (
-      <article key={option.id} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-xl transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07]">
-        <div className="mb-4 inline-flex rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-white/55">
-          {getRechargeTypeLabel(item.type)}
-        </div>
-        <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
-        <div className="mt-3 text-2xl font-black text-cyan-300">{option.price}</div>
-        <p className="mt-4 text-sm leading-6 text-white/68">{getRechargeOptionSeoText(item, option)}</p>
-        <a
-          href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-green-500 px-5 py-3 text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400 sm:w-auto"
-        >
-          Pedir por WhatsApp
-        </a>
-      </article>
-    );
+    const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
+
+    const renderRechargeOptionCard = (item, option, theme) => {
+      const optionImage = getRechargeOptionImage(item);
+
+      return (
+        <article key={option.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07]">
+          {optionImage && (
+            <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-white/10 bg-black/45 p-5">
+              <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-70 blur-2xl`} />
+              <img
+                src={optionImage}
+                alt={`${getRechargeOptionTitle(item, option)} imagen`}
+                className="relative z-10 max-h-28 w-full object-contain transition duration-500 hover:scale-105"
+                onError={(e) => {
+                  if (item.image && e.currentTarget.src !== item.image) {
+                    e.currentTarget.src = item.image;
+                  }
+                }}
+              />
+            </div>
+          )}
+          <div className="p-5">
+            <div className="mb-4 inline-flex rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-white/55">
+              {getRechargeTypeLabel(item.type)}
+            </div>
+            <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
+            <div className="mt-3 text-2xl font-black text-cyan-300">{option.price}</div>
+            <p className="mt-4 text-sm leading-6 text-white/68">{getRechargeOptionSeoText(item, option)}</p>
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-green-500 px-5 py-3 text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400 sm:w-auto"
+            >
+              Pedir por WhatsApp
+            </a>
+          </div>
+        </article>
+      );
+    };
 
     const renderRechargeDetailPage = (item) => {
       const theme = getServiceTheme(item, item.type);
@@ -2785,6 +2809,7 @@ export default function SkayGamesWeb() {
       setNewRechargeName("");
       setNewRechargeDescription("");
       setNewRechargeImage("");
+      setNewRechargeOptionImage("");
       setNewRechargeType("recarga");
       setNewRechargeOptions([{ id: Date.now(), label: "", price: "", description: "" }]);
       setRechargeFormMessage("");
@@ -2808,6 +2833,7 @@ export default function SkayGamesWeb() {
         name: newRechargeName.trim(),
         description: newRechargeDescription.trim(),
         image: newRechargeImage.trim(),
+        optionImage: newRechargeOptionImage.trim(),
         options: newRechargeOptions.map((option, index) => ({
           id: option.id || index + 1,
           label: option.label.trim(),
@@ -2836,6 +2862,7 @@ export default function SkayGamesWeb() {
       setNewRechargeName(item.name);
       setNewRechargeDescription(item.description || "");
       setNewRechargeImage(item.image);
+      setNewRechargeOptionImage(item.optionImage || item.priceImage || "");
       setNewRechargeType(item.type);
       setNewRechargeOptions(item.options.map((option) => ({ description: "", ...option })));
       setRechargeFormMessage("Editando ítem. Guardá para actualizar.");
@@ -3184,6 +3211,15 @@ export default function SkayGamesWeb() {
                         <option value="streaming">Streaming</option>
                       </select>
                       <input value={newRechargeImage} onChange={(e) => setNewRechargeImage(e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
+                      <input value={newRechargeOptionImage} onChange={(e) => setNewRechargeOptionImage(e.target.value)} placeholder="URL de imagen para tarjetas de precios (opcional, ej: diamante Free Fire)" className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-white outline-none md:col-span-2" />
+                      {newRechargeOptionImage && (
+                        <div className="flex items-center gap-4 rounded-2xl border border-cyan-400/15 bg-black/40 p-3 md:col-span-2">
+                          <img src={newRechargeOptionImage} alt="Vista previa imagen de precios" className="h-20 w-20 rounded-xl bg-black object-contain p-2" />
+                          <div className="text-xs text-white/55">
+                            Esta imagen se mostrará en todas las tarjetas de precios de este servicio.
+                          </div>
+                        </div>
+                      )}
                       <textarea
                         value={newRechargeDescription}
                         onChange={(e) => setNewRechargeDescription(e.target.value)}
@@ -3229,11 +3265,17 @@ export default function SkayGamesWeb() {
                         <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
                           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                             <div className="flex items-center gap-4">
-                              <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-cover bg-black" />
+                              <div className="flex gap-2">
+                                <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-cover bg-black" />
+                                {(item.optionImage || item.priceImage) && (
+                                  <img src={item.optionImage || item.priceImage} alt={`${item.name} precios`} className="h-20 w-20 rounded-2xl object-contain bg-black p-2" />
+                                )}
+                              </div>
                               <div>
                                 <div className="text-base font-bold text-white">{item.name}</div>
                                 <div className="mt-1 text-sm text-white/60">{item.type === "recarga" ? "Recarga" : "Streaming"}</div>
                                 <div className="mt-1 text-xs text-cyan-300">URL: /recargas-servicios/{getRechargeItemRouteSlug(item)}</div>
+                                {(item.optionImage || item.priceImage) && <div className="mt-1 text-xs text-white/45">Imagen de precios cargada</div>}
                                 {item.description && <div className="mt-2 max-w-2xl text-sm text-white/55">{item.description}</div>}
                                 <div className="mt-3 flex flex-wrap gap-2">
                                   {item.options.map((option) => (
