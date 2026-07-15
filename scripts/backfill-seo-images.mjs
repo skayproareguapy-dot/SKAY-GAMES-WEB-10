@@ -8,6 +8,13 @@ const rootDir = path.resolve(__dirname, "..");
 const bucketName = process.env.SEO_IMAGES_BUCKET || "seo-images";
 const siteUrl = "https://www.skaygames.com.py";
 const fallbackSeoImage = `${siteUrl}/og-skay-games.svg`;
+const productSelectFields = [
+  "id",
+  "nombre",
+  "imagen",
+  "seo_image_url",
+  "seo_image_migration_status",
+].join(",");
 
 const loadEnvFile = async (fileName) => {
   try {
@@ -86,7 +93,7 @@ const main = async () => {
 
   const { data: products, error } = await supabase
     .from("productos")
-    .select("id,nombre,imagen,seo_image_url,seo_image_migration_status,updated_at")
+    .select(productSelectFields)
     .eq("activo", true)
     .order("id", { ascending: true });
 
@@ -107,7 +114,6 @@ const main = async () => {
         imagen: product.imagen,
         seo_image_url: product.seo_image_url,
         seo_image_migration_status: product.seo_image_migration_status,
-        updated_at: product.updated_at,
       })),
       null,
       2

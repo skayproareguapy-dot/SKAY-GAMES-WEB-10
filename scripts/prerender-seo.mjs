@@ -335,13 +335,9 @@ const getPublicImageUrl = (image) => {
   return `${siteUrl}/${value.replace(/^\/+/, "")}`;
 };
 
-const isPublicHttpImage = (image) => /^https?:\/\//i.test(String(image || "").trim());
-
 const getProductSeoImageUrl = (product = {}) => {
-  const explicitSeoImage = product.seoImageUrl || product.publicImageUrl || product.seo_image_url || product.public_image_url;
-  if (isPublicHttpImage(explicitSeoImage)) return getPublicImageUrl(explicitSeoImage);
-  if (isPublicHttpImage(product.image)) return getPublicImageUrl(product.image);
-  return defaultSeoImage;
+  const seoImage = product.seoImageUrl ?? product.seo_image_url ?? "";
+  return getPublicImageUrl(seoImage || defaultSeoImage);
 };
 
 const getCanonicalUrl = (route = "/") => `${siteUrl}${route.startsWith("/") ? route : `/${route}`}`;
@@ -471,7 +467,7 @@ const mapSupabaseProduct = (item) => ({
   category: (item.categoria || "juegos").toLowerCase(),
   platform: item.plataforma ? String(item.plataforma).toLowerCase() : undefined,
   image: item.imagen || defaultSeoImage,
-  seoImageUrl: item.seo_image_url || item.public_image_url || "",
+  seoImageUrl: item.seo_image_url || "",
   publicImageUrl: item.public_image_url || item.seo_image_url || "",
   description: item.descripcion || "",
   condition: normalizeCondition(item.condicion || "Nuevo"),
@@ -517,8 +513,11 @@ const loadProducts = async () => {
   try {
     const rows = await fetchSupabaseJson("productos?select=*&activo=eq.true&order=id.desc");
     if (Array.isArray(rows) && rows.length) {
-      console.log(`[seo] Productos cargados desde Supabase: ${rows.length}`);
-      return rows.map(mapSupabaseProduct);
+      const products = rows.map(mapSupabaseProduct);
+      const productsWithSeoImage = products.filter((product) => Boolean(product.seoImageUrl)).length;
+      console.log(`[seo] Productos cargados desde Supabase: ${products.length}`);
+      console.log(`[seo] Productos con seo_image_url: ${productsWithSeoImage}/${products.length}`);
+      return products;
     }
   } catch (error) {
     console.warn(`[seo] No se pudieron cargar productos desde Supabase: ${error.message}`);

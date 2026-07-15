@@ -725,7 +725,7 @@ export default function SkayGamesWeb() {
     category: (item.categoria || "juegos").toLowerCase(),
     platform: item.plataforma ? String(item.plataforma).toLowerCase() : undefined,
     image: item.imagen || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-    seoImageUrl: item.seo_image_url || item.public_image_url || "",
+    seoImageUrl: item.seo_image_url || "",
     publicImageUrl: item.public_image_url || item.seo_image_url || "",
     description: item.descripcion || "",
     message: `Hola! Quiero consultar por ${item.nombre || "este producto"}.`,
@@ -983,10 +983,8 @@ export default function SkayGamesWeb() {
   const isPublicHttpImage = (image) => /^https?:\/\//i.test(String(image || "").trim());
 
   const getProductSeoImageUrl = (product = {}) => {
-    const explicitSeoImage = product.seoImageUrl || product.publicImageUrl || product.seo_image_url || product.public_image_url;
-    if (isPublicHttpImage(explicitSeoImage)) return getPublicImageUrl(explicitSeoImage);
-    if (isPublicHttpImage(product.image)) return getPublicImageUrl(product.image);
-    return defaultSeoImage;
+    const seoImage = product.seoImageUrl ?? product.seo_image_url ?? "";
+    return getPublicImageUrl(seoImage || defaultSeoImage);
   };
 
   const getDisplayImageUrl = (image) => {
