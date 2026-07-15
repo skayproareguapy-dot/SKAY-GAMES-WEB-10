@@ -1135,23 +1135,59 @@ export default function SkayGamesWeb() {
 
     try {
       const payload = typeof valor === "string" ? valor : JSON.stringify(valor);
+      const baseRow = { clave, valor: payload };
+      const rowWithTimestamp = { ...baseRow, updated_at: new Date().toISOString() };
+      const getErrorMessage = (error) =>
+        error?.message || error?.details || error?.hint || `No se pudo guardar ${clave} en Supabase.`;
 
-      const { error } = await supabase
+      const firstSave = await supabase
         .from(WEB_CONTENT_TABLE)
-        .upsert(
-          [{ clave, valor: payload, updated_at: new Date().toISOString() }],
-          { onConflict: "clave" }
-        );
+        .upsert([rowWithTimestamp], { onConflict: "clave" });
 
-      if (error) {
-        console.error(`Error guardando ${clave} en Supabase:`, error);
-        return { ok: false, message: `No se pudo guardar ${clave} en Supabase.` };
+      if (!firstSave.error) {
+        return { ok: true };
       }
 
-      return { ok: true };
+      console.warn(`Primer intento falló guardando ${clave}:`, firstSave.error);
+
+      const secondSave = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .upsert([baseRow], { onConflict: "clave" });
+
+      if (!secondSave.error) {
+        return { ok: true };
+      }
+
+      console.warn(`Segundo intento falló guardando ${clave}:`, secondSave.error);
+
+      const updateResult = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .update({ valor: payload })
+        .eq("clave", clave)
+        .select("clave")
+        .maybeSingle();
+
+      if (!updateResult.error && updateResult.data?.clave) {
+        return { ok: true };
+      }
+
+      if (updateResult.error) {
+        console.warn(`Actualización falló guardando ${clave}:`, updateResult.error);
+      }
+
+      const insertResult = await supabase
+        .from(WEB_CONTENT_TABLE)
+        .insert([baseRow]);
+
+      if (!insertResult.error) {
+        return { ok: true };
+      }
+
+      console.error(`Error guardando ${clave} en Supabase:`, insertResult.error);
+      return { ok: false, message: `No se pudo guardar ${clave}: ${getErrorMessage(insertResult.error)}` };
     } catch (err) {
       console.error(`Error inesperado guardando ${clave}:`, err);
-      return { ok: false, message: `Ocurrió un error guardando ${clave}.` };
+      return { ok: false, message: `Ocurrió un error guardando ${clave}: ${err?.message || "error inesperado"}.` };
     }
   };
 
