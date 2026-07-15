@@ -592,6 +592,17 @@ export default function SkayGamesWeb() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const navigateToRechargeOption = (item, option) => {
+    const routeSlug = `${getRechargeItemRouteSlug(item)}/${getRechargeOptionRouteSlug(option)}`;
+    const nextPath = `/${RECHARGE_ROUTE_PREFIX}${routeSlug}`;
+    setActiveProductSlug("");
+    setActiveRechargeSlug(routeSlug);
+    window.history.pushState(null, "", nextPath);
+    setActivePage("recargas-servicios");
+    setSelectedProduct(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const getHeroSlideTargetPage = (slide) => {
     const text = `${slide?.title || ""} ${slide?.subtitle || ""} ${slide?.buttonText || ""} ${slide?.message || ""}`.toLowerCase();
 
@@ -775,12 +786,36 @@ export default function SkayGamesWeb() {
     return readableSlug || slugify(item.id || "servicio");
   };
 
+  const getRechargeOptionSlugText = (option = {}) =>
+    String(option.slug || option.label || option.id || "opcion")
+      .replace(/💎/g, " diamantes ")
+      .replace(/\bdiamante\b/gi, "diamantes");
+
+  const getRechargeOptionRouteSlug = (option = {}) => {
+    const readableSlug = slugify(getRechargeOptionSlugText(option));
+    return readableSlug || slugify(option.id || "opcion");
+  };
+
+  const getRechargeRouteParts = (routeSlug = "") => {
+    const [itemSlug = "", optionSlug = ""] = String(routeSlug || "").split("/").filter(Boolean);
+    return { itemSlug, optionSlug };
+  };
+
   const findRechargeItemByRouteSlug = (routeSlug) =>
     editableRechargeItems.find((item) => {
+      const { itemSlug: comparableRouteSlug } = getRechargeRouteParts(routeSlug);
       const itemSlug = getRechargeItemRouteSlug(item);
       const legacySlug = slugify([item.id, item.name].filter(Boolean).join(" "));
       const idSlug = slugify(item.id || "");
-      return routeSlug === itemSlug || routeSlug === legacySlug || (idSlug && routeSlug.startsWith(`${idSlug}-`));
+      return comparableRouteSlug === itemSlug || comparableRouteSlug === legacySlug || (idSlug && comparableRouteSlug.startsWith(`${idSlug}-`));
+    });
+
+  const findRechargeOptionByRouteSlug = (item = {}, optionSlug = "") =>
+    (item.options || []).find((option) => {
+      const routeSlug = getRechargeOptionRouteSlug(option);
+      const legacySlug = slugify([option.id, option.label].filter(Boolean).join(" "));
+      const idSlug = slugify(option.id || "");
+      return optionSlug === routeSlug || optionSlug === legacySlug || (idSlug && optionSlug.startsWith(`${idSlug}-`));
     });
 
   const getRechargeSeoTitle = (item = {}) => {
@@ -1034,9 +1069,19 @@ export default function SkayGamesWeb() {
     setActivePage(product.category || "home");
   }, [activeProductSlug, productsData]);
 
+  const activeRechargeRouteParts = useMemo(
+    () => getRechargeRouteParts(activeRechargeSlug),
+    [activeRechargeSlug]
+  );
+
   const activeRechargeItem = useMemo(
-    () => (activeRechargeSlug ? findRechargeItemByRouteSlug(activeRechargeSlug) : null),
-    [activeRechargeSlug, editableRechargeItems]
+    () => (activeRechargeRouteParts.itemSlug ? findRechargeItemByRouteSlug(activeRechargeRouteParts.itemSlug) : null),
+    [activeRechargeRouteParts.itemSlug, editableRechargeItems]
+  );
+
+  const activeRechargeOption = useMemo(
+    () => (activeRechargeItem && activeRechargeRouteParts.optionSlug ? findRechargeOptionByRouteSlug(activeRechargeItem, activeRechargeRouteParts.optionSlug) : null),
+    [activeRechargeItem, activeRechargeRouteParts.optionSlug]
   );
 
   const parseWebContentValue = (value, fallback) => {
@@ -1490,6 +1535,13 @@ export default function SkayGamesWeb() {
     }
 
     if (activeRechargeItem) {
+      if (activeRechargeOption) {
+        document.title = `${getRechargeOptionTitle(activeRechargeItem, activeRechargeOption)} | SKAY GAMES`;
+        metaDescription.setAttribute("content", getRechargeOptionSeoText(activeRechargeItem, activeRechargeOption).slice(0, 160));
+        canonical.setAttribute("href", getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}/${getRechargeOptionRouteSlug(activeRechargeOption)}`));
+        return;
+      }
+
       document.title = `${getRechargeSeoTitle(activeRechargeItem)} | SKAY GAMES`;
       metaDescription.setAttribute("content", getRechargeSeoDescription(activeRechargeItem).slice(0, 160));
       canonical.setAttribute("href", getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}`));
@@ -1502,7 +1554,7 @@ export default function SkayGamesWeb() {
       pageContent?.description || "SKAY GAMES - videojuegos, consolas, accesorios, recargas y servicios."
     );
     canonical.setAttribute("href", getCanonicalUrl(activePage === "home" ? "/" : `/${activePage}`));
-  }, [selectedProduct, activeRechargeItem, pageContent, activePage]);
+  }, [selectedProduct, activeRechargeItem, activeRechargeOption, pageContent, activePage]);
 
   const featuredProducts = productsData
     .filter((product) => product.isFeatured || product.featured)
@@ -2081,6 +2133,7 @@ export default function SkayGamesWeb() {
     const renderRechargeOptionCard = (item, option, theme) => {
       const optionImage = getRechargeOptionImage(item);
       const methodLabel = getRechargeMethodLabel(item);
+      const optionPath = `/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(item)}/${getRechargeOptionRouteSlug(option)}`;
 
       return (
         <article key={option.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07]">
@@ -2113,16 +2166,67 @@ export default function SkayGamesWeb() {
             <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
             <div className="mt-3 text-2xl font-black text-cyan-300">{option.price}</div>
             <p className="mt-4 text-sm leading-6 text-white/68">{getRechargeOptionSeoText(item, option)}</p>
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-5 inline-flex w-full items-center justify-center rounded-2xl bg-green-500 px-5 py-3 text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400 sm:w-auto"
-            >
-              Pedir por WhatsApp
-            </a>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <a
+                href={optionPath}
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigateToRechargeOption(item, option);
+                }}
+                className={`inline-flex w-full items-center justify-center rounded-2xl border bg-black/35 px-5 py-3 text-sm font-black transition ${theme.button}`}
+              >
+                Ver detalles
+              </a>
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center rounded-2xl bg-green-500 px-5 py-3 text-sm font-black text-black shadow-lg shadow-green-500/15 transition hover:scale-[1.02] hover:bg-green-400"
+              >
+                Pedir por WhatsApp
+              </a>
+            </div>
           </div>
         </article>
+      );
+    };
+
+    const renderRechargeOptionDetailPage = (item, option) => {
+      const theme = getServiceTheme(item, item.type);
+      const methodLabel = getRechargeMethodLabel(item);
+      const optionImage = getRechargeOptionImage(item);
+
+      return (
+        <>
+          <section className={`relative overflow-hidden border-b border-white/10 bg-gradient-to-br ${theme.card} py-20`}>
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-80 blur-3xl`} />
+            <div className="relative mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1fr_360px] lg:items-center">
+              <div>
+                <button onClick={() => navigateToRechargeItem(item)} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver a {item.name}</button>
+                <div className="flex flex-wrap gap-2">
+                  <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{getRechargeTypeLabel(item.type)}</span>
+                  {methodLabel && <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{methodLabel}</span>}
+                </div>
+                <h1 className="mt-5 text-4xl font-black md:text-6xl">{getRechargeOptionTitle(item, option)}</h1>
+                <div className="mt-4 text-3xl font-black text-cyan-300">{option.price}</div>
+                <p className="mt-5 max-w-3xl text-lg leading-8 text-white/75">{getRechargeOptionSeoText(item, option)}</p>
+                <a
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-7 inline-flex rounded-2xl bg-green-500 px-6 py-4 font-black text-black shadow-lg shadow-green-500/20 transition hover:scale-[1.02] hover:bg-green-400"
+                >
+                  Pedir esta opción por WhatsApp
+                </a>
+              </div>
+              {optionImage && (
+                <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
+                  <img src={optionImage} alt={getRechargeOptionTitle(item, option)} className="max-h-48 w-full object-contain" />
+                </div>
+              )}
+            </div>
+          </section>
+        </>
       );
     };
 
@@ -2175,6 +2279,20 @@ export default function SkayGamesWeb() {
             <p className="mt-4 text-white/65">Puede que haya cambiado el nombre o que ya no esté disponible.</p>
           </section>
         );
+      }
+
+      if (activeRechargeRouteParts.optionSlug && !activeRechargeOption) {
+        return (
+          <section className="mx-auto max-w-4xl px-6 py-24 text-center">
+            <button onClick={() => navigateToRechargeItem(activeRechargeItem)} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver a {activeRechargeItem.name}</button>
+            <h1 className="text-4xl font-black">No encontramos esa opción</h1>
+            <p className="mt-4 text-white/65">Puede que ese precio haya cambiado o que ya no esté disponible.</p>
+          </section>
+        );
+      }
+
+      if (activeRechargeOption) {
+        return renderRechargeOptionDetailPage(activeRechargeItem, activeRechargeOption);
       }
 
       return renderRechargeDetailPage(activeRechargeItem);
