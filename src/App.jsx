@@ -99,7 +99,9 @@ export default function SkayGamesWeb() {
     { id: "gamer", title: "Accesorios Gamer" },
   ];
 
-  const catalogPageIds = ["consolas", "juegos", "accesorios", "recargas-servicios"];
+  const DIGITAL_OFFERS_PAGE_ID = "juegos-digitales-oferta";
+
+  const catalogPageIds = ["consolas", "juegos", "accesorios", "recargas-servicios", DIGITAL_OFFERS_PAGE_ID];
 
   const catalogCategoryOptions = [
     { value: "all", label: "Todos" },
@@ -131,6 +133,7 @@ export default function SkayGamesWeb() {
     { value: "recent", label: "Más recientes" },
     { value: "price-asc", label: "Menor precio" },
     { value: "price-desc", label: "Mayor precio" },
+    { value: "discount-desc", label: "Mayor descuento" },
     { value: "featured", label: "Destacados primero" },
   ];
 
@@ -472,6 +475,7 @@ export default function SkayGamesWeb() {
   const [newProductCategory, setNewProductCategory] = useState("juegos");
   const [newProductPlatform, setNewProductPlatform] = useState("ps4");
   const [newProductCondition, setNewProductCondition] = useState("Nuevo");
+  const [newProductFormat, setNewProductFormat] = useState("fisico");
   const [newProductImage, setNewProductImage] = useState("");
   const [newProductDescription, setNewProductDescription] = useState("");
   const [newProductFeatured, setNewProductFeatured] = useState(false);
@@ -533,10 +537,10 @@ export default function SkayGamesWeb() {
     if (!catalogPageIds.includes(activePage)) return;
 
     setCatalogSearchTerm("");
-    setCatalogCategoryFilter(activePage);
+    setCatalogCategoryFilter(activePage === DIGITAL_OFFERS_PAGE_ID ? "juegos" : activePage);
     setCatalogPlatformFilter("all");
     setCatalogConditionFilter("all");
-    setCatalogSortOrder("recent");
+    setCatalogSortOrder(activePage === DIGITAL_OFFERS_PAGE_ID ? "discount-desc" : "recent");
   }, [activePage]);
 
   const navigateTo = (page) => {
@@ -636,6 +640,27 @@ export default function SkayGamesWeb() {
     return value || "Nuevo";
   };
 
+  const getProductFormat = (...values) => {
+    const text = normalizeCatalogText(values.filter(Boolean).join(" "));
+    if (text.includes("digital")) return "digital";
+    if (text.includes("fisico") || text.includes("físico")) return "fisico";
+    return "";
+  };
+
+  const getProductFormatLabel = (product = {}) => {
+    const format = product.format || getProductFormat(product.formato, product.tipo, product.rawCondition, product.condition, product.description, product.name);
+    if (format === "digital") return "Digital";
+    if (format === "fisico") return "Físico";
+    return "";
+  };
+
+  const buildStoredCondition = (condition, format) => {
+    const cleanCondition = normalizeCondition(condition);
+    if (format === "digital") return `${cleanCondition} Digital`;
+    if (format === "fisico") return cleanCondition;
+    return cleanCondition;
+  };
+
   const mapSupabaseProduct = (item) => ({
     id: item.id,
     name: item.nombre || "Sin nombre",
@@ -649,7 +674,9 @@ export default function SkayGamesWeb() {
     isRecent: Boolean(item.recent),
     createdAt: item.created_at ? String(item.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10),
     originalPrice: item.precio_anterior != null ? String(item.precio_anterior) : "",
+    rawCondition: item.condicion || "Nuevo",
     condition: normalizeCondition(item.condicion || "Nuevo"),
+    format: getProductFormat(item.formato, item.tipo, item.formato_producto, item.tipo_producto, item.condicion, item.descripcion, item.nombre),
     stock: item.stock ?? 0,
   });
 
@@ -721,6 +748,72 @@ export default function SkayGamesWeb() {
     return `${idSlug}-${textSlug || "producto"}`;
   };
 
+  const hasProductOffer = (product = {}) => {
+    const originalPrice = parseSafePrice(product.originalPrice);
+    const currentPrice = parseSafePrice(product.price);
+    if (originalPrice !== null && currentPrice !== null) return originalPrice > currentPrice;
+    return Boolean(String(product.originalPrice || "").trim());
+  };
+
+  const getProductDiscountAmount = (product = {}) => {
+    const originalPrice = parseSafePrice(product.originalPrice);
+    const currentPrice = parseSafePrice(product.price);
+    if (originalPrice === null || currentPrice === null) return 0;
+    return Math.max(0, originalPrice - currentPrice);
+  };
+
+  const isDigitalOfferProduct = (product = {}) => {
+    const platform = normalizeCatalogText(product.platform);
+    return (
+      getComparableCategory(product.category) === "juegos" &&
+      ["ps4", "ps5"].includes(platform) &&
+      getProductFormatLabel(product) === "Digital" &&
+      hasProductOffer(product)
+    );
+  };
+
+  const compactText = (value) => String(value || "").replace(/\s+/g, " ").trim();
+
+  const getProductAutomaticSeoText = (product = {}) => {
+    const name = compactText(product.name) || "este producto";
+    const category = getComparableCategory(product.category);
+    const platform = product.platform ? String(product.platform).toUpperCase() : "";
+    const state = normalizeCondition(product.condition || product.rawCondition || "Nuevo").toLowerCase();
+    const format = getProductFormatLabel(product).toLowerCase();
+
+    if (category === "juegos") {
+      const platformText = platform ? ` para ${platform}` : "";
+      const details = [format ? `en formato ${format}` : "", state ? `en estado ${state}` : ""].filter(Boolean);
+      const availabilityText = details.length ? `Disponible ${details.join(", ")}.` : "Disponible según stock.";
+      return compactText(
+        `Comprá ${name}${platformText} en SKAY GAMES Paraguay. ${availabilityText} Consultá precio, stock y disponibilidad desde nuestra tienda online.`
+      );
+    }
+
+    if (category === "consolas") {
+      const stateText = state ? ` ${state}` : "";
+      return compactText(
+        `Encontrá ${name} en SKAY GAMES Paraguay. Consola${stateText} disponible según stock. Consultá precio, características y disponibilidad desde nuestra tienda online.`
+      );
+    }
+
+    if (category === "accesorios") {
+      const platformText = platform ? ` para ${platform}` : "";
+      const stateText = state ? ` ${state}` : "";
+      return compactText(
+        `Comprá ${name}${platformText} en SKAY GAMES Paraguay. Accesorio${stateText} disponible según stock. Consultá precio y disponibilidad.`
+      );
+    }
+
+    if (category === "recargas-servicios") {
+      return compactText(
+        `Solicitá ${name} en SKAY GAMES Paraguay. Servicio digital rápido y seguro, disponible según las condiciones publicadas. Consultá precio y disponibilidad.`
+      );
+    }
+
+    return compactText(`Consultá por ${name} en SKAY GAMES Paraguay. Verificá precio, stock y disponibilidad desde nuestra tienda online.`);
+  };
+
   const getProductSearchText = (product = {}) =>
     normalizeCatalogText(
       [
@@ -730,6 +823,8 @@ export default function SkayGamesWeb() {
         getProductCategoryLabel(product.category),
         product.platform,
         product.condition,
+        product.rawCondition,
+        getProductFormatLabel(product),
         product.slug,
         product.url,
         getProductRouteSlug(product),
@@ -775,6 +870,11 @@ export default function SkayGamesWeb() {
     const platformText = product.platform ? ` para ${String(product.platform).toUpperCase()}` : "";
     const categoryText = !product.platform && product.category ? ` - ${getProductCategoryLabel(product.category)}` : "";
     return `${product.name || "Producto"}${platformText}${categoryText} en SKAY GAMES`;
+  };
+
+  const getCanonicalUrl = (path = "/") => {
+    const cleanPath = path && path !== "home" ? path : "/";
+    return `https://skaygames.com.py${cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`}`;
   };
 
   const loadProductsFromSupabase = async () => {
@@ -1183,6 +1283,11 @@ export default function SkayGamesWeb() {
         subtitle: "Recargas y servicios digitales.",
         description: "Consultá por recargas para juegos y plataformas de streaming.",
       },
+      [DIGITAL_OFFERS_PAGE_ID]: {
+        title: "Juegos digitales en oferta para PS4 y PS5",
+        subtitle: "Precios especiales en juegos digitales.",
+        description: "Encontrá juegos digitales para PS4 y PS5 a precios especiales en SKAY GAMES. Consultá las ofertas disponibles, el stock y las condiciones de entrega.",
+      },
     };
     return pages[activePage] ?? null;
   }, [activePage]);
@@ -1193,25 +1298,28 @@ export default function SkayGamesWeb() {
     const metaDescription =
       document.querySelector('meta[name="description"]') ||
       document.head.appendChild(document.createElement("meta"));
+    const canonical =
+      document.querySelector('link[rel="canonical"]') ||
+      document.head.appendChild(document.createElement("link"));
 
     metaDescription.setAttribute("name", "description");
+    canonical.setAttribute("rel", "canonical");
 
     if (selectedProduct) {
       const seoTitle = getProductSeoTitle(selectedProduct);
       document.title = `${seoTitle} | SKAY GAMES`;
-      metaDescription.setAttribute(
-        "content",
-        (selectedProduct.description || `Consultá por ${seoTitle}, precio, stock y disponibilidad en SKAY GAMES.`).slice(0, 160)
-      );
+      metaDescription.setAttribute("content", getProductAutomaticSeoText(selectedProduct).slice(0, 160));
+      canonical.setAttribute("href", getCanonicalUrl(`/producto/${getProductRouteSlug(selectedProduct)}`));
       return;
     }
 
-    document.title = "SKAY GAMES";
+    document.title = pageContent?.title ? `${pageContent.title} | SKAY GAMES` : "SKAY GAMES";
     metaDescription.setAttribute(
       "content",
       pageContent?.description || "SKAY GAMES - videojuegos, consolas, accesorios, recargas y servicios."
     );
-  }, [selectedProduct, pageContent]);
+    canonical.setAttribute("href", getCanonicalUrl(activePage === "home" ? "/" : `/${activePage}`));
+  }, [selectedProduct, pageContent, activePage]);
 
   const featuredProducts = productsData
     .filter((product) => product.isFeatured || product.featured)
@@ -1233,14 +1341,21 @@ export default function SkayGamesWeb() {
       .filter((product) => {
         const productCategory = getComparableCategory(product?.category);
         const productCondition = normalizeCondition(product?.condition).toLowerCase();
+        const matchesDigitalOfferPage = activePage !== DIGITAL_OFFERS_PAGE_ID || isDigitalOfferProduct(product);
         const matchesCategory = catalogCategoryFilter === "all" || productCategory === catalogCategoryFilter;
         const matchesPlatform = matchesPlatformFilter(product, catalogPlatformFilter);
         const matchesCondition = catalogConditionFilter === "all" || productCondition === catalogConditionFilter;
         const matchesSearch = !searchText || getProductSearchText(product).includes(searchText);
 
-        return matchesCategory && matchesPlatform && matchesCondition && matchesSearch;
+        return matchesDigitalOfferPage && matchesCategory && matchesPlatform && matchesCondition && matchesSearch;
       })
       .sort((a, b) => {
+        if (catalogSortOrder === "discount-desc") {
+          const discountDiff = getProductDiscountAmount(b) - getProductDiscountAmount(a);
+          if (discountDiff !== 0) return discountDiff;
+          return getProductTimestamp(b) - getProductTimestamp(a);
+        }
+
         if (catalogSortOrder === "featured") {
           const featuredDiff = getFeaturedScore(b) - getFeaturedScore(a);
           if (featuredDiff !== 0) return featuredDiff;
@@ -1260,7 +1375,7 @@ export default function SkayGamesWeb() {
 
         return getProductTimestamp(b) - getProductTimestamp(a);
       });
-  }, [productsData, catalogSearchTerm, catalogCategoryFilter, catalogPlatformFilter, catalogConditionFilter, catalogSortOrder]);
+  }, [productsData, activePage, catalogSearchTerm, catalogCategoryFilter, catalogPlatformFilter, catalogConditionFilter, catalogSortOrder]);
 
   const productsToShow = activePage === "home" ? featuredProducts : catalogProducts;
 
@@ -1290,6 +1405,11 @@ export default function SkayGamesWeb() {
 
   const renderProductDetailModal = () => {
     if (!selectedProduct) return null;
+
+    const selectedProductSeoText = getProductAutomaticSeoText(selectedProduct);
+    const selectedProductManualDescription =
+      selectedProduct.description || "Consultá por este producto para recibir detalles específicos, stock y disponibilidad.";
+    const selectedProductFormatLabel = getProductFormatLabel(selectedProduct);
 
     return (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm" onClick={closeProductDetail}>
@@ -1331,6 +1451,11 @@ export default function SkayGamesWeb() {
                     {normalizeCondition(selectedProduct.condition)}
                   </span>
                 )}
+                {selectedProductFormatLabel && (
+                  <span className="rounded-full border border-cyan-400/20 bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">
+                    {selectedProductFormatLabel}
+                  </span>
+                )}
               </div>
 
               <h3 className="text-3xl font-black md:text-4xl">{selectedProduct.name}</h3>
@@ -1351,9 +1476,16 @@ export default function SkayGamesWeb() {
                 )}
               </div>
 
-              <p className="mt-5 text-base leading-7 text-white/70">
-                {selectedProduct.description || "Consultá por este producto para recibir todos los detalles, stock y disponibilidad."}
-              </p>
+              <div className="mt-6 rounded-3xl border border-cyan-400/15 bg-cyan-400/[0.06] p-5 text-base leading-7 text-cyan-50/85">
+                {selectedProductSeoText}
+              </div>
+
+              <div className="mt-6">
+                <h4 className="text-lg font-black text-white">Sobre el producto</h4>
+                <p className="mt-3 text-base leading-7 text-white/70">
+                  {selectedProductManualDescription}
+                </p>
+              </div>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
@@ -1446,6 +1578,11 @@ export default function SkayGamesWeb() {
           {product.category === "juegos" && product.condition && (
             <span className={`rounded-full px-3 py-1 text-xs font-bold border ${normalizeCondition(product.condition) === "Nuevo" ? "bg-emerald-500/15 text-emerald-300 border-emerald-400/20" : "bg-amber-500/15 text-amber-300 border-amber-400/20"}`}>
               {normalizeCondition(product.condition)}
+            </span>
+          )}
+          {getProductFormatLabel(product) && (
+            <span className="rounded-full border border-cyan-400/20 bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-200">
+              {getProductFormatLabel(product)}
             </span>
           )}
         </div>
@@ -1556,7 +1693,9 @@ export default function SkayGamesWeb() {
       ) : (
         <div className="rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-black via-slate-950 to-black px-6 py-12 text-center shadow-[0_0_36px_rgba(34,211,238,0.08)]">
           <p className="mx-auto max-w-2xl text-lg font-bold text-white/80">
-            No encontramos productos con esos filtros. Probá con otra búsqueda o consultanos por WhatsApp.
+            {activePage === DIGITAL_OFFERS_PAGE_ID
+              ? "No encontramos juegos digitales en oferta con esos filtros. Probá con PS4, PS5 o consultanos por WhatsApp."
+              : "No encontramos productos con esos filtros. Probá con otra búsqueda o consultanos por WhatsApp."}
           </p>
           <a
             href={whatsappLink}
@@ -1571,60 +1710,67 @@ export default function SkayGamesWeb() {
     </section>
   );
 
+  const applyGamesPlatformFilter = (platformId = "all") => {
+    setCatalogSearchTerm("");
+    setCatalogCategoryFilter("juegos");
+    setCatalogPlatformFilter(platformId);
+    setCatalogConditionFilter("all");
+    setCatalogSortOrder("recent");
+  };
+
   const renderGamesPlatformSelector = () => (
     <section className="mx-auto max-w-7xl px-6 pt-10">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h3 className="text-3xl font-black md:text-4xl">Elegí tu categoría</h3>
-          <p className="mt-3 text-white/65">Entrá directo al catálogo según consola y estado del juego.</p>
+          <h3 className="text-3xl font-black md:text-4xl">Subcategorías de juegos</h3>
+          <p className="mt-3 text-white/65">Entrá directo a PS4, PS5 o a las ofertas digitales sin salir de Juegos.</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={() => setSelectedGamePlatform("all")}
+            onClick={() => applyGamesPlatformFilter("all")}
             className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
-              selectedGamePlatform === "all"
+              catalogPlatformFilter === "all"
                 ? "border-cyan-400/50 bg-cyan-400 text-black"
                 : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
             }`}
           >
-            Todas las consolas
+            Todos los juegos
           </button>
-          {[
-            ["all", "Todos"],
-            ["nuevo", "Juegos nuevos"],
-            ["usado", "Juegos usados"],
-          ].map(([value, label]) => (
-            <button
-              key={value}
-              onClick={() => setSelectedGameCondition(value)}
-              className={`rounded-2xl border px-5 py-3 text-sm font-bold transition ${
-                selectedGameCondition === value
-                  ? "border-emerald-400/50 bg-emerald-400 text-black"
-                  : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
         </div>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {editableGamePlatforms.map((platform) => (
           <button
             key={platform.id}
-            onClick={() => setSelectedGamePlatform(platform.id)}
+            onClick={() => applyGamesPlatformFilter(platform.id)}
             className={`overflow-hidden rounded-3xl border text-left shadow-2xl transition hover:-translate-y-1 ${
-              selectedGamePlatform === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
+              catalogPlatformFilter === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
             }`}
           >
             <img src={platform.image} alt={platform.title} className="h-64 w-full object-contain bg-black p-4" />
             <div className="p-6">
-              <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Consola</div>
+              <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Juegos</div>
               <h4 className="text-3xl font-black">{platform.title}</h4>
               <p className="mt-3 text-white/70">{platform.description}</p>
             </div>
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => navigateTo(DIGITAL_OFFERS_PAGE_ID)}
+          className="group overflow-hidden rounded-3xl border border-cyan-400/25 bg-gradient-to-br from-cyan-950/35 via-black to-purple-950/25 text-left shadow-2xl transition hover:-translate-y-1 hover:border-cyan-300/55 hover:shadow-[0_0_34px_rgba(34,211,238,0.2)]"
+        >
+          <div className="flex h-64 items-center justify-center bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.28),transparent_55%),linear-gradient(135deg,rgba(2,6,23,1),rgba(0,0,0,1))]">
+            <div className="rounded-full border border-cyan-300/35 bg-black/45 px-5 py-3 text-sm font-black uppercase tracking-[0.18em] text-cyan-200 shadow-[0_0_32px_rgba(34,211,238,0.16)]">
+              PS4 · PS5
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="mb-3 inline-block rounded-full bg-red-500/15 px-3 py-1 text-xs font-bold text-red-300">Oferta digital</div>
+            <h4 className="text-3xl font-black">Juegos digitales en oferta</h4>
+            <p className="mt-3 text-white/70">Juegos digitales para PS4 y PS5 a precios especiales.</p>
+          </div>
+        </button>
       </div>
     </section>
   );
@@ -2150,11 +2296,13 @@ export default function SkayGamesWeb() {
         recent: newProductRecent,
       };
 
+      const productCondition = categoria === "juegos" ? buildStoredCondition(newProductCondition, newProductFormat) : "Disponible";
+
       const payloadCompleto = {
         ...payloadBasico,
         plataforma: usaPlataforma ? newProductPlatform : null,
         precio_anterior: parseNumericPrice(newProductOriginalPrice),
-        condicion: categoria === "juegos" ? newProductCondition : "Disponible",
+        condicion: productCondition,
       };
 
       try {
@@ -2214,6 +2362,7 @@ export default function SkayGamesWeb() {
         setNewProductCategory("juegos");
         setNewProductPlatform("ps4");
         setNewProductCondition("Nuevo");
+        setNewProductFormat("fisico");
         setNewProductImage("");
         setNewProductDescription("");
         setNewProductFeatured(false);
@@ -2232,6 +2381,7 @@ export default function SkayGamesWeb() {
       setNewProductCategory(product.category || "juegos");
       setNewProductPlatform(product.platform || "ps4");
       setNewProductCondition(normalizeCondition(product.condition || "Nuevo"));
+      setNewProductFormat(product.format || getProductFormat(product.rawCondition, product.condition, product.description, product.name) || "fisico");
       setNewProductImage(product.image || "");
       setNewProductDescription(product.description || "");
       setNewProductFeatured(!!product.isFeatured);
@@ -2292,6 +2442,7 @@ export default function SkayGamesWeb() {
       setNewProductCategory("juegos");
       setNewProductPlatform("ps4");
       setNewProductCondition("Nuevo");
+      setNewProductFormat("fisico");
       setNewProductImage("");
       setNewProductDescription("");
       setNewProductFeatured(false);
@@ -2429,7 +2580,7 @@ export default function SkayGamesWeb() {
                     <div className="grid gap-4 md:grid-cols-2">
                       <input value={newProductName} onChange={(e) => setNewProductName(e.target.value)} placeholder="Nombre de la mercadería" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <input value={newProductPrice} onChange={(e) => setNewProductPrice(e.target.value)} placeholder="Precio actual (ej: Gs. 150.000)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
-                      <input value={newProductOriginalPrice} onChange={(e) => setNewProductOriginalPrice(e.target.value)} placeholder="Precio anterior / normal (opcional)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                      <input value={newProductOriginalPrice} onChange={(e) => setNewProductOriginalPrice(e.target.value)} placeholder="Precio anterior / normal (marca En oferta)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <select value={newProductCategory} onChange={(e) => setNewProductCategory(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
                         <option value="juegos">Juegos</option>
                         <option value="consolas">Consolas</option>
@@ -2447,10 +2598,17 @@ export default function SkayGamesWeb() {
                         <option value="Nuevo">Juego nuevo</option>
                         <option value="Usado">Juego usado</option>
                       </select>
+                      <select value={newProductFormat} onChange={(e) => setNewProductFormat(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
+                        <option value="fisico">Formato físico</option>
+                        <option value="digital">Formato digital</option>
+                      </select>
+                      <div className="rounded-2xl border border-cyan-400/15 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100 md:col-span-2">
+                        Para aparecer en “Juegos digitales en oferta”: categoría Juegos, plataforma PS4 o PS5, formato Digital y precio anterior cargado.
+                      </div>
                       <textarea
                         value={newProductDescription}
                         onChange={(e) => setNewProductDescription(e.target.value)}
-                        placeholder="Detalles / descripción para SEO. Se muestra solo al tocar Ver detalles."
+                        placeholder="Descripción manual del producto. El bloque SEO se genera automáticamente."
                         className="min-h-[120px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2"
                       />
                       <div className="space-y-3 md:col-span-2">
@@ -2500,6 +2658,8 @@ export default function SkayGamesWeb() {
                               category: newProductCategory,
                               platform: ["juegos", "accesorios"].includes(newProductCategory) ? newProductPlatform : undefined,
                               condition: newProductCategory === "juegos" ? newProductCondition : "Disponible",
+                              rawCondition: newProductCategory === "juegos" ? buildStoredCondition(newProductCondition, newProductFormat) : "Disponible",
+                              format: newProductFormat,
                               image: newProductImage,
                               description: newProductDescription.trim(),
                               message: `Hola! Quiero consultar por ${newProductName.trim() || "este producto"}.`,
@@ -2526,7 +2686,9 @@ export default function SkayGamesWeb() {
                             <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-contain bg-black p-1" />
                             <div>
                               <div className="text-base font-bold text-white">{item.name}</div>
-                              <div className="mt-1 text-sm text-white/60">{item.category}{item.platform ? ` · ${item.platform.toUpperCase()}` : ""}</div>
+                              <div className="mt-1 text-sm text-white/60">
+                                {item.category}{item.platform ? ` · ${item.platform.toUpperCase()}` : ""}{getProductFormatLabel(item) ? ` · ${getProductFormatLabel(item)}` : ""}{hasProductOffer(item) ? " · Oferta" : ""}
+                              </div>
                               <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
                                 {item.originalPrice && <span className="text-white/40 line-through">{item.originalPrice}</span>}
                                 <span className="text-cyan-300 font-bold">{item.price}</span>
@@ -2785,7 +2947,7 @@ export default function SkayGamesWeb() {
 
         <div className="relative mx-auto flex h-full max-w-7xl items-center justify-between gap-4 px-6">
           <button onClick={() => navigateTo("home")} className="text-left">
-            <h1 className="text-3xl font-extrabold tracking-tighter text-cyan-400">SKAY GAMES</h1>
+            <div className="text-3xl font-extrabold tracking-tighter text-cyan-400">SKAY GAMES</div>
             <p className="text-xs text-white/60">Videojuegos, consolas, accesorios y servicios</p>
           </button>
 
@@ -2887,11 +3049,12 @@ export default function SkayGamesWeb() {
               <div className="mx-auto max-w-7xl px-6">
                 <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
                 <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: {activePage === "home" ? "/" : `/${activePage}`}</span>
-                <h2 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h2>
+                <h1 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h1>
                 <p className="mt-4 text-xl text-white/75">{pageContent?.subtitle}</p>
                 <p className="mt-4 max-w-3xl text-white/65">{pageContent?.description}</p>
               </div>
             </section>
+            {activePage === "juegos" && renderGamesPlatformSelector()}
             {renderCatalogFilters()}
             {renderCatalogProductsSection()}
           </>
@@ -2909,7 +3072,7 @@ export default function SkayGamesWeb() {
                 <div className="absolute inset-0 z-10 mx-auto flex max-w-7xl items-center px-6">
                   <div className="max-w-2xl">
                     <span className="mb-4 inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Tu tienda gamer en Areguá - Caacupemí</span>
-                    <h2 className="text-4xl font-black leading-tight md:text-6xl">{editableHeroSlides[currentSlide].title}</h2>
+                    <h1 className="text-4xl font-black leading-tight md:text-6xl">{editableHeroSlides[currentSlide].title}</h1>
                     <p className="mt-5 text-lg text-white/75 md:text-xl">{editableHeroSlides[currentSlide].subtitle}</p>
                     <div className="mt-8 flex flex-wrap gap-4">
                       <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(editableHeroSlides[currentSlide].message)}`} target="_blank" rel="noreferrer" className="rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">{editableHeroSlides[currentSlide].buttonText}</a>
