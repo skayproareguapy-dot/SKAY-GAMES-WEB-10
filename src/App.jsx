@@ -391,6 +391,7 @@ export default function SkayGamesWeb() {
       id: 1,
       type: "recarga",
       name: "Free Fire",
+      rechargeMethod: "via-id",
       image: "https://i.imgur.com/QLBhjxz.png",
       options: [
         { id: 1, label: "100 💎", price: "Gs. 10.000" },
@@ -403,6 +404,7 @@ export default function SkayGamesWeb() {
       id: 2,
       type: "recarga",
       name: "Call of Duty Mobile",
+      rechargeMethod: "via-id",
       image: "https://i.imgur.com/YRrshz6.png",
       options: [
         { id: 1, label: "80 CP", price: "Gs. 10.000" },
@@ -502,6 +504,7 @@ export default function SkayGamesWeb() {
   const [newRechargeImage, setNewRechargeImage] = useState("");
   const [newRechargeOptionImage, setNewRechargeOptionImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
+  const [newRechargeMethod, setNewRechargeMethod] = useState("via-id");
   const [newRechargeOptions, setNewRechargeOptions] = useState([{ id: Date.now(), label: "", price: "", description: "" }]);
   const [rechargeFormMessage, setRechargeFormMessage] = useState("");
   const [editingRechargeId, setEditingRechargeId] = useState(null);
@@ -748,6 +751,25 @@ export default function SkayGamesWeb() {
 
   const getRechargeTypeLabel = (type) => (type === "streaming" ? "Streaming" : "Recarga");
 
+  const getRechargeMethodValue = (item = {}) => {
+    const rawMethod = normalizeCatalogText(item.rechargeMethod || item.method || item.via || "");
+    if (rawMethod.includes("cuenta")) return "via-cuenta";
+    if (rawMethod.includes("id")) return "via-id";
+    return "";
+  };
+
+  const getRechargeMethodLabel = (item = {}) => {
+    const method = getRechargeMethodValue(item);
+    if (method === "via-id") return "Vía ID";
+    if (method === "via-cuenta") return "Vía cuenta";
+    return "";
+  };
+
+  const getRechargeMethodSeoText = (item = {}) => {
+    const label = getRechargeMethodLabel(item);
+    return label ? label.toLowerCase() : "";
+  };
+
   const getRechargeItemRouteSlug = (item = {}) => {
     const readableSlug = slugify(item.slug || item.name);
     return readableSlug || slugify(item.id || "servicio");
@@ -763,7 +785,9 @@ export default function SkayGamesWeb() {
 
   const getRechargeSeoTitle = (item = {}) => {
     const typeLabel = getRechargeTypeLabel(item.type).toLowerCase();
-    return `${typeLabel === "streaming" ? "Servicio" : "Recarga"} ${item.name || "digital"} en SKAY GAMES Paraguay`;
+    const methodText = getRechargeMethodSeoText(item);
+    const methodSuffix = methodText ? ` ${methodText}` : "";
+    return `${typeLabel === "streaming" ? "Servicio" : "Recarga"} ${item.name || "digital"}${methodSuffix} en SKAY GAMES Paraguay`;
   };
 
   const getRechargeSeoDescription = (item = {}) => {
@@ -776,17 +800,22 @@ export default function SkayGamesWeb() {
       );
     }
 
+    const methodText = getRechargeMethodSeoText(item);
+    const methodSentence = methodText ? ` Modalidad: ${methodText}.` : "";
+
     return compactText(
-      `Recargá ${name} en SKAY GAMES Paraguay. Elegí el paquete disponible, verificá precio y solicitá la recarga de forma rápida por WhatsApp.`
+      `Recargá ${name} en SKAY GAMES Paraguay.${methodSentence} Elegí el paquete disponible, verificá precio y solicitá la recarga de forma rápida por WhatsApp.`
     );
   };
 
   const getRechargeOptionTitle = (item = {}, option = {}) => {
     const name = compactText(item.name) || "servicio";
     const optionLabel = compactText(option.label) || "opción";
+    const methodText = getRechargeMethodSeoText(item);
+    const methodSuffix = methodText ? ` ${methodText}` : "";
     return item.type === "streaming"
       ? `${name} - ${optionLabel}`
-      : `Recarga ${name} ${optionLabel}`;
+      : `Recarga ${name} ${optionLabel}${methodSuffix}`;
   };
 
   const getRechargeOptionSeoText = (item = {}, option = {}) => {
@@ -2015,6 +2044,7 @@ export default function SkayGamesWeb() {
 
     const renderRechargeOptionCard = (item, option, theme) => {
       const optionImage = getRechargeOptionImage(item);
+      const methodLabel = getRechargeMethodLabel(item);
 
       return (
         <article key={option.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07]">
@@ -2034,8 +2064,15 @@ export default function SkayGamesWeb() {
             </div>
           )}
           <div className="p-5">
-            <div className="mb-4 inline-flex rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-white/55">
-              {getRechargeTypeLabel(item.type)}
+            <div className="mb-4 flex flex-wrap gap-2">
+              <span className="inline-flex rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-white/55">
+                {getRechargeTypeLabel(item.type)}
+              </span>
+              {methodLabel && (
+                <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black uppercase tracking-[0.12em] ${theme.badge}`}>
+                  {methodLabel}
+                </span>
+              )}
             </div>
             <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
             <div className="mt-3 text-2xl font-black text-cyan-300">{option.price}</div>
@@ -2056,6 +2093,7 @@ export default function SkayGamesWeb() {
     const renderRechargeDetailPage = (item) => {
       const theme = getServiceTheme(item, item.type);
       const typeLabel = getRechargeTypeLabel(item.type);
+      const methodLabel = getRechargeMethodLabel(item);
 
       return (
         <>
@@ -2070,6 +2108,7 @@ export default function SkayGamesWeb() {
                 <div className="mt-6 flex flex-wrap gap-3 text-sm text-white/60">
                   <span className="rounded-full border border-white/10 bg-black/30 px-4 py-2">{item.options?.length || 0} opciones disponibles</span>
                   <span className="rounded-full border border-white/10 bg-black/30 px-4 py-2">Atención por WhatsApp</span>
+                  {methodLabel && <span className={`rounded-full border px-4 py-2 font-black ${theme.badge}`}>{methodLabel}</span>}
                 </div>
               </div>
               <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
@@ -2107,6 +2146,7 @@ export default function SkayGamesWeb() {
 
     const renderCard = (item, type) => {
       const theme = getServiceTheme(item, type);
+      const methodLabel = getRechargeMethodLabel(item);
 
       return (
         <div
@@ -2141,6 +2181,12 @@ export default function SkayGamesWeb() {
                   ? "Elegí el paquete y pedilo directo por WhatsApp."
                   : "Planes disponibles, renovación y cuentas nuevas."}
               </p>
+
+              {methodLabel && (
+                <div className={`mt-4 inline-flex rounded-2xl border px-4 py-2 text-xs font-black uppercase tracking-[0.14em] ${theme.badge}`}>
+                  {methodLabel}
+                </div>
+              )}
 
               <a
                 href={`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(item)}`}
@@ -2811,6 +2857,7 @@ export default function SkayGamesWeb() {
       setNewRechargeImage("");
       setNewRechargeOptionImage("");
       setNewRechargeType("recarga");
+      setNewRechargeMethod("via-id");
       setNewRechargeOptions([{ id: Date.now(), label: "", price: "", description: "" }]);
       setRechargeFormMessage("");
     };
@@ -2830,6 +2877,7 @@ export default function SkayGamesWeb() {
       const payload = {
         id: editingRechargeId || Date.now(),
         type: newRechargeType,
+        rechargeMethod: newRechargeType === "recarga" ? newRechargeMethod : "",
         name: newRechargeName.trim(),
         description: newRechargeDescription.trim(),
         image: newRechargeImage.trim(),
@@ -2864,6 +2912,7 @@ export default function SkayGamesWeb() {
       setNewRechargeImage(item.image);
       setNewRechargeOptionImage(item.optionImage || item.priceImage || "");
       setNewRechargeType(item.type);
+      setNewRechargeMethod(getRechargeMethodValue(item) || "via-id");
       setNewRechargeOptions(item.options.map((option) => ({ description: "", ...option })));
       setRechargeFormMessage("Editando ítem. Guardá para actualizar.");
     };
@@ -3210,6 +3259,12 @@ export default function SkayGamesWeb() {
                         <option value="recarga">Recarga</option>
                         <option value="streaming">Streaming</option>
                       </select>
+                      {newRechargeType === "recarga" && (
+                        <select value={newRechargeMethod} onChange={(e) => setNewRechargeMethod(e.target.value)} className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-white outline-none md:col-span-2">
+                          <option value="via-id">Recarga vía ID</option>
+                          <option value="via-cuenta">Recarga vía cuenta</option>
+                        </select>
+                      )}
                       <input value={newRechargeImage} onChange={(e) => setNewRechargeImage(e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-2" />
                       <input value={newRechargeOptionImage} onChange={(e) => setNewRechargeOptionImage(e.target.value)} placeholder="URL de imagen para tarjetas de precios (opcional, ej: diamante Free Fire)" className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-white outline-none md:col-span-2" />
                       {newRechargeOptionImage && (
@@ -3274,6 +3329,7 @@ export default function SkayGamesWeb() {
                               <div>
                                 <div className="text-base font-bold text-white">{item.name}</div>
                                 <div className="mt-1 text-sm text-white/60">{item.type === "recarga" ? "Recarga" : "Streaming"}</div>
+                                {getRechargeMethodLabel(item) && <div className="mt-1 text-xs font-black text-cyan-300">{getRechargeMethodLabel(item)}</div>}
                                 <div className="mt-1 text-xs text-cyan-300">URL: /recargas-servicios/{getRechargeItemRouteSlug(item)}</div>
                                 {(item.optionImage || item.priceImage) && <div className="mt-1 text-xs text-white/45">Imagen de precios cargada</div>}
                                 {item.description && <div className="mt-2 max-w-2xl text-sm text-white/55">{item.description}</div>}
