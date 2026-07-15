@@ -6,9 +6,8 @@ export default function SkayGamesWeb() {
   const whatsappLink = `https://wa.me/${whatsappNumber}`;
   const siteName = "SKAY GAMES";
   const brandName = "SKAY GAMES Paraguay";
-  const siteUrl = "https://skaygames.com.py";
-  const defaultSeoImage =
-    "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
+  const siteUrl = "https://www.skaygames.com.py";
+  const defaultSeoImage = `${siteUrl}/og-skay-games.svg`;
   
 
   const heroSlides = [
@@ -971,9 +970,11 @@ export default function SkayGamesWeb() {
   const getPublicImageUrl = (image) => {
     const value = String(image || "").trim();
     if (!value) return defaultSeoImage;
-    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith("data:image/")) return defaultSeoImage;
+    if (value.startsWith("//")) return `https:${value}`;
+    if (/^https?:\/\//i.test(value)) return value.replace(/^http:\/\//i, "https://");
     if (value.startsWith("/")) return `${siteUrl}${value}`;
-    return defaultSeoImage;
+    return `${siteUrl}/${value.replace(/^\/+/, "")}`;
   };
 
   const getOptimizedImageUrl = (image) => {
