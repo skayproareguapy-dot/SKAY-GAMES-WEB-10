@@ -4,6 +4,11 @@ import { supabase } from "./supabase";
 export default function SkayGamesWeb() {
   const whatsappNumber = "595991224388";
   const whatsappLink = `https://wa.me/${whatsappNumber}`;
+  const siteName = "SKAY GAMES";
+  const brandName = "SKAY GAMES Paraguay";
+  const siteUrl = "https://skaygames.com.py";
+  const defaultSeoImage =
+    "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
   
 
   const heroSlides = [
@@ -933,26 +938,83 @@ export default function SkayGamesWeb() {
 
   const compactText = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
+  const getSeoCategoryName = (category) => {
+    const labels = {
+      juegos: "Juegos",
+      consolas: "Consolas",
+      accesorios: "Accesorios",
+      "recargas-servicios": "Recargas y servicios",
+      [DIGITAL_OFFERS_PAGE_ID]: "Juegos digitales en oferta",
+    };
+    return labels[getComparableCategory(category)] || labels[category] || "Productos";
+  };
+
+  const getProductSeoPriceSentence = (product = {}) => {
+    const numericPrice = parseSafePrice(product.price);
+    if (numericPrice === null) return "Consultá precio y disponibilidad.";
+    return `Precio: Gs. ${numericPrice.toLocaleString("es-PY")}. Consultá stock y disponibilidad.`;
+  };
+
+  const getProductPlatformLabel = (product = {}) =>
+    product.platform ? String(product.platform).toUpperCase() : "";
+
+  const getProductConditionLabel = (product = {}) =>
+    normalizeCondition(product.condition || product.rawCondition || "Nuevo");
+
+  const getProductImageAlt = (product = {}) =>
+    compactText(
+      [product.name, getProductPlatformLabel(product) || getSeoCategoryName(product.category)]
+        .filter(Boolean)
+        .join(" ")
+    ) || "Producto SKAY GAMES";
+
+  const getPublicImageUrl = (image) => {
+    const value = String(image || "").trim();
+    if (!value) return defaultSeoImage;
+    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith("/")) return `${siteUrl}${value}`;
+    return defaultSeoImage;
+  };
+
+  const getOptimizedImageUrl = (image) => {
+    const value = String(image || "").trim();
+    if (!value) return defaultSeoImage;
+    if (value.includes("images.unsplash.com") && !value.includes("auto=format")) {
+      return `${value}${value.includes("?") ? "&" : "?"}auto=format`;
+    }
+    return value;
+  };
+
   const getProductAutomaticSeoText = (product = {}) => {
     const name = compactText(product.name) || "este producto";
     const category = getComparableCategory(product.category);
-    const platform = product.platform ? String(product.platform).toUpperCase() : "";
-    const state = normalizeCondition(product.condition || product.rawCondition || "Nuevo").toLowerCase();
-    const format = getProductFormatLabel(product).toLowerCase();
+    const platform = getProductPlatformLabel(product);
+    const state = getProductConditionLabel(product).toLowerCase();
+    const formatLabel = getProductFormatLabel(product);
+    const format = formatLabel.toLowerCase();
+    const priceSentence = getProductSeoPriceSentence(product);
+    const isDigitalOffer = isDigitalOfferProduct(product);
+
+    if (isDigitalOffer) {
+      const platformText = platform ? ` para ${platform}` : "";
+      return compactText(
+        `Comprá ${name}${platformText} en oferta digital en ${brandName}. Juego digital disponible según stock y condiciones. ${priceSentence}`
+      );
+    }
 
     if (category === "juegos") {
       const platformText = platform ? ` para ${platform}` : "";
       const details = [format ? `en formato ${format}` : "", state ? `en estado ${state}` : ""].filter(Boolean);
       const availabilityText = details.length ? `Disponible ${details.join(", ")}.` : "Disponible según stock.";
       return compactText(
-        `Comprá ${name}${platformText} en SKAY GAMES Paraguay. ${availabilityText} Consultá precio, stock y disponibilidad desde nuestra tienda online.`
+        `Comprá ${name}${platformText} en ${brandName}. ${availabilityText} ${priceSentence}`
       );
     }
 
     if (category === "consolas") {
       const stateText = state ? ` ${state}` : "";
       return compactText(
-        `Encontrá ${name} en SKAY GAMES Paraguay. Consola${stateText} disponible según stock. Consultá precio, características y disponibilidad desde nuestra tienda online.`
+        `Encontrá ${name} en ${brandName}. Consola${stateText} disponible según stock. ${priceSentence}`
       );
     }
 
@@ -960,17 +1022,17 @@ export default function SkayGamesWeb() {
       const platformText = platform ? ` para ${platform}` : "";
       const stateText = state ? ` ${state}` : "";
       return compactText(
-        `Comprá ${name}${platformText} en SKAY GAMES Paraguay. Accesorio${stateText} disponible según stock. Consultá precio y disponibilidad.`
+        `Comprá ${name}${platformText} en ${brandName}. Accesorio gamer${stateText} disponible según stock. ${priceSentence}`
       );
     }
 
     if (category === "recargas-servicios") {
       return compactText(
-        `Solicitá ${name} en SKAY GAMES Paraguay. Servicio digital rápido y seguro, disponible según las condiciones publicadas. Consultá precio y disponibilidad.`
+        `Solicitá ${name} en ${brandName}. Recarga o servicio digital rápido y seguro, disponible según las condiciones publicadas. ${priceSentence}`
       );
     }
 
-    return compactText(`Consultá por ${name} en SKAY GAMES Paraguay. Verificá precio, stock y disponibilidad desde nuestra tienda online.`);
+    return compactText(`Consultá por ${name} en ${brandName}. ${priceSentence}`);
   };
 
   const getProductSearchText = (product = {}) =>
@@ -1026,14 +1088,39 @@ export default function SkayGamesWeb() {
     });
 
   const getProductSeoTitle = (product = {}) => {
-    const platformText = product.platform ? ` para ${String(product.platform).toUpperCase()}` : "";
-    const categoryText = !product.platform && product.category ? ` - ${getProductCategoryLabel(product.category)}` : "";
-    return `${product.name || "Producto"}${platformText}${categoryText} en SKAY GAMES`;
+    const name = compactText(product.name) || "Producto";
+    const platform = getProductPlatformLabel(product);
+    const category = getComparableCategory(product.category);
+    const condition = getProductConditionLabel(product);
+    const formatLabel = getProductFormatLabel(product);
+
+    if (isDigitalOfferProduct(product)) {
+      return compactText(`${name}${platform ? ` ${platform}` : ""} | Juego digital en oferta | ${brandName}`);
+    }
+
+    if (category === "juegos") {
+      const formatText = formatLabel ? `Juego ${formatLabel}` : "Juego";
+      return compactText(`${name}${platform ? ` ${platform}` : ""} | ${formatText} | ${brandName}`);
+    }
+
+    if (category === "consolas") {
+      return compactText(`${name} | Consola ${condition} | ${brandName}`);
+    }
+
+    if (category === "accesorios") {
+      return compactText(`${name}${platform ? ` ${platform}` : ""} | Accesorio gamer | ${brandName}`);
+    }
+
+    if (category === "recargas-servicios") {
+      return compactText(`${name} | Recarga o servicio digital | ${brandName}`);
+    }
+
+    return compactText(`${name} | ${getSeoCategoryName(category)} | ${brandName}`);
   };
 
   const getCanonicalUrl = (path = "/") => {
     const cleanPath = path && path !== "home" ? path : "/";
-    return `https://skaygames.com.py${cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`}`;
+    return `${siteUrl}${cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`}`;
   };
 
   const loadProductsFromSupabase = async () => {
@@ -1485,24 +1572,24 @@ export default function SkayGamesWeb() {
   const pageContent = useMemo(() => {
     const pages = {
       consolas: {
-        title: "Consolas",
+        title: "Consolas en Paraguay",
         subtitle: "Modelos nuevos y usados, listos para jugar.",
-        description: "Explorá las consolas disponibles en SKAY GAMES y consultá por stock, precio y combos por WhatsApp.",
+        description: "Comprá consolas PlayStation, Xbox y otras opciones gamer en SKAY GAMES Paraguay. Consultá modelos nuevos o usados, stock, precio y combos disponibles.",
       },
       juegos: {
-        title: "Juegos",
+        title: "Juegos PS4, PS5 y más",
         subtitle: "Físicos y digitales para varias plataformas.",
-        description: "Descubrí títulos disponibles para PS3, PS4 y PS5.",
+        description: "Encontrá juegos físicos y digitales para PS4, PS5 y otras plataformas en SKAY GAMES Paraguay. Revisá novedades, ofertas, usados y nuevos según stock.",
       },
       accesorios: {
-        title: "Accesorios",
+        title: "Accesorios gamer",
         subtitle: "Mandos, auriculares, cables y más.",
-        description: "Equipá tu setup con accesorios gamer y consultá rápido por disponibilidad.",
+        description: "Comprá accesorios gamer, controles, auriculares, cables, bases y repuestos para consolas en SKAY GAMES Paraguay. Consultá disponibilidad por WhatsApp.",
       },
       "recargas-servicios": {
         title: "Recargas y servicios",
         subtitle: "Recargas y servicios digitales.",
-        description: "Consultá por recargas para juegos y plataformas de streaming.",
+        description: "Recargas de juegos, diamantes, monedas, puntos y servicios digitales en SKAY GAMES Paraguay. Elegí el paquete, revisá precios y consultá por WhatsApp.",
       },
       [DIGITAL_OFFERS_PAGE_ID]: {
         title: "Juegos digitales en oferta para PS4 y PS5",
@@ -1513,48 +1600,240 @@ export default function SkayGamesWeb() {
     return pages[activePage] ?? null;
   }, [activePage]);
 
+  const isKnownPage =
+    activePage === "home" ||
+    activePage === "admin" ||
+    catalogPageIds.includes(activePage);
+
+  const getPageImageForSeo = (page) => {
+    if (page === DIGITAL_OFFERS_PAGE_ID) return editableDigitalOffersCard.image || digitalOffersCard.image;
+    const categoryImage = editableCategories.find((item) => item.id === page)?.image;
+    if (categoryImage) return categoryImage;
+    return editableHeroSlides?.[0]?.image || defaultSeoImage;
+  };
+
+  const getProductBreadcrumbItems = (product = {}) => {
+    const category = getComparableCategory(product.category);
+    const categoryLabel = getSeoCategoryName(category);
+    const platform = getProductPlatformLabel(product);
+
+    return [
+      { label: "Inicio", path: "/", page: "home" },
+      { label: categoryLabel, path: `/${category}`, page: category },
+      ...(platform ? [{ label: platform, path: `/${category}`, page: category }] : []),
+      { label: product.name || "Producto", path: `/producto/${getProductRouteSlug(product)}` },
+    ];
+  };
+
+  const getRechargeBreadcrumbItems = (item, option) => [
+    { label: "Inicio", path: "/", page: "home" },
+    { label: "Recargas y servicios", path: "/recargas-servicios", page: "recargas-servicios" },
+    ...(item
+      ? [
+          {
+            label: item.name || "Servicio",
+            path: `/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(item)}`,
+            rechargeItem: item,
+          },
+        ]
+      : []),
+    ...(option
+      ? [
+          {
+            label: compactText(option.label) || "Opción",
+            path: `/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(item)}/${getRechargeOptionRouteSlug(option)}`,
+          },
+        ]
+      : []),
+  ];
+
+  const getPageBreadcrumbItems = () => {
+    if (selectedProduct) return getProductBreadcrumbItems(selectedProduct);
+    if (activeRechargeItem) return getRechargeBreadcrumbItems(activeRechargeItem, activeRechargeOption);
+    if (activePage === "home") return [{ label: "Inicio", path: "/", page: "home" }];
+    if (pageContent) {
+      return [
+        { label: "Inicio", path: "/", page: "home" },
+        { label: pageContent.title, path: `/${activePage}`, page: activePage },
+      ];
+    }
+    return [
+      { label: "Inicio", path: "/", page: "home" },
+      { label: "Página no encontrada", path: `/${activePage || ""}` },
+    ];
+  };
+
+  const buildOfferSchema = (price, url) => {
+    const priceValue = parseSafePrice(price);
+    const offer = {
+      "@type": "Offer",
+      url,
+      priceCurrency: "PYG",
+      availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: siteName,
+      },
+    };
+
+    if (priceValue !== null) {
+      offer.price = priceValue;
+    }
+
+    return offer;
+  };
+
+  const buildProductStructuredData = (product, url) => ({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name || "Producto SKAY GAMES",
+    description: getProductAutomaticSeoText(product),
+    image: [getPublicImageUrl(product.image)],
+    brand: {
+      "@type": "Brand",
+      name: siteName,
+    },
+    category: getSeoCategoryName(product.category),
+    offers: buildOfferSchema(product.price, url),
+  });
+
+  const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
+
+  const buildRechargeStructuredData = (item, option, url) => {
+    const title = option ? getRechargeOptionTitle(item, option) : getRechargeSeoTitle(item);
+    const description = option ? getRechargeOptionSeoText(item, option) : getRechargeSeoDescription(item);
+    const image = option ? getRechargeOptionImage(item) : item?.image;
+    const price = option?.price || item?.price || "";
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: title,
+      description,
+      image: [getPublicImageUrl(image)],
+      brand: {
+        "@type": "Brand",
+        name: siteName,
+      },
+      category: item?.type === "streaming" ? "Servicios digitales" : "Recargas",
+      offers: buildOfferSchema(price, url),
+    };
+  };
+
+  const buildBreadcrumbStructuredData = (items = []) => ({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: getCanonicalUrl(item.path || "/"),
+    })),
+  });
+
   useEffect(() => {
     if (typeof document === "undefined") return;
 
-    const metaDescription =
-      document.querySelector('meta[name="description"]') ||
-      document.head.appendChild(document.createElement("meta"));
-    const canonical =
-      document.querySelector('link[rel="canonical"]') ||
-      document.head.appendChild(document.createElement("link"));
-
-    metaDescription.setAttribute("name", "description");
-    canonical.setAttribute("rel", "canonical");
-
-    if (selectedProduct) {
-      const seoTitle = getProductSeoTitle(selectedProduct);
-      document.title = `${seoTitle} | SKAY GAMES`;
-      metaDescription.setAttribute("content", getProductAutomaticSeoText(selectedProduct).slice(0, 160));
-      canonical.setAttribute("href", getCanonicalUrl(`/producto/${getProductRouteSlug(selectedProduct)}`));
-      return;
-    }
-
-    if (activeRechargeItem) {
-      if (activeRechargeOption) {
-        document.title = `${getRechargeOptionTitle(activeRechargeItem, activeRechargeOption)} | SKAY GAMES`;
-        metaDescription.setAttribute("content", getRechargeOptionSeoText(activeRechargeItem, activeRechargeOption).slice(0, 160));
-        canonical.setAttribute("href", getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}/${getRechargeOptionRouteSlug(activeRechargeOption)}`));
+    const truncateSeoText = (value, maxLength = 160) => compactText(value).slice(0, maxLength);
+    const setMetaName = (name, content) => {
+      if (!content) return;
+      const meta =
+        document.querySelector(`meta[name="${name}"]`) ||
+        document.head.appendChild(document.createElement("meta"));
+      meta.setAttribute("name", name);
+      meta.setAttribute("content", content);
+    };
+    const setMetaProperty = (property, content) => {
+      if (!content) return;
+      const meta =
+        document.querySelector(`meta[property="${property}"]`) ||
+        document.head.appendChild(document.createElement("meta"));
+      meta.setAttribute("property", property);
+      meta.setAttribute("content", content);
+    };
+    const setJsonLd = (id, data) => {
+      const existing = document.getElementById(id);
+      if (!data) {
+        existing?.remove();
         return;
       }
 
-      document.title = `${getRechargeSeoTitle(activeRechargeItem)} | SKAY GAMES`;
-      metaDescription.setAttribute("content", getRechargeSeoDescription(activeRechargeItem).slice(0, 160));
-      canonical.setAttribute("href", getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}`));
-      return;
+      const script = existing || document.head.appendChild(document.createElement("script"));
+      script.id = id;
+      script.type = "application/ld+json";
+      script.textContent = JSON.stringify(data);
+    };
+
+    const canonical =
+      document.querySelector('link[rel="canonical"]') ||
+      document.head.appendChild(document.createElement("link"));
+    canonical.setAttribute("rel", "canonical");
+
+    let title = `${siteName} | Videojuegos, consolas y recargas en Paraguay`;
+    let description = "SKAY GAMES Paraguay - videojuegos, consolas, accesorios, recargas y servicios digitales.";
+    let canonicalUrl = getCanonicalUrl(activePage === "home" ? "/" : `/${activePage}`);
+    let image = getPublicImageUrl(getPageImageForSeo(activePage));
+    let structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteName,
+      url: siteUrl,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${siteUrl}/juegos?buscar={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    };
+
+    if (!isKnownPage) {
+      title = `Página no encontrada | ${brandName}`;
+      description = "No encontramos esa página en SKAY GAMES. Entrá a juegos, consolas, accesorios o recargas.";
+      canonicalUrl = getCanonicalUrl("/");
+      structuredData = null;
+    } else if (selectedProduct) {
+      title = getProductSeoTitle(selectedProduct);
+      description = getProductAutomaticSeoText(selectedProduct);
+      canonicalUrl = getCanonicalUrl(`/producto/${getProductRouteSlug(selectedProduct)}`);
+      image = getPublicImageUrl(selectedProduct.image);
+      structuredData = buildProductStructuredData(selectedProduct, canonicalUrl);
+    } else if (activeRechargeItem) {
+      if (activeRechargeOption) {
+        title = `${getRechargeOptionTitle(activeRechargeItem, activeRechargeOption)} | ${brandName}`;
+        description = getRechargeOptionSeoText(activeRechargeItem, activeRechargeOption);
+        canonicalUrl = getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}/${getRechargeOptionRouteSlug(activeRechargeOption)}`);
+        image = getPublicImageUrl(getRechargeOptionImage(activeRechargeItem));
+        structuredData = buildRechargeStructuredData(activeRechargeItem, activeRechargeOption, canonicalUrl);
+      } else {
+        title = `${getRechargeSeoTitle(activeRechargeItem)} | ${siteName}`;
+        description = getRechargeSeoDescription(activeRechargeItem);
+        canonicalUrl = getCanonicalUrl(`/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(activeRechargeItem)}`);
+        image = getPublicImageUrl(activeRechargeItem.image);
+        structuredData = buildRechargeStructuredData(activeRechargeItem, null, canonicalUrl);
+      }
+    } else if (pageContent) {
+      title = `${pageContent.title} | ${brandName}`;
+      description = pageContent.description;
+      canonicalUrl = getCanonicalUrl(activePage === "home" ? "/" : `/${activePage}`);
+      image = getPublicImageUrl(getPageImageForSeo(activePage));
     }
 
-    document.title = pageContent?.title ? `${pageContent.title} | SKAY GAMES` : "SKAY GAMES";
-    metaDescription.setAttribute(
-      "content",
-      pageContent?.description || "SKAY GAMES - videojuegos, consolas, accesorios, recargas y servicios."
-    );
-    canonical.setAttribute("href", getCanonicalUrl(activePage === "home" ? "/" : `/${activePage}`));
-  }, [selectedProduct, activeRechargeItem, activeRechargeOption, pageContent, activePage]);
+    const breadcrumbItems = getPageBreadcrumbItems();
+    document.title = title;
+    canonical.setAttribute("href", canonicalUrl);
+    setMetaName("description", truncateSeoText(description));
+    setMetaProperty("og:title", title);
+    setMetaProperty("og:description", truncateSeoText(description, 220));
+    setMetaProperty("og:image", image);
+    setMetaProperty("og:url", canonicalUrl);
+    setMetaProperty("og:type", selectedProduct || activeRechargeItem ? "product" : "website");
+    setMetaProperty("og:site_name", siteName);
+    setMetaName("twitter:card", "summary_large_image");
+    setMetaName("twitter:title", title);
+    setMetaName("twitter:description", truncateSeoText(description, 220));
+    setMetaName("twitter:image", image);
+    setJsonLd("skay-primary-schema", structuredData);
+    setJsonLd("skay-breadcrumb-schema", buildBreadcrumbStructuredData(breadcrumbItems));
+  }, [selectedProduct, activeRechargeItem, activeRechargeOption, pageContent, activePage, isKnownPage, editableCategories, editableHeroSlides, editableDigitalOffersCard]);
 
   const featuredProducts = productsData
     .filter((product) => product.isFeatured || product.featured)
@@ -1638,6 +1917,64 @@ export default function SkayGamesWeb() {
     }
   };
 
+  const handleBreadcrumbClick = (event, item) => {
+    event.preventDefault();
+    if (item.rechargeItem) {
+      navigateToRechargeItem(item.rechargeItem);
+      return;
+    }
+    if (item.page) {
+      navigateTo(item.page);
+    }
+  };
+
+  const renderBreadcrumbs = (items = getPageBreadcrumbItems(), className = "") => {
+    if (!items.length) return null;
+
+    return (
+      <nav aria-label="Breadcrumb" className={`flex flex-wrap items-center gap-2 text-sm text-white/55 ${className}`}>
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1;
+          return (
+            <span key={`${item.label}-${index}`} className="inline-flex items-center gap-2">
+              {isLast ? (
+                <span className="font-bold text-cyan-200">{item.label}</span>
+              ) : (
+                <a
+                  href={item.path || "/"}
+                  onClick={(event) => handleBreadcrumbClick(event, item)}
+                  className="transition hover:text-cyan-300"
+                >
+                  {item.label}
+                </a>
+              )}
+              {!isLast && <span className="text-white/25">/</span>}
+            </span>
+          );
+        })}
+      </nav>
+    );
+  };
+
+  const getRelatedProducts = (product = {}, limit = 4) => {
+    const category = getComparableCategory(product.category);
+    const platform = normalizeCatalogText(product.platform);
+    const selectedId = String(product.id ?? "");
+
+    return [...productsData]
+      .filter((item) => {
+        if (String(item.id ?? "") === selectedId) return false;
+        return getComparableCategory(item.category) === category;
+      })
+      .sort((a, b) => {
+        const aPlatform = normalizeCatalogText(a.platform) === platform ? 1 : 0;
+        const bPlatform = normalizeCatalogText(b.platform) === platform ? 1 : 0;
+        if (aPlatform !== bPlatform) return bPlatform - aPlatform;
+        return getProductTimestamp(b) - getProductTimestamp(a);
+      })
+      .slice(0, limit);
+  };
+
   const renderProductDetailModal = () => {
     if (!selectedProduct) return null;
 
@@ -1645,10 +1982,11 @@ export default function SkayGamesWeb() {
     const selectedProductManualDescription =
       selectedProduct.description || "Consultá por este producto para recibir detalles específicos, stock y disponibilidad.";
     const selectedProductFormatLabel = getProductFormatLabel(selectedProduct);
+    const relatedProducts = getRelatedProducts(selectedProduct);
 
     return (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-4 py-8 backdrop-blur-sm" onClick={closeProductDetail}>
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-950 via-black to-slate-900 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-950 via-black to-slate-900 shadow-2xl" onClick={(e) => e.stopPropagation()}>
           <button
             type="button"
             onClick={closeProductDetail}
@@ -1660,16 +1998,20 @@ export default function SkayGamesWeb() {
           <div className="grid gap-0 lg:grid-cols-[420px_1fr]">
             <div className="flex items-center justify-center bg-black p-6">
               <img
-                src={selectedProduct.image}
-                alt={selectedProduct.name}
+                src={getOptimizedImageUrl(selectedProduct.image)}
+                alt={getProductImageAlt(selectedProduct)}
+                loading="lazy"
+                decoding="async"
                 className="max-h-[420px] w-full object-contain"
                 onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
+                  e.currentTarget.src = defaultSeoImage;
                 }}
               />
             </div>
 
             <div className="p-8">
+              {renderBreadcrumbs(getProductBreadcrumbItems(selectedProduct), "mb-5")}
+
               <div className="mb-4 flex flex-wrap gap-2">
                 {selectedProduct.category && (
                   <span className="rounded-full border border-cyan-400/20 bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">
@@ -1739,6 +2081,37 @@ export default function SkayGamesWeb() {
                   Seguir viendo
                 </button>
               </div>
+
+              {relatedProducts.length > 0 && (
+                <div className="mt-8 border-t border-white/10 pt-6">
+                  <h4 className="text-lg font-black text-white">Productos relacionados</h4>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {relatedProducts.map((item) => (
+                      <button
+                        key={item.id ?? item.name}
+                        type="button"
+                        onClick={() => openProductDetail(item)}
+                        className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-left transition hover:border-cyan-300/35 hover:bg-cyan-400/10"
+                      >
+                        <img
+                          src={getOptimizedImageUrl(item.image)}
+                          alt={getProductImageAlt(item)}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-16 w-16 rounded-xl bg-black object-contain p-2"
+                          onError={(e) => {
+                            e.currentTarget.src = defaultSeoImage;
+                          }}
+                        />
+                        <span>
+                          <span className="block text-sm font-black text-white">{item.name}</span>
+                          <span className="mt-1 block text-xs font-bold text-cyan-300">{formatDisplayPrice(item.price)}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1778,11 +2151,13 @@ export default function SkayGamesWeb() {
         <div className="pointer-events-none absolute inset-x-12 bottom-8 h-10 rounded-full bg-cyan-300/25 blur-2xl opacity-70 transition duration-500 group-hover:opacity-100" />
         <div className="pointer-events-none absolute inset-x-10 top-8 h-12 rounded-full bg-purple-500/15 blur-2xl opacity-45 transition duration-500 group-hover:opacity-70" />
         <img
-          src={product.image}
-          alt={product.name}
+          src={getOptimizedImageUrl(product.image)}
+          alt={getProductImageAlt(product)}
+          loading="lazy"
+          decoding="async"
           className="relative z-10 h-64 w-full object-contain bg-transparent p-4 drop-shadow-[0_0_18px_rgba(34,211,238,0.22)] transition duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_28px_rgba(34,211,238,0.36)]"
           onError={(e) => {
-            e.currentTarget.src = "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80";
+            e.currentTarget.src = defaultSeoImage;
           }}
         />
       </div>
@@ -1982,7 +2357,7 @@ export default function SkayGamesWeb() {
               catalogPlatformFilter === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
             }`}
           >
-            <img src={platform.image} alt={platform.title} className="h-64 w-full object-contain bg-black p-4" />
+            <img src={getOptimizedImageUrl(platform.image)} alt={`${platform.title} SKAY GAMES`} loading="lazy" decoding="async" className="h-64 w-full object-contain bg-black p-4" />
             <div className="p-6">
               <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Juegos</div>
               <h4 className="text-3xl font-black">{platform.title}</h4>
@@ -1997,8 +2372,10 @@ export default function SkayGamesWeb() {
         >
           <div className="relative h-64 overflow-hidden bg-black">
             <img
-              src={editableDigitalOffersCard.image || digitalOffersCard.image}
-              alt={editableDigitalOffersCard.title || digitalOffersCard.title}
+              src={getOptimizedImageUrl(editableDigitalOffersCard.image || digitalOffersCard.image)}
+              alt={`${editableDigitalOffersCard.title || digitalOffersCard.title} SKAY GAMES`}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
               onError={(e) => {
                 if (e.currentTarget.src !== digitalOffersCard.image) {
@@ -2141,8 +2518,10 @@ export default function SkayGamesWeb() {
             <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-white/10 bg-black/45 p-5">
               <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-70 blur-2xl`} />
               <img
-                src={optionImage}
+                src={getOptimizedImageUrl(optionImage)}
                 alt={`${getRechargeOptionTitle(item, option)} imagen`}
+                loading="lazy"
+                decoding="async"
                 className="relative z-10 max-h-28 w-full object-contain transition duration-500 hover:scale-105"
                 onError={(e) => {
                   if (item.image && e.currentTarget.src !== item.image) {
@@ -2202,6 +2581,7 @@ export default function SkayGamesWeb() {
             <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-80 blur-3xl`} />
             <div className="relative mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1fr_360px] lg:items-center">
               <div>
+                {renderBreadcrumbs(getRechargeBreadcrumbItems(item, option), "mb-6")}
                 <button onClick={() => navigateToRechargeItem(item)} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver a {item.name}</button>
                 <div className="flex flex-wrap gap-2">
                   <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{getRechargeTypeLabel(item.type)}</span>
@@ -2221,7 +2601,7 @@ export default function SkayGamesWeb() {
               </div>
               {optionImage && (
                 <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
-                  <img src={optionImage} alt={getRechargeOptionTitle(item, option)} className="max-h-48 w-full object-contain" />
+                  <img src={getOptimizedImageUrl(optionImage)} alt={getRechargeOptionTitle(item, option)} loading="lazy" decoding="async" className="max-h-48 w-full object-contain" />
                 </div>
               )}
             </div>
@@ -2241,6 +2621,7 @@ export default function SkayGamesWeb() {
             <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-80 blur-3xl`} />
             <div className="relative mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[1fr_360px] lg:items-center">
               <div>
+                {renderBreadcrumbs(getRechargeBreadcrumbItems(item, null), "mb-6")}
                 <button onClick={() => navigateTo("recargas-servicios")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver a recargas</button>
                 <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{typeLabel}</span>
                 <h1 className="mt-5 text-4xl font-black md:text-6xl">{item.name}</h1>
@@ -2252,7 +2633,7 @@ export default function SkayGamesWeb() {
                 </div>
               </div>
               <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
-                <img src={item.image} alt={item.name} className="max-h-48 w-full object-contain" />
+                <img src={getOptimizedImageUrl(item.image)} alt={`${item.name} SKAY GAMES`} loading="lazy" decoding="async" className="max-h-48 w-full object-contain" />
               </div>
             </div>
           </section>
@@ -2320,8 +2701,10 @@ export default function SkayGamesWeb() {
 
               <div className={`flex h-36 w-full max-w-[260px] items-center justify-center rounded-[28px] border bg-black/45 px-6 py-5 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={getOptimizedImageUrl(item.image)}
+                  alt={`${item.name} ${getRechargeTypeLabel(type)}`}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-24 w-full object-contain transition duration-500 group-hover:scale-110"
                 />
               </div>
@@ -3540,6 +3923,39 @@ export default function SkayGamesWeb() {
     );
   };
 
+  const renderNotFoundPage = () => (
+    <section className="mx-auto max-w-5xl px-6 py-24 text-center">
+      {renderBreadcrumbs(getPageBreadcrumbItems(), "mb-8 justify-center")}
+      <div className="rounded-[32px] border border-cyan-400/20 bg-gradient-to-br from-black via-slate-950 to-black p-8 shadow-[0_0_42px_rgba(34,211,238,0.12)] md:p-12">
+        <div className="mx-auto mb-5 inline-flex rounded-full border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm font-black text-red-200">
+          Error 404
+        </div>
+        <h1 className="text-4xl font-black md:text-6xl">No encontramos esa página</h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/70">
+          La URL puede haber cambiado o estar escrita de otra forma. Podés seguir navegando por las secciones principales de SKAY GAMES.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          {[
+            { id: "home", label: "Inicio" },
+            { id: "juegos", label: "Juegos" },
+            { id: "consolas", label: "Consolas" },
+            { id: "accesorios", label: "Accesorios" },
+            { id: "recargas-servicios", label: "Recargas" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => navigateTo(item.id)}
+              className="rounded-2xl border border-cyan-300/40 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:border-cyan-200 hover:bg-cyan-400/20 hover:shadow-[0_0_22px_rgba(34,211,238,0.22)]"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <div className="min-h-screen bg-black text-white">
       <header
@@ -3656,6 +4072,8 @@ export default function SkayGamesWeb() {
       <div className="pt-[99px]">
         {activePage === "admin" ? (
           renderAdminPage()
+        ) : !isKnownPage ? (
+          renderNotFoundPage()
         ) : activePage === "recargas-servicios" ? (
           <>
             {renderRechargeServicesPage()}
@@ -3666,6 +4084,7 @@ export default function SkayGamesWeb() {
           <>
             <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)] py-20">
               <div className="mx-auto max-w-7xl px-6">
+                {renderBreadcrumbs(getPageBreadcrumbItems(), "mb-6")}
                 <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
                 <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: {activePage === "home" ? "/" : `/${activePage}`}</span>
                 <h1 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h1>
@@ -3683,7 +4102,7 @@ export default function SkayGamesWeb() {
               <div className="relative h-[75vh] min-h-[520px] w-full">
                 {draftHeroSlides.map((slide, index) => (
                   <div key={slide.title} className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                    <img src={slide.image} alt={slide.title} className="h-full w-full object-cover" style={getImagePositionStyle(slide, "image")} />
+                    <img src={getOptimizedImageUrl(slide.image)} alt={slide.title} decoding="async" className="h-full w-full object-cover" style={getImagePositionStyle(slide, "image")} />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)]" />
                   </div>
@@ -3716,9 +4135,11 @@ export default function SkayGamesWeb() {
             <section className="max-w-7xl mx-auto px-6 mt-10">
               <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black p-6 shadow-2xl md:p-8">
                 <img
-                  src={displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80"}
+                  src={getOptimizedImageUrl(displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80")}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover opacity-65"
                   style={getImagePositionStyle(displayOffer, "background")}
                 />
@@ -3730,8 +4151,10 @@ export default function SkayGamesWeb() {
                 <div className="relative z-10 grid gap-6 md:grid-cols-[300px_1fr] items-center">
                   <div className="overflow-hidden rounded-[30px] border border-white/20 bg-black/45 shadow-2xl backdrop-blur-md">
                     <img
-                      src={displayOffer?.image || "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80"}
+                      src={getOptimizedImageUrl(displayOffer?.image || defaultSeoImage)}
                       alt={displayOffer?.title || "Oferta activa"}
+                      loading="lazy"
+                      decoding="async"
                       className="h-72 w-full object-contain bg-black/35 p-4"
                       style={getImagePositionStyle(displayOffer, "image")}
                     />
@@ -3760,8 +4183,10 @@ export default function SkayGamesWeb() {
                 {editableCategories.map((item) => (
                   <button key={item.id} onClick={() => navigateTo(item.id)} className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/35 hover:shadow-[0_0_32px_rgba(34,211,238,0.16)]">
                     <img
-                      src={item.image}
-                      alt={item.title}
+                      src={getOptimizedImageUrl(item.image)}
+                      alt={`${item.title} SKAY GAMES`}
+                      loading="lazy"
+                      decoding="async"
                       className="h-52 w-full object-cover"
                       onError={(e) => {
                         if (!e.currentTarget.src.includes(".jpg")) {
@@ -3813,7 +4238,7 @@ export default function SkayGamesWeb() {
                 <div className="relative h-[420px] w-full md:h-[500px]">
                   {draftComboSlides.map((combo, index) => (
                     <div key={combo.id} className={`absolute inset-0 transition-all duration-1000 ${index === currentComboSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                      <img src={combo.image} alt={combo.title} className="h-full w-full object-cover" style={getImagePositionStyle(combo, "image")} />
+                      <img src={getOptimizedImageUrl(combo.image)} alt={combo.title} loading="lazy" decoding="async" className="h-full w-full object-cover" style={getImagePositionStyle(combo, "image")} />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
                     </div>
                   ))}

@@ -1,5 +1,9 @@
 User-agent: *
 
+Disallow: /admin
+Disallow: /admin/
+Disallow: /private
+Disallow: /private/
 Allow: /
 
 Sitemap: https://skaygames.com.py/sitemap.xml
