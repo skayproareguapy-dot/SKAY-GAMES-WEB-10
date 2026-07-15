@@ -23,13 +23,58 @@
   </url>
 
   <url>
+    <loc>https://skaygames.com.py/recargas-servicios/free-fire/100-diamantes</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/free-fire/310-diamantes</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/free-fire/520-diamantes</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/free-fire/600-diamantes</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
     <loc>https://skaygames.com.py/recargas-servicios/call-of-duty-mobile</loc>
     <priority>0.7</priority>
   </url>
 
   <url>
+    <loc>https://skaygames.com.py/recargas-servicios/call-of-duty-mobile/80-cp</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/call-of-duty-mobile/420-cp</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/call-of-duty-mobile/880-cp</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
     <loc>https://skaygames.com.py/recargas-servicios/netflix</loc>
     <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/netflix/plan-mensual</loc>
+    <priority>0.65</priority>
+  </url>
+
+  <url>
+    <loc>https://skaygames.com.py/recargas-servicios/netflix/cuenta-compartida</loc>
+    <priority>0.65</priority>
   </url>
 
 </urlset>
