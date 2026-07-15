@@ -980,10 +980,84 @@ export default function SkayGamesWeb() {
   const getOptimizedImageUrl = (image) => {
     const value = String(image || "").trim();
     if (!value) return defaultSeoImage;
-    if (value.includes("images.unsplash.com") && !value.includes("auto=format")) {
-      return `${value}${value.includes("?") ? "&" : "?"}auto=format`;
+    return getResponsiveImageUrl(value, { width: 1200 });
+  };
+
+  const supportsRemoteImageTransform = (image) => {
+    const value = String(image || "");
+    return value.includes("images.unsplash.com");
+  };
+
+  const getResponsiveImageUrl = (image, { width, format, quality = 80 } = {}) => {
+    const value = getPublicImageUrl(image);
+    if (!value || value.startsWith("data:image/") || value.endsWith(".svg")) return value;
+
+    if (value.includes("images.unsplash.com")) {
+      try {
+        const url = new URL(value);
+        url.searchParams.set("auto", "format");
+        url.searchParams.set("fit", url.searchParams.get("fit") || "max");
+        url.searchParams.set("q", String(quality));
+        if (width) url.searchParams.set("w", String(width));
+        if (format === "webp") url.searchParams.set("fm", "webp");
+        return url.toString();
+      } catch {
+        return value;
+      }
     }
+
     return value;
+  };
+
+  const getImageSrcSet = (image, widths = [], format) => {
+    if (!supportsRemoteImageTransform(image)) return "";
+    return widths
+      .map((width) => `${getResponsiveImageUrl(image, { width, format })} ${width}w`)
+      .join(", ");
+  };
+
+  const renderOptimizedImage = ({
+    src,
+    alt,
+    className,
+    width,
+    height,
+    loading = "lazy",
+    decoding = "async",
+    sizes = "(max-width: 768px) 100vw, 33vw",
+    widths = [360, 640, 960, 1200],
+    style,
+    onError,
+    fetchPriority,
+    ariaHidden,
+  }) => {
+    const webpSrcSet = getImageSrcSet(src, widths, "webp");
+    const fallbackSrcSet = getImageSrcSet(src, widths);
+    const fallbackSrc = getResponsiveImageUrl(src, { width: widths[widths.length - 1] || width });
+
+    return (
+      <picture>
+        {webpSrcSet && <source type="image/webp" srcSet={webpSrcSet} sizes={sizes} />}
+        <img
+          src={fallbackSrc}
+          srcSet={fallbackSrcSet || undefined}
+          sizes={fallbackSrcSet ? sizes : undefined}
+          alt={alt}
+          width={width}
+          height={height}
+          loading={loading}
+          decoding={decoding}
+          fetchPriority={fetchPriority}
+          aria-hidden={ariaHidden}
+          className={className}
+          style={style}
+          onError={onError || ((e) => {
+            e.currentTarget.src = defaultSeoImage;
+            e.currentTarget.removeAttribute("srcset");
+          })}
+        />
+      </picture>
+    );
   };
 
   const getProductAutomaticSeoText = (product = {}) => {
@@ -1521,7 +1595,8 @@ export default function SkayGamesWeb() {
     }
 
     context.putImageData(imageData, 0, 0);
-    return canvas.toDataURL("image/png");
+    const webpDataUrl = canvas.toDataURL("image/webp", 0.88);
+    return webpDataUrl.startsWith("data:image/webp") ? webpDataUrl : canvas.toDataURL("image/png");
   };
 
   const ImagePositionControls = ({ label = "Posición de imagen", item, onChange, prefix = "image" }) => {
@@ -1998,16 +2073,15 @@ export default function SkayGamesWeb() {
 
           <div className="grid gap-0 lg:grid-cols-[420px_1fr]">
             <div className="flex items-center justify-center bg-black p-6">
-              <img
-                src={getOptimizedImageUrl(selectedProduct.image)}
-                alt={getProductImageAlt(selectedProduct)}
-                loading="lazy"
-                decoding="async"
-                className="max-h-[420px] w-full object-contain"
-                onError={(e) => {
-                  e.currentTarget.src = defaultSeoImage;
-                }}
-              />
+              {renderOptimizedImage({
+                src: selectedProduct.image,
+                alt: getProductImageAlt(selectedProduct),
+                width: 840,
+                height: 840,
+                sizes: "(max-width: 1024px) 100vw, 420px",
+                widths: [420, 640, 840, 1200],
+                className: "max-h-[420px] w-full object-contain",
+              })}
             </div>
 
             <div className="p-8">
@@ -2094,16 +2168,15 @@ export default function SkayGamesWeb() {
                         onClick={() => openProductDetail(item)}
                         className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-left transition hover:border-cyan-300/35 hover:bg-cyan-400/10"
                       >
-                        <img
-                          src={getOptimizedImageUrl(item.image)}
-                          alt={getProductImageAlt(item)}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-16 w-16 rounded-xl bg-black object-contain p-2"
-                          onError={(e) => {
-                            e.currentTarget.src = defaultSeoImage;
-                          }}
-                        />
+                        {renderOptimizedImage({
+                          src: item.image,
+                          alt: getProductImageAlt(item),
+                          width: 160,
+                          height: 160,
+                          sizes: "64px",
+                          widths: [160, 320],
+                          className: "h-16 w-16 rounded-xl bg-black object-contain p-2",
+                        })}
                         <span>
                           <span className="block text-sm font-black text-white">{item.name}</span>
                           <span className="mt-1 block text-xs font-bold text-cyan-300">{formatDisplayPrice(item.price)}</span>
@@ -2151,16 +2224,15 @@ export default function SkayGamesWeb() {
         <div className="pointer-events-none absolute inset-8 rounded-[32px] bg-cyan-400/20 blur-3xl opacity-55 transition duration-500 group-hover:opacity-85" />
         <div className="pointer-events-none absolute inset-x-12 bottom-8 h-10 rounded-full bg-cyan-300/25 blur-2xl opacity-70 transition duration-500 group-hover:opacity-100" />
         <div className="pointer-events-none absolute inset-x-10 top-8 h-12 rounded-full bg-purple-500/15 blur-2xl opacity-45 transition duration-500 group-hover:opacity-70" />
-        <img
-          src={getOptimizedImageUrl(product.image)}
-          alt={getProductImageAlt(product)}
-          loading="lazy"
-          decoding="async"
-          className="relative z-10 h-64 w-full object-contain bg-transparent p-4 drop-shadow-[0_0_18px_rgba(34,211,238,0.22)] transition duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_28px_rgba(34,211,238,0.36)]"
-          onError={(e) => {
-            e.currentTarget.src = defaultSeoImage;
-          }}
-        />
+        {renderOptimizedImage({
+          src: product.image,
+          alt: getProductImageAlt(product),
+          width: 640,
+          height: 640,
+          sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw",
+          widths: [320, 480, 640, 960],
+          className: "relative z-10 h-64 w-full object-contain bg-transparent p-4 drop-shadow-[0_0_18px_rgba(34,211,238,0.22)] transition duration-500 group-hover:scale-110 group-hover:drop-shadow-[0_0_28px_rgba(34,211,238,0.36)]",
+        })}
       </div>
       <div className="p-5">
         <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
@@ -2358,7 +2430,15 @@ export default function SkayGamesWeb() {
               catalogPlatformFilter === platform.id ? "border-cyan-400/50 bg-cyan-400/10" : "border-white/10 bg-white/5"
             }`}
           >
-            <img src={getOptimizedImageUrl(platform.image)} alt={`${platform.title} SKAY GAMES`} loading="lazy" decoding="async" className="h-64 w-full object-contain bg-black p-4" />
+            {renderOptimizedImage({
+              src: platform.image,
+              alt: `${platform.title} SKAY GAMES`,
+              width: 640,
+              height: 360,
+              sizes: "(max-width: 768px) 100vw, 33vw",
+              widths: [360, 640, 960],
+              className: "h-64 w-full object-contain bg-black p-4",
+            })}
             <div className="p-6">
               <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Juegos</div>
               <h4 className="text-3xl font-black">{platform.title}</h4>
@@ -2372,18 +2452,15 @@ export default function SkayGamesWeb() {
           className="group overflow-hidden rounded-3xl border border-cyan-400/25 bg-gradient-to-br from-cyan-950/35 via-black to-purple-950/25 text-left shadow-2xl transition hover:-translate-y-1 hover:border-cyan-300/55 hover:shadow-[0_0_34px_rgba(34,211,238,0.2)]"
         >
           <div className="relative h-64 overflow-hidden bg-black">
-            <img
-              src={getOptimizedImageUrl(editableDigitalOffersCard.image || digitalOffersCard.image)}
-              alt={`${editableDigitalOffersCard.title || digitalOffersCard.title} SKAY GAMES`}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
-              onError={(e) => {
-                if (e.currentTarget.src !== digitalOffersCard.image) {
-                  e.currentTarget.src = digitalOffersCard.image;
-                }
-              }}
-            />
+            {renderOptimizedImage({
+              src: editableDigitalOffersCard.image || digitalOffersCard.image,
+              alt: `${editableDigitalOffersCard.title || digitalOffersCard.title} SKAY GAMES`,
+              width: 960,
+              height: 540,
+              sizes: "(max-width: 768px) 100vw, 33vw",
+              widths: [360, 640, 960],
+              className: "h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-100",
+            })}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
             <div className="absolute left-5 top-5 rounded-full border border-cyan-300/35 bg-black/55 px-5 py-3 text-sm font-black uppercase tracking-[0.18em] text-cyan-200 shadow-[0_0_32px_rgba(34,211,238,0.16)]">
               {editableDigitalOffersCard.kicker || digitalOffersCard.kicker}
@@ -2518,18 +2595,15 @@ export default function SkayGamesWeb() {
           {optionImage && (
             <div className="relative flex h-40 items-center justify-center overflow-hidden border-b border-white/10 bg-black/45 p-5">
               <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${theme.glow} opacity-70 blur-2xl`} />
-              <img
-                src={getOptimizedImageUrl(optionImage)}
-                alt={`${getRechargeOptionTitle(item, option)} imagen`}
-                loading="lazy"
-                decoding="async"
-                className="relative z-10 max-h-28 w-full object-contain transition duration-500 hover:scale-105"
-                onError={(e) => {
-                  if (item.image && e.currentTarget.src !== item.image) {
-                    e.currentTarget.src = item.image;
-                  }
-                }}
-              />
+              {renderOptimizedImage({
+                src: optionImage,
+                alt: `${getRechargeOptionTitle(item, option)} imagen`,
+                width: 420,
+                height: 240,
+                sizes: "(max-width: 768px) 100vw, 33vw",
+                widths: [240, 420, 640],
+                className: "relative z-10 max-h-28 w-full object-contain transition duration-500 hover:scale-105",
+              })}
             </div>
           )}
           <div className="p-5">
@@ -2602,7 +2676,15 @@ export default function SkayGamesWeb() {
               </div>
               {optionImage && (
                 <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
-                  <img src={getOptimizedImageUrl(optionImage)} alt={getRechargeOptionTitle(item, option)} loading="lazy" decoding="async" className="max-h-48 w-full object-contain" />
+                  {renderOptimizedImage({
+                    src: optionImage,
+                    alt: getRechargeOptionTitle(item, option),
+                    width: 640,
+                    height: 360,
+                    sizes: "(max-width: 1024px) 100vw, 360px",
+                    widths: [360, 640, 960],
+                    className: "max-h-48 w-full object-contain",
+                  })}
                 </div>
               )}
             </div>
@@ -2634,7 +2716,15 @@ export default function SkayGamesWeb() {
                 </div>
               </div>
               <div className={`flex h-72 items-center justify-center rounded-[32px] border bg-black/45 p-8 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
-                <img src={getOptimizedImageUrl(item.image)} alt={`${item.name} SKAY GAMES`} loading="lazy" decoding="async" className="max-h-48 w-full object-contain" />
+                {renderOptimizedImage({
+                  src: item.image,
+                  alt: `${item.name} SKAY GAMES`,
+                  width: 640,
+                  height: 360,
+                  sizes: "(max-width: 1024px) 100vw, 360px",
+                  widths: [360, 640, 960],
+                  className: "max-h-48 w-full object-contain",
+                })}
               </div>
             </div>
           </section>
@@ -2701,13 +2791,15 @@ export default function SkayGamesWeb() {
               </div>
 
               <div className={`flex h-36 w-full max-w-[260px] items-center justify-center rounded-[28px] border bg-black/45 px-6 py-5 backdrop-blur-md ${theme.logoBorder} ${theme.logoGlow}`}>
-                <img
-                  src={getOptimizedImageUrl(item.image)}
-                  alt={`${item.name} ${getRechargeTypeLabel(type)}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="max-h-24 w-full object-contain transition duration-500 group-hover:scale-110"
-                />
+                {renderOptimizedImage({
+                  src: item.image,
+                  alt: `${item.name} ${getRechargeTypeLabel(type)}`,
+                  width: 520,
+                  height: 240,
+                  sizes: "(max-width: 768px) 80vw, 260px",
+                  widths: [260, 520, 780],
+                  className: "max-h-24 w-full object-contain transition duration-500 group-hover:scale-110",
+                })}
               </div>
             </div>
 
@@ -3574,7 +3666,7 @@ export default function SkayGamesWeb() {
                         </div>
                         {newProductImage && (
                           <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-black/40 p-3">
-                            <img src={newProductImage} alt="Vista previa del producto" className="h-28 w-28 rounded-xl bg-black object-contain p-2" />
+                            <img src={newProductImage} alt="Vista previa del producto" width="112" height="112" loading="lazy" decoding="async" className="h-28 w-28 rounded-xl bg-black object-contain p-2" />
                             <div className="text-xs text-white/55">
                               Vista previa sobre fondo negro. Si queda algún borde blanco, probá con una foto más limpia o con fondo bien liso.
                             </div>
@@ -3636,7 +3728,7 @@ export default function SkayGamesWeb() {
                       {productsData.map((item) => (
                         <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 md:flex-row md:items-center md:justify-between">
                           <div className="flex items-center gap-4">
-                            <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-contain bg-black p-1" />
+                            <img src={item.image} alt={item.name} width="80" height="80" loading="lazy" decoding="async" className="h-20 w-20 rounded-2xl object-contain bg-black p-1" />
                             <div>
                               <div className="text-base font-bold text-white">{item.name}</div>
                               <div className="mt-1 text-sm text-white/60">
@@ -3807,7 +3899,7 @@ export default function SkayGamesWeb() {
                       <input value={newRechargeOptionImage} onChange={(e) => setNewRechargeOptionImage(e.target.value)} placeholder="URL de imagen para tarjetas de precios (opcional, ej: diamante Free Fire)" className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-white outline-none md:col-span-2" />
                       {newRechargeOptionImage && (
                         <div className="flex items-center gap-4 rounded-2xl border border-cyan-400/15 bg-black/40 p-3 md:col-span-2">
-                          <img src={newRechargeOptionImage} alt="Vista previa imagen de precios" className="h-20 w-20 rounded-xl bg-black object-contain p-2" />
+                          <img src={newRechargeOptionImage} alt="Vista previa imagen de precios" width="80" height="80" loading="lazy" decoding="async" className="h-20 w-20 rounded-xl bg-black object-contain p-2" />
                           <div className="text-xs text-white/55">
                             Esta imagen se mostrará en todas las tarjetas de precios de este servicio.
                           </div>
@@ -3859,9 +3951,9 @@ export default function SkayGamesWeb() {
                           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                             <div className="flex items-center gap-4">
                               <div className="flex gap-2">
-                                <img src={item.image} alt={item.name} className="h-20 w-20 rounded-2xl object-cover bg-black" />
+                                <img src={item.image} alt={item.name} width="80" height="80" loading="lazy" decoding="async" className="h-20 w-20 rounded-2xl object-cover bg-black" />
                                 {(item.optionImage || item.priceImage) && (
-                                  <img src={item.optionImage || item.priceImage} alt={`${item.name} precios`} className="h-20 w-20 rounded-2xl object-contain bg-black p-2" />
+                                  <img src={item.optionImage || item.priceImage} alt={`${item.name} precios`} width="80" height="80" loading="lazy" decoding="async" className="h-20 w-20 rounded-2xl object-contain bg-black p-2" />
                                 )}
                               </div>
                               <div>
@@ -3969,9 +4061,13 @@ export default function SkayGamesWeb() {
           {editableHeaderBackgrounds.map((background, index) => (
             <img
               key={background}
-              src={background}
+              src={getOptimizedImageUrl(background)}
               alt=""
               aria-hidden="true"
+              width="1600"
+              height="240"
+              loading={headerBackgroundIndex === index ? "eager" : "lazy"}
+              decoding="async"
               className={`absolute inset-0 h-full w-full object-cover object-[center_41%] blur-[1px] scale-110 transition-all duration-700 ${
                 headerBackgroundIndex === index ? "opacity-90" : "opacity-0"
               }`}
@@ -4103,7 +4199,18 @@ export default function SkayGamesWeb() {
               <div className="relative h-[75vh] min-h-[520px] w-full">
                 {draftHeroSlides.map((slide, index) => (
                   <div key={slide.title} className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                    <img src={getOptimizedImageUrl(slide.image)} alt={slide.title} decoding="async" className="h-full w-full object-cover" style={getImagePositionStyle(slide, "image")} />
+                    {renderOptimizedImage({
+                      src: slide.image,
+                      alt: slide.title,
+                      width: 1600,
+                      height: 900,
+                      loading: index === currentSlide ? "eager" : "lazy",
+                      fetchPriority: index === currentSlide ? "high" : "auto",
+                      sizes: "100vw",
+                      widths: [640, 960, 1280, 1600],
+                      className: "h-full w-full object-cover",
+                      style: getImagePositionStyle(slide, "image"),
+                    })}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_25%),radial-gradient(circle_at_left,rgba(168,85,247,0.16),transparent_30%)]" />
                   </div>
@@ -4135,15 +4242,17 @@ export default function SkayGamesWeb() {
 
             <section className="max-w-7xl mx-auto px-6 mt-10">
               <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-black p-6 shadow-2xl md:p-8">
-                <img
-                  src={getOptimizedImageUrl(displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80")}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover opacity-65"
-                  style={getImagePositionStyle(displayOffer, "background")}
-                />
+                {renderOptimizedImage({
+                  src: displayOffer?.backgroundImage || displayOffer?.image || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
+                  alt: "",
+                  ariaHidden: true,
+                  width: 1600,
+                  height: 900,
+                  sizes: "100vw",
+                  widths: [640, 960, 1280, 1600],
+                  className: "absolute inset-0 h-full w-full object-cover opacity-65",
+                  style: getImagePositionStyle(displayOffer, "background"),
+                })}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/35" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_25%,rgba(34,211,238,0.34),transparent_28%),radial-gradient(circle_at_82%_72%,rgba(168,85,247,0.34),transparent_34%)]" />
@@ -4151,14 +4260,16 @@ export default function SkayGamesWeb() {
 
                 <div className="relative z-10 grid gap-6 md:grid-cols-[300px_1fr] items-center">
                   <div className="overflow-hidden rounded-[30px] border border-white/20 bg-black/45 shadow-2xl backdrop-blur-md">
-                    <img
-                      src={getOptimizedImageUrl(displayOffer?.image || defaultSeoImage)}
-                      alt={displayOffer?.title || "Oferta activa"}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-72 w-full object-contain bg-black/35 p-4"
-                      style={getImagePositionStyle(displayOffer, "image")}
-                    />
+                    {renderOptimizedImage({
+                      src: displayOffer?.image || defaultSeoImage,
+                      alt: displayOffer?.title || "Oferta activa",
+                      width: 600,
+                      height: 600,
+                      sizes: "(max-width: 768px) 100vw, 300px",
+                      widths: [300, 600, 900],
+                      className: "h-72 w-full object-contain bg-black/35 p-4",
+                      style: getImagePositionStyle(displayOffer, "image"),
+                    })}
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
@@ -4183,22 +4294,15 @@ export default function SkayGamesWeb() {
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 {editableCategories.map((item) => (
                   <button key={item.id} onClick={() => navigateTo(item.id)} className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-left shadow-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-400/35 hover:shadow-[0_0_32px_rgba(34,211,238,0.16)]">
-                    <img
-                      src={getOptimizedImageUrl(item.image)}
-                      alt={`${item.title} SKAY GAMES`}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-52 w-full object-cover"
-                      onError={(e) => {
-                        if (!e.currentTarget.src.includes(".jpg")) {
-                          e.currentTarget.src = item.image.replace(".png", ".jpg");
-                        } else if (!e.currentTarget.src.includes(".webp")) {
-                          e.currentTarget.src = item.image.replace(".jpg", ".webp");
-                        } else {
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1200&q=80";
-                        }
-                      }}
-                    />
+                    {renderOptimizedImage({
+                      src: item.image,
+                      alt: `${item.title} SKAY GAMES`,
+                      width: 640,
+                      height: 360,
+                      sizes: "(max-width: 768px) 100vw, 25vw",
+                      widths: [320, 480, 640, 960],
+                      className: "h-52 w-full object-cover",
+                    })}
                     <div className="p-5">
                       <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
                       <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Página</div>
@@ -4239,7 +4343,16 @@ export default function SkayGamesWeb() {
                 <div className="relative h-[420px] w-full md:h-[500px]">
                   {draftComboSlides.map((combo, index) => (
                     <div key={combo.id} className={`absolute inset-0 transition-all duration-1000 ${index === currentComboSlide ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-105"}`}>
-                      <img src={getOptimizedImageUrl(combo.image)} alt={combo.title} loading="lazy" decoding="async" className="h-full w-full object-cover" style={getImagePositionStyle(combo, "image")} />
+                      {renderOptimizedImage({
+                        src: combo.image,
+                        alt: combo.title,
+                        width: 1600,
+                        height: 900,
+                        sizes: "100vw",
+                        widths: [640, 960, 1280, 1600],
+                        className: "h-full w-full object-cover",
+                        style: getImagePositionStyle(combo, "image"),
+                      })}
                       <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
                     </div>
                   ))}
