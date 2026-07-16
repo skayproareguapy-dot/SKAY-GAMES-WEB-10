@@ -183,6 +183,15 @@ const parseSafePrice = (value) => {
   return onlyDigits ? Number(onlyDigits) : null;
 };
 
+const formatDisplayPrice = (value) => {
+  if (value === null || value === undefined) return "";
+  const text = String(value).trim();
+  if (!text) return "";
+  const numericPrice = parseSafePrice(text);
+  if (numericPrice !== null) return `Gs. ${numericPrice.toLocaleString("es-PY")}`;
+  return text;
+};
+
 const normalizeCondition = (value) => {
   const text = String(value || "Nuevo").trim().toLowerCase();
   if (text.includes("usado")) return "Usado";
@@ -419,10 +428,10 @@ const getRechargeOptionSeoText = (item = {}, option = {}) => {
   if (compactText(option.description)) return compactText(option.description);
   const title = getRechargeOptionTitle(item, option);
   const price = compactText(option.price);
-  const priceText = price ? ` Precio: ${price}.` : "";
+  const priceText = price ? ` Precio: ${formatDisplayPrice(price)}.` : "";
   const previousPrice = getRechargeOptionPreviousPrice(option);
   const offerText = previousPrice
-    ? ` Antes ${previousPrice}.`
+    ? ` Antes ${formatDisplayPrice(previousPrice)}.`
     : shouldShowRechargeOfferBadge(option)
       ? " Oferta disponible."
       : "";

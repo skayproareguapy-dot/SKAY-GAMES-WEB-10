@@ -919,10 +919,10 @@ export default function SkayGamesWeb() {
 
     const title = getRechargeOptionTitle(item, option);
     const price = compactText(option.price);
-    const priceText = price ? ` Precio: ${price}.` : "";
+    const priceText = price ? ` Precio: ${formatDisplayPrice(price)}.` : "";
     const previousPrice = getRechargeOptionPreviousPrice(option);
     const offerText = previousPrice
-      ? ` Antes ${previousPrice}.`
+      ? ` Antes ${formatDisplayPrice(previousPrice)}.`
       : shouldShowRechargeOfferBadge(option)
         ? " Oferta disponible."
         : "";
@@ -1561,7 +1561,9 @@ export default function SkayGamesWeb() {
   const formatDisplayPrice = (value) => {
     if (value === null || value === undefined) return "";
     const text = String(value).trim();
-    if (/^[0-9]+$/.test(text)) return Number(text).toLocaleString("es-PY");
+    if (!text) return "";
+    const numericPrice = parseSafePrice(text);
+    if (numericPrice !== null) return `Gs. ${numericPrice.toLocaleString("es-PY")}`;
     return text;
   };
 
@@ -2662,7 +2664,7 @@ export default function SkayGamesWeb() {
 
     const getRechargeWhatsappMessage = (item, option) => {
       const previousPrice = getRechargeOptionPreviousPrice(option);
-      return `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${option.price}` : ""}${previousPrice ? ` (antes ${previousPrice})` : ""}.`;
+      return `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${formatDisplayPrice(option.price)}` : ""}${previousPrice ? ` (antes ${formatDisplayPrice(previousPrice)})` : ""}.`;
     };
 
     const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
@@ -2709,8 +2711,8 @@ export default function SkayGamesWeb() {
             </div>
             <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
             <div className="mt-3 flex flex-wrap items-end gap-3">
-              {previousPrice && <span className="pb-1 text-base font-black text-white/40 line-through">{previousPrice}</span>}
-              <span className="text-2xl font-black text-cyan-300">{option.price}</span>
+              {previousPrice && <span className="pb-1 text-base font-black text-white/40 line-through">{formatDisplayPrice(previousPrice)}</span>}
+              <span className="text-2xl font-black text-cyan-300">{formatDisplayPrice(option.price)}</span>
             </div>
             <p className="mt-4 text-sm leading-6 text-white/68">{getRechargeOptionSeoText(item, option)}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -2765,8 +2767,8 @@ export default function SkayGamesWeb() {
                 </div>
                 <h1 className="mt-5 text-4xl font-black md:text-6xl">{getRechargeOptionTitle(item, option)}</h1>
                 <div className="mt-4 flex flex-wrap items-end gap-4">
-                  {previousPrice && <span className="pb-1 text-xl font-black text-white/40 line-through">{previousPrice}</span>}
-                  <span className="text-3xl font-black text-cyan-300">{option.price}</span>
+                  {previousPrice && <span className="pb-1 text-xl font-black text-white/40 line-through">{formatDisplayPrice(previousPrice)}</span>}
+                  <span className="text-3xl font-black text-cyan-300">{formatDisplayPrice(option.price)}</span>
                 </div>
                 <p className="mt-5 max-w-3xl text-lg leading-8 text-white/75">{getRechargeOptionSeoText(item, option)}</p>
                 <a
@@ -3930,8 +3932,8 @@ export default function SkayGamesWeb() {
                                 {item.category}{item.platform ? ` · ${item.platform.toUpperCase()}` : ""}{getProductFormatLabel(item) ? ` · ${getProductFormatLabel(item)}` : ""}{hasProductOffer(item) ? " · Oferta" : ""}
                               </div>
                               <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-                                {item.originalPrice && <span className="text-white/40 line-through">{item.originalPrice}</span>}
-                                <span className="text-cyan-300 font-bold">{item.price}</span>
+                                {item.originalPrice && <span className="text-white/40 line-through">{formatDisplayPrice(item.originalPrice)}</span>}
+                                <span className="text-cyan-300 font-bold">{formatDisplayPrice(item.price)}</span>
                               </div>
                               <div className="mt-1 flex flex-wrap gap-2 text-xs">
                                 {item.isFeatured && <span className="rounded-full bg-cyan-400/15 px-3 py-1 font-bold text-cyan-300">Destacado</span>}
@@ -4180,8 +4182,8 @@ export default function SkayGamesWeb() {
                                 <div className="mt-3 flex flex-wrap gap-2">
                                   {sortRechargeOptionsByPrice(item.options || []).map((option) => (
                                     <span key={option.id} className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/75">
-                                      {option.label} · {getRechargeOptionPreviousPrice(option) && <span className="text-white/35 line-through">{getRechargeOptionPreviousPrice(option)} </span>}
-                                      <span className="font-bold text-cyan-300">{option.price}</span>
+                                      {option.label} · {getRechargeOptionPreviousPrice(option) && <span className="text-white/35 line-through">{formatDisplayPrice(getRechargeOptionPreviousPrice(option))} </span>}
+                                      <span className="font-bold text-cyan-300">{formatDisplayPrice(option.price)}</span>
                                       {shouldShowRechargeOfferBadge(option) && <span className="ml-1 font-black text-yellow-300">· {getRechargeOfferBadgeText(option)}</span>}
                                     </span>
                                   ))}
@@ -4496,7 +4498,7 @@ export default function SkayGamesWeb() {
                       </div>
                       <h2 className="text-3xl md:text-5xl font-black text-white mt-4 drop-shadow-[0_4px_18px_rgba(0,0,0,0.9)]">{displayOffer?.title || "Sin oferta activa"}</h2>
                       <p className="text-white/85 mt-3 max-w-2xl drop-shadow-lg">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
-                      <p className="text-3xl font-black text-green-400 mt-4 drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">{displayOffer?.price || "Gs. 0"}</p>
+                      <p className="text-3xl font-black text-green-400 mt-4 drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">{formatDisplayPrice(displayOffer?.price || "Gs. 0")}</p>
                     </div>
                     <a href={whatsappLink} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
                   </div>
