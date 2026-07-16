@@ -447,6 +447,16 @@ export default function SkayGamesWeb() {
       backgroundPositionY: offer.backgroundPositionY ?? defaultOffers[index]?.backgroundPositionY ?? 50,
     }));
 
+  const createEmptyRechargeOption = () => ({
+    id: Date.now() + Math.random(),
+    label: "",
+    price: "",
+    previousPrice: "",
+    showOfferBadge: false,
+    offerBadgeText: "Oferta",
+    description: "",
+  });
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentComboSlide, setCurrentComboSlide] = useState(0);
   const [selectedGamePlatform, setSelectedGamePlatform] = useState("all");
@@ -510,7 +520,7 @@ export default function SkayGamesWeb() {
   const [newRechargeOptionImage, setNewRechargeOptionImage] = useState("");
   const [newRechargeType, setNewRechargeType] = useState("recarga");
   const [newRechargeMethod, setNewRechargeMethod] = useState("via-id");
-  const [newRechargeOptions, setNewRechargeOptions] = useState([{ id: Date.now(), label: "", price: "", description: "" }]);
+  const [newRechargeOptions, setNewRechargeOptions] = useState(() => [createEmptyRechargeOption()]);
   const [rechargeFormMessage, setRechargeFormMessage] = useState("");
   const [editingRechargeId, setEditingRechargeId] = useState(null);
 
@@ -752,6 +762,50 @@ export default function SkayGamesWeb() {
     return onlyDigits ? Number(onlyDigits) : null;
   };
 
+  const toBooleanFlag = (value) => value === true || value === "true" || value === 1 || value === "1";
+
+  const getRechargeOptionPreviousPrice = (option = {}) =>
+    compactText(option.previousPrice || option.originalPrice || option.oldPrice || "");
+
+  const shouldShowRechargeOfferBadge = (option = {}) =>
+    toBooleanFlag(option.showOfferBadge ?? option.offerBadge ?? option.isOffer ?? option.onSale);
+
+  const getRechargeOfferBadgeText = (option = {}) =>
+    compactText(option.offerBadgeText || option.offerBadgeLabel || option.badgeText || "Oferta");
+
+  const sortRechargeOptionsByPrice = (options = []) =>
+    [...options]
+      .map((option, index) => ({ option, index }))
+      .sort((a, b) => {
+        const priceA = parseSafePrice(a.option?.price);
+        const priceB = parseSafePrice(b.option?.price);
+
+        if (priceA === null && priceB === null) return a.index - b.index;
+        if (priceA === null) return 1;
+        if (priceB === null) return -1;
+        if (priceA === priceB) return a.index - b.index;
+        return priceA - priceB;
+      })
+      .map(({ option }) => option);
+
+  const normalizeRechargeOption = (option = {}, index = 0) => ({
+    ...option,
+    id: option.id || Date.now() + index,
+    label: String(option.label || "").trim(),
+    price: String(option.price || "").trim(),
+    previousPrice: getRechargeOptionPreviousPrice(option),
+    showOfferBadge: shouldShowRechargeOfferBadge(option),
+    offerBadgeText: getRechargeOfferBadgeText(option),
+    description: String(option.description || "").trim(),
+  });
+
+  const normalizeRechargeItem = (item = {}) => ({
+    ...item,
+    options: sortRechargeOptionsByPrice((item.options || []).map((option, index) => normalizeRechargeOption(option, index))),
+  });
+
+  const normalizeRechargeItems = (items = []) => items.map(normalizeRechargeItem);
+
   const normalizeCatalogText = (value) =>
     String(value ?? "")
       .normalize("NFD")
@@ -866,12 +920,18 @@ export default function SkayGamesWeb() {
     const title = getRechargeOptionTitle(item, option);
     const price = compactText(option.price);
     const priceText = price ? ` Precio: ${price}.` : "";
+    const previousPrice = getRechargeOptionPreviousPrice(option);
+    const offerText = previousPrice
+      ? ` Antes ${previousPrice}.`
+      : shouldShowRechargeOfferBadge(option)
+        ? " Oferta disponible."
+        : "";
     const actionText =
       item.type === "streaming"
         ? "Consultá disponibilidad, condiciones del servicio y activación por WhatsApp."
         : "Consultá disponibilidad y pedí la recarga por WhatsApp.";
 
-    return compactText(`${title} disponible en SKAY GAMES Paraguay.${priceText} ${actionText}`);
+    return compactText(`${title} disponible en SKAY GAMES Paraguay.${priceText}${offerText} ${actionText}`);
   };
 
   const getProductCategorySlug = (category) => {
@@ -1330,7 +1390,7 @@ export default function SkayGamesWeb() {
     }
 
     if (Array.isArray(byKey.rechargeItems)) {
-      setEditableRechargeItems(byKey.rechargeItems);
+      setEditableRechargeItems(normalizeRechargeItems(byKey.rechargeItems));
     }
   };
 
@@ -2600,8 +2660,10 @@ export default function SkayGamesWeb() {
       };
     };
 
-    const getRechargeWhatsappMessage = (item, option) =>
-      `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${option.price}` : ""}.`;
+    const getRechargeWhatsappMessage = (item, option) => {
+      const previousPrice = getRechargeOptionPreviousPrice(option);
+      return `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${option.price}` : ""}${previousPrice ? ` (antes ${previousPrice})` : ""}.`;
+    };
 
     const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
 
@@ -2609,6 +2671,9 @@ export default function SkayGamesWeb() {
       const optionImage = getRechargeOptionImage(item);
       const methodLabel = getRechargeMethodLabel(item);
       const optionPath = `/${RECHARGE_ROUTE_PREFIX}${getRechargeItemRouteSlug(item)}/${getRechargeOptionRouteSlug(option)}`;
+      const previousPrice = getRechargeOptionPreviousPrice(option);
+      const showOfferBadge = shouldShowRechargeOfferBadge(option);
+      const offerBadgeText = getRechargeOfferBadgeText(option);
 
       return (
         <article key={option.id} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-xl transition hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07]">
@@ -2636,9 +2701,17 @@ export default function SkayGamesWeb() {
                   {methodLabel}
                 </span>
               )}
+              {showOfferBadge && (
+                <span className="inline-flex rounded-full border border-yellow-200/60 bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-black shadow-[0_0_24px_rgba(251,191,36,0.42)]">
+                  {offerBadgeText}
+                </span>
+              )}
             </div>
             <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
-            <div className="mt-3 text-2xl font-black text-cyan-300">{option.price}</div>
+            <div className="mt-3 flex flex-wrap items-end gap-3">
+              {previousPrice && <span className="pb-1 text-base font-black text-white/40 line-through">{previousPrice}</span>}
+              <span className="text-2xl font-black text-cyan-300">{option.price}</span>
+            </div>
             <p className="mt-4 text-sm leading-6 text-white/68">{getRechargeOptionSeoText(item, option)}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <a
@@ -2669,6 +2742,9 @@ export default function SkayGamesWeb() {
       const theme = getServiceTheme(item, item.type);
       const methodLabel = getRechargeMethodLabel(item);
       const optionImage = getRechargeOptionImage(item);
+      const previousPrice = getRechargeOptionPreviousPrice(option);
+      const showOfferBadge = shouldShowRechargeOfferBadge(option);
+      const offerBadgeText = getRechargeOfferBadgeText(option);
 
       return (
         <>
@@ -2681,9 +2757,17 @@ export default function SkayGamesWeb() {
                 <div className="flex flex-wrap gap-2">
                   <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{getRechargeTypeLabel(item.type)}</span>
                   {methodLabel && <span className={`inline-flex rounded-full border px-4 py-2 text-sm font-black ${theme.badge}`}>{methodLabel}</span>}
+                  {showOfferBadge && (
+                    <span className="inline-flex rounded-full border border-yellow-200/60 bg-gradient-to-r from-yellow-300 via-orange-400 to-pink-500 px-4 py-2 text-sm font-black text-black shadow-[0_0_28px_rgba(251,191,36,0.45)]">
+                      {offerBadgeText}
+                    </span>
+                  )}
                 </div>
                 <h1 className="mt-5 text-4xl font-black md:text-6xl">{getRechargeOptionTitle(item, option)}</h1>
-                <div className="mt-4 text-3xl font-black text-cyan-300">{option.price}</div>
+                <div className="mt-4 flex flex-wrap items-end gap-4">
+                  {previousPrice && <span className="pb-1 text-xl font-black text-white/40 line-through">{previousPrice}</span>}
+                  <span className="text-3xl font-black text-cyan-300">{option.price}</span>
+                </div>
                 <p className="mt-5 max-w-3xl text-lg leading-8 text-white/75">{getRechargeOptionSeoText(item, option)}</p>
                 <a
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getRechargeWhatsappMessage(item, option))}`}
@@ -2755,7 +2839,7 @@ export default function SkayGamesWeb() {
               <p className="mt-3 text-white/60">Cada opción tiene texto SEO visible y consulta directa por WhatsApp.</p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {(item.options || []).map((option) => renderRechargeOptionCard(item, option, theme))}
+              {sortRechargeOptionsByPrice(item.options || []).map((option) => renderRechargeOptionCard(item, option, theme))}
             </div>
           </section>
         </>
@@ -3565,7 +3649,7 @@ export default function SkayGamesWeb() {
     };
 
     const addRechargeOption = () => {
-      setNewRechargeOptions((prev) => [...prev, { id: Date.now() + Math.random(), label: "", price: "", description: "" }]);
+      setNewRechargeOptions((prev) => [...prev, createEmptyRechargeOption()]);
     };
 
     const removeRechargeOption = (optionId) => {
@@ -3580,7 +3664,7 @@ export default function SkayGamesWeb() {
       setNewRechargeOptionImage("");
       setNewRechargeType("recarga");
       setNewRechargeMethod("via-id");
-      setNewRechargeOptions([{ id: Date.now(), label: "", price: "", description: "" }]);
+      setNewRechargeOptions([createEmptyRechargeOption()]);
       setRechargeFormMessage("");
     };
 
@@ -3604,12 +3688,23 @@ export default function SkayGamesWeb() {
         description: newRechargeDescription.trim(),
         image: newRechargeImage.trim(),
         optionImage: newRechargeOptionImage.trim(),
-        options: newRechargeOptions.map((option, index) => ({
-          id: option.id || index + 1,
-          label: option.label.trim(),
-          price: option.price.trim(),
-          description: option.description?.trim() || "",
-        })),
+        options: sortRechargeOptionsByPrice(
+          newRechargeOptions.map((option, index) =>
+            normalizeRechargeOption(
+              {
+                ...option,
+                id: option.id || index + 1,
+                label: option.label.trim(),
+                price: option.price.trim(),
+                previousPrice: String(option.previousPrice || "").trim(),
+                showOfferBadge: shouldShowRechargeOfferBadge(option),
+                offerBadgeText: String(option.offerBadgeText || "Oferta").trim() || "Oferta",
+                description: option.description?.trim() || "",
+              },
+              index
+            )
+          )
+        ),
       };
 
       const nextItems = editingRechargeId
@@ -3635,7 +3730,7 @@ export default function SkayGamesWeb() {
       setNewRechargeOptionImage(item.optionImage || item.priceImage || "");
       setNewRechargeType(item.type);
       setNewRechargeMethod(getRechargeMethodValue(item) || "via-id");
-      setNewRechargeOptions(item.options.map((option) => ({ description: "", ...option })));
+      setNewRechargeOptions(sortRechargeOptionsByPrice((item.options || []).map((option, index) => normalizeRechargeOption({ description: "", ...option }, index))));
       setRechargeFormMessage("Editando ítem. Guardá para actualizar.");
     };
 
@@ -4020,15 +4115,34 @@ export default function SkayGamesWeb() {
                       </div>
                       <div className="space-y-4">
                         {newRechargeOptions.map((option) => (
-                          <div key={option.id} className="grid gap-3 md:grid-cols-[1fr_220px_120px]">
-                            <input value={option.label} onChange={(e) => handleRechargeOptionChange(option.id, "label", e.target.value)} placeholder="Ej: 310 diamantes / Plan mensual" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
-                            <input value={option.price} onChange={(e) => handleRechargeOptionChange(option.id, "price", e.target.value)} placeholder="Ej: Gs. 25.000" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
-                            <button type="button" onClick={() => removeRechargeOption(option.id)} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">Eliminar</button>
+                          <div key={option.id} className="rounded-2xl border border-white/10 bg-black/30 p-3">
+                            <div className="grid gap-3 md:grid-cols-[1fr_170px_170px_120px]">
+                              <input value={option.label} onChange={(e) => handleRechargeOptionChange(option.id, "label", e.target.value)} placeholder="Ej: 310 diamantes / Plan mensual" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                              <input value={option.price} onChange={(e) => handleRechargeOptionChange(option.id, "price", e.target.value)} placeholder="Precio actual" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
+                              <input value={option.previousPrice || ""} onChange={(e) => handleRechargeOptionChange(option.id, "previousPrice", e.target.value)} placeholder="Precio anterior" className="rounded-2xl border border-orange-300/20 bg-orange-300/10 px-4 py-3 text-white outline-none" />
+                              <button type="button" onClick={() => removeRechargeOption(option.id)} className="rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">Eliminar</button>
+                            </div>
+                            <div className="mt-3 grid gap-3 md:grid-cols-[220px_1fr]">
+                              <label className="flex items-center gap-3 rounded-2xl border border-yellow-300/25 bg-yellow-300/10 px-4 py-3 text-sm font-black text-yellow-200">
+                                <input
+                                  type="checkbox"
+                                  checked={shouldShowRechargeOfferBadge(option)}
+                                  onChange={(e) => handleRechargeOptionChange(option.id, "showOfferBadge", e.target.checked)}
+                                />
+                                Burbuja oferta
+                              </label>
+                              <input
+                                value={option.offerBadgeText || ""}
+                                onChange={(e) => handleRechargeOptionChange(option.id, "offerBadgeText", e.target.value)}
+                                placeholder="Texto de burbuja (ej: Oferta, Promo, Nuevo precio)"
+                                className="rounded-2xl border border-yellow-300/20 bg-black/40 px-4 py-3 text-white outline-none"
+                              />
+                            </div>
                             <textarea
                               value={option.description || ""}
                               onChange={(e) => handleRechargeOptionChange(option.id, "description", e.target.value)}
                               placeholder="Descripción SEO opcional de esta opción. Si queda vacío, se genera automático."
-                              className="min-h-[80px] rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none md:col-span-3"
+                              className="mt-3 min-h-[80px] w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none"
                             />
                           </div>
                         ))}
@@ -4064,8 +4178,12 @@ export default function SkayGamesWeb() {
                                 {(item.optionImage || item.priceImage) && <div className="mt-1 text-xs text-white/45">Imagen de precios cargada</div>}
                                 {item.description && <div className="mt-2 max-w-2xl text-sm text-white/55">{item.description}</div>}
                                 <div className="mt-3 flex flex-wrap gap-2">
-                                  {item.options.map((option) => (
-                                    <span key={option.id} className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/75">{option.label} · {option.price}</span>
+                                  {sortRechargeOptionsByPrice(item.options || []).map((option) => (
+                                    <span key={option.id} className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/75">
+                                      {option.label} · {getRechargeOptionPreviousPrice(option) && <span className="text-white/35 line-through">{getRechargeOptionPreviousPrice(option)} </span>}
+                                      <span className="font-bold text-cyan-300">{option.price}</span>
+                                      {shouldShowRechargeOfferBadge(option) && <span className="ml-1 font-black text-yellow-300">· {getRechargeOfferBadgeText(option)}</span>}
+                                    </span>
                                   ))}
                                 </div>
                               </div>

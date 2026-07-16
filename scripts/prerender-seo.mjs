@@ -369,6 +369,25 @@ const getRechargeOptionSlugText = (option = {}) =>
     .replace(/\bdiamante\b/gi, "diamantes");
 const getRechargeOptionRouteSlug = (option = {}) => slugify(getRechargeOptionSlugText(option)) || slugify(option.id || "opcion");
 const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
+const toBooleanFlag = (value) => value === true || value === "true" || value === 1 || value === "1";
+const getRechargeOptionPreviousPrice = (option = {}) =>
+  compactText(option.previousPrice || option.originalPrice || option.oldPrice || "");
+const shouldShowRechargeOfferBadge = (option = {}) =>
+  toBooleanFlag(option.showOfferBadge ?? option.offerBadge ?? option.isOffer ?? option.onSale);
+const sortRechargeOptionsByPrice = (options = []) =>
+  [...options]
+    .map((option, index) => ({ option, index }))
+    .sort((a, b) => {
+      const priceA = parseSafePrice(a.option?.price);
+      const priceB = parseSafePrice(b.option?.price);
+
+      if (priceA === null && priceB === null) return a.index - b.index;
+      if (priceA === null) return 1;
+      if (priceB === null) return -1;
+      if (priceA === priceB) return a.index - b.index;
+      return priceA - priceB;
+    })
+    .map(({ option }) => option);
 
 const getRechargeSeoTitle = (item = {}) => {
   const typeLabel = getRechargeTypeLabel(item.type).toLowerCase();
@@ -401,11 +420,17 @@ const getRechargeOptionSeoText = (item = {}, option = {}) => {
   const title = getRechargeOptionTitle(item, option);
   const price = compactText(option.price);
   const priceText = price ? ` Precio: ${price}.` : "";
+  const previousPrice = getRechargeOptionPreviousPrice(option);
+  const offerText = previousPrice
+    ? ` Antes ${previousPrice}.`
+    : shouldShowRechargeOfferBadge(option)
+      ? " Oferta disponible."
+      : "";
   const actionText =
     item.type === "streaming"
       ? "Consultá disponibilidad, condiciones del servicio y activación por WhatsApp."
       : "Consultá disponibilidad y pedí la recarga por WhatsApp.";
-  return compactText(`${title} disponible en ${brandName}.${priceText} ${actionText}`);
+  return compactText(`${title} disponible en ${brandName}.${priceText}${offerText} ${actionText}`);
 };
 
 const buildOfferSchema = (price, url) => {
@@ -727,7 +752,7 @@ const main = async () => {
     });
     sitemapEntries.push({ loc: itemCanonicalUrl, priority: "0.7", lastmod: today });
 
-    for (const option of item.options || []) {
+    for (const option of sortRechargeOptionsByPrice(item.options || [])) {
       const optionRoute = `${itemRoute}/${getRechargeOptionRouteSlug(option)}`;
       const optionCanonicalUrl = getCanonicalUrl(optionRoute);
       const optionTitle = `${getRechargeOptionTitle(item, option)} | ${brandName}`;
