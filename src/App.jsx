@@ -2431,7 +2431,7 @@ export default function SkayGamesWeb() {
           </button>
 
           <div className="grid gap-0 lg:grid-cols-[420px_1fr]">
-            <div className="flex items-center justify-center bg-black p-6">
+            <div className="flex min-h-[320px] items-center justify-center bg-black p-6 lg:sticky lg:top-0 lg:h-[92vh] lg:self-start">
               {renderOptimizedImage({
                 src: selectedProduct.image,
                 alt: getProductImageAlt(selectedProduct),
@@ -2439,7 +2439,7 @@ export default function SkayGamesWeb() {
                 height: 840,
                 sizes: "(max-width: 1024px) 100vw, 420px",
                 widths: [420, 640, 840, 1200],
-                className: "max-h-[420px] w-full object-contain",
+                className: "max-h-[320px] w-full object-contain lg:max-h-[calc(92vh-3rem)]",
               })}
             </div>
 
