@@ -2133,6 +2133,283 @@ export default function SkayGamesWeb() {
       .slice(0, limit);
   };
 
+  const renderInformationCard = ({ title, text }) => (
+    <article key={title} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 shadow-xl shadow-black/10">
+      <h3 className="text-base font-black text-cyan-200">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-white/68">{text}</p>
+    </article>
+  );
+
+  const renderInformationBlock = ({ sections = [], faqs = [] }) => (
+    <section className="mt-8 border-t border-white/10 pt-6">
+      <h2 className="text-2xl font-black text-white">Información del producto</h2>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        {sections.map(renderInformationCard)}
+      </div>
+
+      {faqs.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-black text-white">Preguntas frecuentes</h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {faqs.map(({ question, answer }) => (
+              <article key={question} className="rounded-3xl border border-cyan-400/15 bg-cyan-400/[0.05] p-5">
+                <h3 className="text-base font-black text-cyan-200">{question}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/68">{answer}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+
+  const physicalPaymentSection = {
+    title: "Formas de pago",
+    text: "Aceptamos efectivo, transferencia bancaria y pago por QR. No aceptamos giros.",
+  };
+
+  const physicalAttentionSection = {
+    title: "Atención",
+    text: "Antes de realizar la compra podés consultar disponibilidad, compatibilidad y condiciones directamente por WhatsApp.",
+  };
+
+  const physicalProductFaqs = [
+    {
+      question: "¿Puedo retirar del local?",
+      answer: "Sí. También podés consultar disponibilidad de delivery.",
+    },
+    {
+      question: "¿Cómo verifico la compatibilidad?",
+      answer: "Revisá la plataforma publicada o consultanos por WhatsApp antes de comprar.",
+    },
+    {
+      question: "¿El producto tiene garantía?",
+      answer: "Las condiciones dependen del producto, estado y tipo de venta. Se informan antes de confirmar.",
+    },
+  ];
+
+  const rechargeFaqs = [
+    {
+      question: "¿Necesitan mi contraseña?",
+      answer: "No para recargas vía ID.",
+    },
+    {
+      question: "¿Cuánto tarda?",
+      answer: "Normalmente entre 10 y 60 minutos, sujeto al horario y disponibilidad.",
+    },
+    {
+      question: "¿Qué ocurre si envío un ID incorrecto?",
+      answer: "El cliente debe verificar los datos antes de confirmar el pedido.",
+    },
+  ];
+
+  const streamingFaqs = [
+    {
+      question: "¿Cuándo recibo el servicio?",
+      answer: "Después de confirmar el pago y verificar disponibilidad.",
+    },
+    {
+      question: "¿Cuánto dura?",
+      answer: "La duración depende del plan elegido.",
+    },
+    {
+      question: "¿Puedo cambiar la contraseña?",
+      answer: "Solo si las condiciones del servicio lo permiten.",
+    },
+  ];
+
+  const getRechargeDataRequirementText = (item = {}) => {
+    const methodLabel = normalizeCatalogText(getRechargeMethodLabel(item));
+    if (methodLabel.includes("id")) return "Necesitamos el ID correcto del jugador. No solicitamos la contraseña de la cuenta.";
+    if (methodLabel.includes("cuenta")) return "Los datos necesarios se coordinan de forma privada por WhatsApp. Nunca publiques tus datos de acceso en comentarios o espacios públicos.";
+    return "Los datos necesarios dependen del servicio seleccionado y se confirman por WhatsApp.";
+  };
+
+  const renderProductInformationSections = (product = {}) => {
+    const category = getComparableCategory(product.category);
+    const platform = getProductPlatformLabel(product);
+    const formatLabel = getProductFormatLabel(product);
+    const conditionLabel = getProductConditionLabel(product);
+
+    if (category === "juegos") {
+      return renderInformationBlock({
+        sections: [
+          {
+            title: "¿Cómo funciona la compra?",
+            text: "Realizá tu pedido desde la web o por WhatsApp. Confirmamos la disponibilidad del juego y coordinamos el retiro en el local o el envío por delivery.",
+          },
+          {
+            title: "Compatibilidad",
+            text: platform ? `Este juego es compatible con ${platform}.` : "Verificá la plataforma indicada en la publicación antes de realizar la compra.",
+          },
+          {
+            title: "Formato",
+            text: formatLabel ? `Formato del producto: ${formatLabel}.` : "Consultá el formato del producto antes de realizar la compra.",
+          },
+          {
+            title: "Estado",
+            text: `Estado publicado: ${conditionLabel}.`,
+          },
+          {
+            title: "Entrega",
+            text:
+              formatLabel === "Digital"
+                ? "La modalidad de entrega o instalación se coordina por WhatsApp después de confirmar el pago."
+                : "Podés retirar el producto en el local o solicitar delivery, sujeto a cobertura y costo de envío.",
+          },
+          {
+            title: "Garantía",
+            text: "Los productos se verifican antes de la entrega. La garantía y sus condiciones se informan según el producto adquirido.",
+          },
+          physicalPaymentSection,
+          physicalAttentionSection,
+        ],
+        faqs: physicalProductFaqs,
+      });
+    }
+
+    if (category === "consolas") {
+      return renderInformationBlock({
+        sections: [
+          {
+            title: "¿Cómo funciona la compra?",
+            text: "Consultá la disponibilidad de la consola, confirmá el pedido y coordiná el retiro o delivery.",
+          },
+          {
+            title: "Estado",
+            text: `Estado publicado: ${conditionLabel}.`,
+          },
+          {
+            title: "¿Qué incluye?",
+            text: "El contenido puede variar según la publicación. Confirmá antes de comprar si incluye control, cables, fuente, almacenamiento u otros accesorios.",
+          },
+          {
+            title: "Entrega",
+            text: "Retiro disponible en el local y delivery sujeto a cobertura y costo de envío.",
+          },
+          {
+            title: "Garantía",
+            text: "Las consolas se prueban antes de la entrega. Las condiciones de garantía se informan al confirmar la compra.",
+          },
+          {
+            title: "Compatibilidad y región",
+            text: "Consultá la compatibilidad de juegos, accesorios y servicios antes de realizar la compra.",
+          },
+          physicalPaymentSection,
+          physicalAttentionSection,
+        ],
+        faqs: physicalProductFaqs,
+      });
+    }
+
+    if (category === "accesorios") {
+      return renderInformationBlock({
+        sections: [
+          {
+            title: "¿Cómo funciona la compra?",
+            text: "Elegí el accesorio, consultá disponibilidad y coordiná el retiro o delivery.",
+          },
+          {
+            title: "Compatibilidad",
+            text: platform ? `Compatible con ${platform}.` : "Verificá la compatibilidad con tu consola, dispositivo o modelo antes de comprar.",
+          },
+          {
+            title: "Estado",
+            text: `Estado publicado: ${conditionLabel}.`,
+          },
+          {
+            title: "Entrega",
+            text: "Retiro disponible en el local y delivery sujeto a cobertura y costo de envío.",
+          },
+          {
+            title: "Garantía",
+            text: "Los accesorios se verifican antes de la entrega. La garantía depende del tipo y estado del producto.",
+          },
+          physicalPaymentSection,
+          physicalAttentionSection,
+        ],
+        faqs: physicalProductFaqs,
+      });
+    }
+
+    if (category === "recargas-servicios") {
+      return renderInformationBlock({
+        sections: [
+          {
+            title: "¿Cómo funciona?",
+            text: "La recarga se procesa después de confirmar el pago y recibir correctamente los datos necesarios.",
+          },
+          {
+            title: "Datos necesarios",
+            text: "Los datos necesarios dependen del servicio seleccionado y se confirman por WhatsApp.",
+          },
+          {
+            title: "Tiempo de entrega",
+            text: "La entrega normalmente se realiza entre 10 y 60 minutos dentro del horario de atención, según disponibilidad del proveedor.",
+          },
+          {
+            title: "Información importante",
+            text: "El cliente debe verificar que el ID, usuario, región y paquete seleccionado sean correctos antes de confirmar. Una recarga enviada correctamente al dato proporcionado no puede transferirse a otra cuenta.",
+          },
+          physicalPaymentSection,
+        ],
+        faqs: rechargeFaqs,
+      });
+    }
+
+    return null;
+  };
+
+  const renderRechargeInformationSections = (item = {}, option = null) => {
+    if (item.type === "streaming") {
+      return renderInformationBlock({
+        sections: [
+          {
+            title: "¿Cómo funciona?",
+            text: "Elegí el plan disponible, confirmá el pago y recibí las instrucciones o datos del servicio por WhatsApp.",
+          },
+          {
+            title: "Activación",
+            text: "La activación y las condiciones dependen del plan seleccionado. La información se confirma antes de completar la compra.",
+          },
+          {
+            title: "Duración",
+            text: "Verificá la duración del plan y la fecha de vencimiento informada al momento de la entrega.",
+          },
+          {
+            title: "Uso responsable",
+            text: "Los accesos son personales y deben utilizarse según las condiciones informadas. No cambies datos, contraseña ni configuración sin autorización.",
+          },
+          physicalPaymentSection,
+        ],
+        faqs: streamingFaqs,
+      });
+    }
+
+    return renderInformationBlock({
+      sections: [
+        {
+          title: "¿Cómo funciona?",
+          text: "La recarga se procesa después de confirmar el pago y recibir correctamente los datos necesarios.",
+        },
+        {
+          title: "Datos necesarios",
+          text: getRechargeDataRequirementText(item),
+        },
+        {
+          title: "Tiempo de entrega",
+          text: "La entrega normalmente se realiza entre 10 y 60 minutos dentro del horario de atención, según disponibilidad del proveedor.",
+        },
+        {
+          title: "Información importante",
+          text: "El cliente debe verificar que el ID, usuario, región y paquete seleccionado sean correctos antes de confirmar. Una recarga enviada correctamente al dato proporcionado no puede transferirse a otra cuenta.",
+        },
+        physicalPaymentSection,
+      ],
+      faqs: rechargeFaqs,
+    });
+  };
+
   const renderProductDetailModal = () => {
     if (!selectedProduct) return null;
 
@@ -2238,6 +2515,8 @@ export default function SkayGamesWeb() {
                   Seguir viendo
                 </button>
               </div>
+
+              {renderProductInformationSections(selectedProduct)}
 
               {relatedProducts.length > 0 && (
                 <div className="mt-8 border-t border-white/10 pt-6">
@@ -2795,6 +3074,10 @@ export default function SkayGamesWeb() {
               )}
             </div>
           </section>
+
+          <section className="mx-auto max-w-7xl px-6 py-14">
+            {renderRechargeInformationSections(item, option)}
+          </section>
         </>
       );
     };
@@ -2843,6 +3126,10 @@ export default function SkayGamesWeb() {
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {sortRechargeOptionsByPrice(item.options || []).map((option) => renderRechargeOptionCard(item, option, theme))}
             </div>
+          </section>
+
+          <section className="mx-auto max-w-7xl px-6 py-14">
+            {renderRechargeInformationSections(item, null)}
           </section>
         </>
       );
