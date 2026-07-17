@@ -2469,7 +2469,7 @@ export default function SkayGamesWeb() {
                 )}
               </div>
 
-              <h3 className="text-3xl font-black md:text-4xl">{selectedProduct.name}</h3>
+              <h1 className="text-3xl font-black md:text-4xl">{selectedProduct.name}</h1>
 
               <div className="mt-5 flex flex-wrap items-end gap-3">
                 {selectedProduct.originalPrice && (
@@ -2492,7 +2492,7 @@ export default function SkayGamesWeb() {
               </div>
 
               <div className="mt-6">
-                <h4 className="text-lg font-black text-white">Sobre el producto</h4>
+                <h2 className="text-lg font-black text-white">Sobre el producto</h2>
                 <p className="mt-3 text-base leading-7 text-white/70">
                   {selectedProductManualDescription}
                 </p>
@@ -2520,7 +2520,7 @@ export default function SkayGamesWeb() {
 
               {relatedProducts.length > 0 && (
                 <div className="mt-8 border-t border-white/10 pt-6">
-                  <h4 className="text-lg font-black text-white">Productos relacionados</h4>
+                  <h2 className="text-lg font-black text-white">Productos relacionados</h2>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     {relatedProducts.map((item) => (
                       <button
@@ -2539,7 +2539,7 @@ export default function SkayGamesWeb() {
                           className: "h-16 w-16 rounded-xl bg-black object-contain p-2",
                         })}
                         <span>
-                          <span className="block text-sm font-black text-white">{item.name}</span>
+                          <h3 className="block text-sm font-black text-white">{item.name}</h3>
                           <span className="mt-1 block text-xs font-bold text-cyan-300">{formatDisplayPrice(item.price)}</span>
                         </span>
                       </button>
@@ -2598,7 +2598,7 @@ export default function SkayGamesWeb() {
       <div className="p-5">
         <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
         <div className="flex items-center gap-2 flex-wrap">
-          <h4 className="text-xl font-bold">{product.name}</h4>
+          <h3 className="text-xl font-bold">{product.name}</h3>
           {product.platform && (
             <span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300 border border-cyan-400/20">
               {product.platform.toUpperCase()}
@@ -2672,7 +2672,7 @@ export default function SkayGamesWeb() {
           <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Buscador gamer</p>
-              <h3 className="mt-2 text-2xl font-black md:text-3xl">Encontrá productos al toque</h3>
+              <h2 className="mt-2 text-2xl font-black md:text-3xl">Encontrá productos al toque</h2>
             </div>
             <p className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
               {productsToShow.length} resultado{productsToShow.length === 1 ? "" : "s"}
@@ -2766,7 +2766,7 @@ export default function SkayGamesWeb() {
     <section className="mx-auto max-w-7xl px-6 pt-10">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h3 className="text-3xl font-black md:text-4xl">Subcategorías de juegos</h3>
+          <h2 className="text-3xl font-black md:text-4xl">Subcategorías de juegos</h2>
           <p className="mt-3 text-white/65">Entrá directo a PS4, PS5 o a las ofertas digitales sin salir de Juegos.</p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -2802,7 +2802,7 @@ export default function SkayGamesWeb() {
             })}
             <div className="p-6">
               <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Juegos</div>
-              <h4 className="text-3xl font-black">{platform.title}</h4>
+              <h3 className="text-3xl font-black">{platform.title}</h3>
               <p className="mt-3 text-white/70">{platform.description}</p>
             </div>
           </button>
@@ -2831,7 +2831,7 @@ export default function SkayGamesWeb() {
             <div className="mb-3 inline-block rounded-full bg-red-500/15 px-3 py-1 text-xs font-bold text-red-300">
               {editableDigitalOffersCard.badge || digitalOffersCard.badge}
             </div>
-            <h4 className="text-3xl font-black">{editableDigitalOffersCard.title || digitalOffersCard.title}</h4>
+            <h3 className="text-3xl font-black">{editableDigitalOffersCard.title || digitalOffersCard.title}</h3>
             <p className="mt-3 text-white/70">{editableDigitalOffersCard.description || digitalOffersCard.description}</p>
           </div>
         </button>
@@ -2988,7 +2988,7 @@ export default function SkayGamesWeb() {
                 </span>
               )}
             </div>
-            <h2 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h2>
+            <h3 className="text-2xl font-black text-white">{getRechargeOptionTitle(item, option)}</h3>
             <div className="mt-3 flex flex-wrap items-end gap-3">
               {previousPrice && <span className="pb-1 text-base font-black text-white/40 line-through">{formatDisplayPrice(previousPrice)}</span>}
               <span className="text-2xl font-black text-cyan-300">{formatDisplayPrice(option.price)}</span>
@@ -3198,7 +3198,7 @@ export default function SkayGamesWeb() {
 
             <div className="relative p-6 pt-2">
               <div className="mb-4 h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              <h4 className="text-2xl font-black tracking-tight text-white">{item.name}</h4>
+              <h3 className="text-2xl font-black tracking-tight text-white">{item.name}</h3>
               <p className="mt-2 min-h-[44px] text-sm leading-6 text-white/65">
                 {type === "recarga"
                   ? "Elegí el paquete y pedilo directo por WhatsApp."
@@ -3234,7 +3234,11 @@ export default function SkayGamesWeb() {
           <div className="mx-auto max-w-7xl px-6">
             <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
             <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: /recargas-servicios</span>
-            <h1 className="mt-5 text-4xl font-black md:text-6xl">Recargas y servicios</h1>
+            {selectedProduct ? (
+              <h2 className="mt-5 text-4xl font-black md:text-6xl">Recargas y servicios</h2>
+            ) : (
+              <h1 className="mt-5 text-4xl font-black md:text-6xl">Recargas y servicios</h1>
+            )}
             <p className="mt-4 text-xl text-white/75">Cada opción tiene su propio botón de WhatsApp.</p>
           </div>
         </section>
@@ -3252,7 +3256,7 @@ export default function SkayGamesWeb() {
         {(rechargeFilter === "all" || rechargeFilter === "recargas") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
-              <h3 className="text-3xl font-black md:text-4xl">Recargas para juegos</h3>
+              <h2 className="text-3xl font-black md:text-4xl">Recargas para juegos</h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">{recargas.map((item) => renderCard(item, "recarga"))}</div>
           </section>
@@ -3261,7 +3265,7 @@ export default function SkayGamesWeb() {
         {(rechargeFilter === "all" || rechargeFilter === "streaming") && (
           <section className="mx-auto max-w-7xl px-6 pb-16">
             <div className="mb-8">
-              <h3 className="text-3xl font-black md:text-4xl">Servicios streaming</h3>
+              <h2 className="text-3xl font-black md:text-4xl">Servicios streaming</h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{streaming.map((item) => renderCard(item, "streaming"))}</div>
           </section>
@@ -3332,7 +3336,7 @@ export default function SkayGamesWeb() {
         <div className="mx-auto max-w-7xl px-6">
           <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
           <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta privada: /admin</span>
-          <h2 className="mt-5 text-4xl font-black md:text-6xl">Acceso Admin</h2>
+          <h1 className="mt-5 text-4xl font-black md:text-6xl">Acceso Admin</h1>
           <p className="mt-4 max-w-3xl text-xl text-white/75">Ingresá con tu correo y contraseña para administrar la web.</p>
         </div>
       </section>
@@ -3340,11 +3344,11 @@ export default function SkayGamesWeb() {
         <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 shadow-2xl">
             <div className="mb-4 inline-block rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-bold text-cyan-300">Área privada</div>
-            <h3 className="text-3xl font-black md:text-4xl">Panel de control de SKAY GAMES</h3>
+            <h2 className="text-3xl font-black md:text-4xl">Panel de control de SKAY GAMES</h2>
             <p className="mt-4 text-white/70">Desde acá vas a poder cargar productos, administrar recargas y respaldos.</p>
           </div>
           <form onSubmit={handleAdminLogin} className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
-            <h3 className="text-3xl font-black">Iniciar sesión</h3>
+            <h2 className="text-3xl font-black">Iniciar sesión</h2>
             <div className="mt-8 grid gap-4">
               <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="Correo admin" className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 text-white outline-none placeholder:text-white/35" />
               <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="••••••••" className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-4 text-white outline-none placeholder:text-white/35" />
@@ -4041,7 +4045,7 @@ export default function SkayGamesWeb() {
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-300">Panel privado · SKAY GAMES</div>
-                <h2 className="text-4xl font-black md:text-5xl">Admin</h2>
+                <h1 className="text-4xl font-black md:text-5xl">Admin</h1>
                 <p className="mt-3 max-w-3xl text-white/70">La estructura de la web queda fija. Todo lo visual y los productos se editan desde acá.</p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -4072,13 +4076,13 @@ export default function SkayGamesWeb() {
 
             <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-8 shadow-2xl">
               <div className="mb-4 inline-block rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-bold text-cyan-300">{adminSections.find((s) => s.id === activeAdminSection)?.title}</div>
-              <h3 className="text-3xl font-black md:text-4xl">{adminSections.find((s) => s.id === activeAdminSection)?.title}</h3>
+              <h2 className="text-3xl font-black md:text-4xl">{adminSections.find((s) => s.id === activeAdminSection)?.title}</h2>
               <p className="mt-3 max-w-3xl text-white/65">{adminSections.find((s) => s.id === activeAdminSection)?.description}</p>
 
               {activeAdminSection === "mercaderias" ? (
                 <div className="mt-8 space-y-6">
                   <form onSubmit={handleAddOrUpdateProduct} className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">{editingProductId ? "Editar mercadería / producto" : "Agregar mercadería / producto"}</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">{editingProductId ? "Editar mercadería / producto" : "Agregar mercadería / producto"}</h3>
                     <div className="grid gap-4 md:grid-cols-2">
                       <input value={newProductName} onChange={(e) => setNewProductName(e.target.value)} placeholder="Nombre de la mercadería" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <input value={newProductPrice} onChange={(e) => setNewProductPrice(e.target.value)} placeholder="Precio actual (ej: Gs. 150.000)" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
@@ -4166,7 +4170,7 @@ export default function SkayGamesWeb() {
                       <div className="mt-5 rounded-3xl border border-cyan-400/20 bg-black/40 p-4">
                         <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                           <div>
-                            <div className="text-sm font-black text-cyan-300">Vista previa pública</div>
+                            <h3 className="text-sm font-black text-cyan-300">Vista previa pública</h3>
                             <p className="mt-1 text-xs text-white/50">Así se vería la tarjeta del producto para los clientes, sin guardar nada.</p>
                           </div>
                           <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold text-white/55">Solo prueba local</div>
@@ -4207,7 +4211,7 @@ export default function SkayGamesWeb() {
                   </form>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Mercaderías cargadas</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Mercaderías cargadas</h3>
                     <div className="space-y-4">
                       {productsData.map((item) => (
                         <div key={item.id} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/40 p-4 md:flex-row md:items-center md:justify-between">
@@ -4240,7 +4244,7 @@ export default function SkayGamesWeb() {
               ) : activeAdminSection === "contenido-web" ? (
                 <div className="mt-8 space-y-6">
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Imágenes del header</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Imágenes del header</h3>
                     <div className="space-y-4">
                       {draftHeaderBackgrounds.map((item, index) => (
                         <div key={index} className="grid gap-3 md:grid-cols-[1fr_170px]">
@@ -4252,7 +4256,7 @@ export default function SkayGamesWeb() {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Sliders principales</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Sliders principales</h3>
                     <div className="space-y-5">
                       {draftHeroSlides.map((slide, index) => (
                         <div key={index} className="rounded-2xl border border-white/10 bg-black/40 p-4">
@@ -4274,7 +4278,7 @@ export default function SkayGamesWeb() {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Botones / imágenes / textos</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Botones / imágenes / textos</h3>
                     <div className="space-y-5">
                       {draftCategories.map((item, index) => (
                         <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
@@ -4294,7 +4298,7 @@ export default function SkayGamesWeb() {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Subcategorías de juegos</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Subcategorías de juegos</h3>
                     <p className="mb-5 text-sm text-white/55">Editá los botones que aparecen dentro de la página Juegos, por ejemplo Juegos PS4 y Juegos PS5.</p>
                     <div className="space-y-5">
                       {draftGamePlatforms.map((item, index) => (
@@ -4330,7 +4334,7 @@ export default function SkayGamesWeb() {
                   </div>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Ofertas encadenadas / temporizadores</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Ofertas encadenadas / temporizadores</h3>
                     <div className="space-y-6">
                       {draftOffers.map((offer, index) => (
                         <div key={offer.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
@@ -4366,7 +4370,7 @@ export default function SkayGamesWeb() {
               ) : activeAdminSection === "recargas" ? (
                 <div className="mt-8 space-y-6">
                   <form onSubmit={handleAddOrUpdateRechargeItem} className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">{editingRechargeId ? "Editar recarga / servicio" : "Agregar recarga / servicio"}</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">{editingRechargeId ? "Editar recarga / servicio" : "Agregar recarga / servicio"}</h3>
                     <div className="grid gap-4 md:grid-cols-2">
                       <input value={newRechargeName} onChange={(e) => setNewRechargeName(e.target.value)} placeholder="Nombre del juego o servicio" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                       <select value={newRechargeType} onChange={(e) => setNewRechargeType(e.target.value)} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none">
@@ -4399,7 +4403,7 @@ export default function SkayGamesWeb() {
 
                     <div className="mt-6 rounded-2xl border border-white/10 bg-black/40 p-4">
                       <div className="mb-4 flex items-center justify-between gap-3">
-                        <div className="text-sm font-black text-cyan-300">Opciones / precios</div>
+                        <h3 className="text-sm font-black text-cyan-300">Opciones / precios</h3>
                         <button type="button" onClick={addRechargeOption} className="rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-black text-black">Agregar opción</button>
                       </div>
                       <div className="space-y-4">
@@ -4447,7 +4451,7 @@ export default function SkayGamesWeb() {
                   </form>
 
                   <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                    <div className="mb-4 text-sm font-black text-cyan-300">Recargas y servicios cargados</div>
+                    <h3 className="mb-4 text-sm font-black text-cyan-300">Recargas y servicios cargados</h3>
                     <div className="space-y-4">
                       {editableRechargeItems.map((item) => (
                         <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
@@ -4493,7 +4497,7 @@ export default function SkayGamesWeb() {
                 <div className="mt-8 space-y-5">
                   {draftComboSlides.map((combo, index) => (
                     <div key={combo.id} className="rounded-3xl border border-white/10 bg-black/30 p-5">
-                      <div className="mb-4 text-sm font-black text-cyan-300">Combo {index + 1}</div>
+                      <h3 className="mb-4 text-sm font-black text-cyan-300">Combo {index + 1}</h3>
                       <div className="grid gap-4 md:grid-cols-2">
                         <input value={combo.title} onChange={(e) => updateComboSlide(index, "title", e.target.value)} placeholder="Título" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
                         <input value={combo.image} onChange={(e) => updateComboSlide(index, "image", e.target.value)} placeholder="URL de imagen" className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none" />
@@ -4691,7 +4695,11 @@ export default function SkayGamesWeb() {
                 {renderBreadcrumbs(getPageBreadcrumbItems(), "mb-6")}
                 <button onClick={() => navigateTo("home")} className="mb-6 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold transition hover:bg-white/10">← Volver al inicio</button>
                 <span className="inline-block rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">Ruta: {activePage === "home" ? "/" : `/${activePage}`}</span>
-                <h1 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h1>
+                {selectedProduct ? (
+                  <h2 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h2>
+                ) : (
+                  <h1 className="mt-5 text-4xl font-black md:text-6xl">{pageContent?.title}</h1>
+                )}
                 <p className="mt-4 text-xl text-white/75">{pageContent?.subtitle}</p>
                 <p className="mt-4 max-w-3xl text-white/65">{pageContent?.description}</p>
               </div>
@@ -4795,7 +4803,7 @@ export default function SkayGamesWeb() {
 
             <section className="mx-auto max-w-7xl px-6 py-16">
               <div className="mb-10 text-center">
-                <h3 className="text-3xl font-black md:text-4xl">¿Qué vas a encontrar en SKAY GAMES?</h3>
+                <h2 className="text-3xl font-black md:text-4xl">¿Qué vas a encontrar en SKAY GAMES?</h2>
                 <p className="mt-3 text-white/65">Todo lo que necesitás para jugar, equiparte o mantener tu consola en perfecto estado.</p>
               </div>
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -4813,7 +4821,7 @@ export default function SkayGamesWeb() {
                     <div className="p-5">
                       <div className="mb-3 h-px w-full bg-gradient-to-r from-cyan-400/20 via-white/10 to-transparent" />
                       <div className="mb-3 inline-block rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold text-cyan-300">Página</div>
-                      <h4 className="text-xl font-bold">{item.title}</h4>
+                      <h3 className="text-xl font-bold">{item.title}</h3>
                       <p className="mt-2 text-sm text-white/70">{item.description}</p>
                       <div className="mt-4 inline-flex w-full items-center justify-between gap-3 rounded-2xl border border-cyan-300/55 bg-gradient-to-r from-slate-950 via-black to-cyan-950/40 px-4 py-3 text-sm font-black text-white shadow-[0_0_18px_rgba(34,211,238,0.18)] transition duration-300 group-hover:border-cyan-200 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.35)] sm:w-auto">
                         {renderCategoryCtaContent(item.id)}
@@ -4828,7 +4836,7 @@ export default function SkayGamesWeb() {
               <div className="mx-auto max-w-7xl px-6">
                 <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                   <div>
-                    <h3 className="text-3xl font-black md:text-4xl">Productos destacados</h3>
+                    <h2 className="text-3xl font-black md:text-4xl">Productos destacados</h2>
                     
                   </div>
                   <a href={whatsappLink} target="_blank" rel="noreferrer" className="rounded-2xl border border-green-400/40 bg-green-400/10 px-5 py-3 font-bold text-green-300 transition hover:bg-green-400/20">Consultar catálogo completo</a>
@@ -4842,7 +4850,7 @@ export default function SkayGamesWeb() {
             <section className="mx-auto max-w-7xl px-6 py-16">
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
-                  <h3 className="text-3xl font-black md:text-4xl">Combos destacados</h3>
+                  <h2 className="text-3xl font-black md:text-4xl">Combos destacados</h2>
                   
                 </div>
               </div>
@@ -4881,7 +4889,7 @@ export default function SkayGamesWeb() {
             <section className="mx-auto max-w-7xl px-6 py-16">
               <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
                 <div>
-                  <h3 className="text-3xl font-black md:text-4xl">Recién llegados</h3>
+                  <h2 className="text-3xl font-black md:text-4xl">Recién llegados</h2>
                   
                 </div>
               </div>
@@ -4893,12 +4901,12 @@ export default function SkayGamesWeb() {
             <section className="mx-auto max-w-7xl px-6 py-16">
               <div className="grid gap-10 md:grid-cols-2">
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
-                  <h3 className="text-3xl font-black">Servicios del local</h3>
+                  <h2 className="text-3xl font-black">Servicios del local</h2>
                   <p className="mt-3 text-white/65">Además de vender productos, también ofrecés soluciones y atención técnica.</p>
                   <div className="mt-6 grid gap-3">{services.map((service) => <div key={service} className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white/85">{service}</div>)}</div>
                 </div>
                 <div className="rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-purple-500/10 p-8 shadow-2xl">
-                  <h3 className="text-3xl font-black">Pedí rápido y fácil</h3>
+                  <h2 className="text-3xl font-black">Pedí rápido y fácil</h2>
                   <p className="mt-3 text-white/70">Consultanos por stock, precios, combos, mantenimiento o recargas. Te respondemos directo por WhatsApp.</p>
                   <div className="mt-8 space-y-4">
                     <div className="rounded-2xl border border-white/10 bg-black/30 p-4"><p className="text-sm text-white/60">Ubicación</p><p className="mt-1 text-lg font-bold">Areguá - Caacupemí</p></div>
@@ -4911,7 +4919,7 @@ export default function SkayGamesWeb() {
 
             <footer className="border-t border-white/10 bg-black px-6 py-8 text-center text-sm text-white/50">
               <div className="mx-auto max-w-7xl">
-                <h3 className="mb-4 text-xl font-bold text-white">SKAY GAMES</h3>
+                <h2 className="mb-4 text-xl font-bold text-white">SKAY GAMES</h2>
                 <p className="mb-6 text-white/60">Seguinos y escribinos directo desde nuestras redes.</p>
                 <div className="mb-6 flex flex-wrap items-center justify-center gap-4">
                   <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noreferrer" className="rounded-xl bg-green-500 px-5 py-2 font-semibold text-white transition hover:bg-green-600">WhatsApp</a>
