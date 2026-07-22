@@ -16,7 +16,7 @@ export default function SkayGamesWeb() {
     "subtitle": "Saldo, servicios y recargas para todos tus juegos. Consultá ahora.",
     "image": "https://i.imgur.com/LnLO32v.png",
     "buttonText": "Consultar recargas",
-    "message": "Hola! Quiero consultar por recargas disponibles.",
+    "message": "Hola, quiero pedir una recarga disponible en SKAY GAMES. ¿Me indicás las opciones y los pasos para completar el pedido?",
     "imagePositionX": 50,
     "imagePositionY": 50
   },
@@ -25,7 +25,7 @@ export default function SkayGamesWeb() {
     "subtitle": "Nuevos lanzamientos y novedades en juegos. Consultá lo último en SKAY GAMES.",
     "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar lanzamiento",
-    "message": "Hola! Quiero consultar por los juegos nuevos disponibles 🔥",
+    "message": "Hola, quiero comprar un juego nuevo disponible en SKAY GAMES. ¿Me confirmás stock y precio?",
     "imagePositionX": 50,
     "imagePositionY": 50
   },
@@ -34,7 +34,7 @@ export default function SkayGamesWeb() {
     "subtitle": "Encontrá títulos físicos y digitales para seguir jugando sin parar.",
     "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80",
     "buttonText": "Consultar juegos",
-    "message": "Hola! Quiero consultar por juegos disponibles para PS4 y PS5.",
+    "message": "Hola, quiero comprar juegos para PS4 o PS5. ¿Me confirmás disponibilidad y precios?",
     "imagePositionX": 50,
     "imagePositionY": 50
   },
@@ -43,7 +43,7 @@ export default function SkayGamesWeb() {
     "subtitle": "PS3, PS4, PS5 y más opciones para todos los presupuestos.",
     "image": "https://i.imgur.com/V7IWjBe.jpeg",
     "buttonText": "Consultar consolas",
-    "message": "Hola! Quiero consultar por consolas disponibles.",
+    "message": "Hola, quiero comprar una consola. ¿Me confirmás modelos disponibles, estado y precios?",
     "imagePositionX": 50,
     "imagePositionY": 50
   }
@@ -83,7 +83,7 @@ export default function SkayGamesWeb() {
       description: "Catálogo de juegos para PlayStation 4 con títulos físicos y digitales.",
       image:
         "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
-      message: "Hola! Quiero consultar por juegos disponibles para PS4.",
+      message: "Hola, quiero comprar juegos para PS4. ¿Me confirmás disponibilidad y precios?",
     },
     {
       id: "ps5",
@@ -91,7 +91,7 @@ export default function SkayGamesWeb() {
       description: "Explorá juegos para PlayStation 5 y consultá por stock y precios.",
       image:
         "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1200&q=80",
-      message: "Hola! Quiero consultar por juegos disponibles para PS5.",
+      message: "Hola, quiero comprar juegos para PS5. ¿Me confirmás disponibilidad y precios?",
     },
   ];
 
@@ -158,7 +158,7 @@ export default function SkayGamesWeb() {
     "title": "Combo Accesorios PS2",
     "subtitle": "Armá tu combo ideal con mandos, cables y accesorios esenciales.",
     "image": "https://i.imgur.com/sVQ0Bkz.png",
-    "message": "Hola! Quiero consultar por el combo de accesorios para PS2.",
+    "message": "Hola, quiero comprar el combo de accesorios para PS2. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "imagePositionX": 50,
     "imagePositionY": 50
   },
@@ -167,7 +167,7 @@ export default function SkayGamesWeb() {
     "title": "Combo Mesa + Silla Gamer",
     "subtitle": "Mejorá tu espacio con un combo gamer completo para jugar cómodo.",
     "image": "https://images.unsplash.com/photo-1616588589676-62b3bd0d0b2f?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo de mesa gamer + silla gamer.",
+    "message": "Hola, quiero comprar el combo de mesa gamer + silla gamer. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "imagePositionX": 50,
     "imagePositionY": 50
   },
@@ -176,7 +176,7 @@ export default function SkayGamesWeb() {
     "title": "Combo PS4 + Juego + Control",
     "subtitle": "Llevate un combo listo para jugar desde el primer día.",
     "image": "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1600&q=80",
-    "message": "Hola! Quiero consultar por el combo PS4 + juego + control.",
+    "message": "Hola, quiero comprar el combo PS4 + juego + control. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "imagePositionX": 50,
     "imagePositionY": 50
   }
@@ -191,7 +191,7 @@ export default function SkayGamesWeb() {
     "platform": "ps4",
     "image": "https://i.imgur.com/NXSuqcR.jpeg",
     "condition": "Nuevo",
-    "message": "Hola! Quiero consultar por The last of us 2.",
+    "message": "Hola, quiero comprar The last of us 2. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-20"
   },
@@ -203,7 +203,7 @@ export default function SkayGamesWeb() {
     "platform": "ps4",
     "image": "https://i.imgur.com/GHOGmmI.jpeg",
     "description": "1",
-    "message": "Hola! Quiero consultar por God Of War.",
+    "message": "Hola, quiero comprar God Of War. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-20",
     "condition": "Nuevo"
@@ -214,7 +214,7 @@ export default function SkayGamesWeb() {
     "price": "Disponible ahora",
     "category": "recargas-servicios",
     "image": "https://i.imgur.com/T7uvTyL.png",
-    "message": "Hola! Quiero consultar por Recargas para todos los juegos.",
+    "message": "Hola, quiero solicitar recargas para juegos. ¿Me indicás las opciones disponibles y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-01"
   },
@@ -225,7 +225,7 @@ export default function SkayGamesWeb() {
     "category": "accesorios",
     "platform": "ps4",
     "image": "https://i.imgur.com/hBoVgOm.jpeg",
-    "message": "Hola! Quiero consultar por Joystick PS4.",
+    "message": "Hola, quiero comprar Joystick PS4. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": true,
     "createdAt": "2026-04-20",
     "originalPrice": ""
@@ -237,7 +237,7 @@ export default function SkayGamesWeb() {
     "category": "accesorios",
     "platform": "ps4",
     "image": "https://i.imgur.com/V7IWjBe.jpeg",
-    "message": "Hola! Quiero consultar por Auricular Gamer.",
+    "message": "Hola, quiero comprar Auricular Gamer. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-20"
   },
@@ -248,7 +248,7 @@ export default function SkayGamesWeb() {
     "category": "juegos",
     "platform": "ps5",
     "image": "https://i.imgur.com/h18c8aJ.jpeg",
-    "message": "Hola! Quiero consultar por God of War Ragnarok.",
+    "message": "Hola, quiero comprar God of War Ragnarok. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": true,
     "createdAt": "2026-04-20",
     "condition": "Nuevo"
@@ -259,7 +259,7 @@ export default function SkayGamesWeb() {
     "price": "Nuevas y usadas",
     "category": "consolas",
     "image": "https://i.imgur.com/Uv1nMii.jpeg",
-    "message": "Hola! Quiero consultar por Consolas.",
+    "message": "Hola, quiero comprar una consola. ¿Me confirmás modelos disponibles, estado y precios?",
     "isFeatured": false,
     "createdAt": "2026-04-01"
   },
@@ -269,7 +269,7 @@ export default function SkayGamesWeb() {
     "price": "Promo disponible",
     "category": "recargas-servicios",
     "image": "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&w=1200&q=80",
-    "message": "Hola! Quiero consultar por Recargas para juegos.",
+    "message": "Hola, quiero solicitar una recarga para juegos. ¿Me indicás las opciones disponibles y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-01"
   },
@@ -279,7 +279,7 @@ export default function SkayGamesWeb() {
     "price": "Planes disponibles",
     "category": "recargas-servicios",
     "image": "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80",
-    "message": "Hola! Quiero consultar por Servicios streaming.",
+    "message": "Hola, quiero contratar un servicio streaming. ¿Me confirmás planes disponibles y pasos de activación?",
     "isFeatured": false,
     "createdAt": "2026-04-01"
   },
@@ -290,7 +290,7 @@ export default function SkayGamesWeb() {
     "category": "accesorios",
     "platform": "ps3",
     "image": "https://i.imgur.com/mPxekSH.png",
-    "message": "Hola! Quiero consultar por Mando PS3.",
+    "message": "Hola, quiero comprar Mando PS3. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": true,
     "createdAt": "2026-04-20",
     "originalPrice": "85.000"
@@ -301,7 +301,7 @@ export default function SkayGamesWeb() {
     "price": "Consultar combo",
     "category": "consolas",
     "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=1200&q=80",
-    "message": "Hola! Quiero consultar por Combo PS4 + GTA V.",
+    "message": "Hola, quiero comprar Combo PS4 + GTA V. ¿Me confirmás disponibilidad y cómo completar el pedido?",
     "isFeatured": false,
     "createdAt": "2026-04-01"
   }
@@ -738,7 +738,7 @@ export default function SkayGamesWeb() {
     seoImageUrl: item.seo_image_url || "",
     publicImageUrl: item.public_image_url || item.seo_image_url || "",
     description: item.descripcion || "",
-    message: `Hola! Quiero consultar por ${item.nombre || "este producto"}.`,
+    message: `Hola, quiero comprar ${item.nombre || "este producto"}. ¿Me confirmás disponibilidad y cómo completar el pedido?`,
     isFeatured: Boolean(item.featured ?? item.destacado),
     isRecent: Boolean(item.recent),
     createdAt: item.created_at ? String(item.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10),
@@ -1565,6 +1565,49 @@ export default function SkayGamesWeb() {
     const numericPrice = parseSafePrice(text);
     if (numericPrice !== null) return `Gs. ${numericPrice.toLocaleString("es-PY")}`;
     return text;
+  };
+
+  const getProductWhatsappMessage = (product = {}) => {
+    const name = compactText(product.name) || "este producto";
+    const category = getComparableCategory(product.category);
+    const platform = getProductPlatformLabel(product);
+    const format = getProductFormatLabel(product);
+    const condition = category === "juegos" ? getProductConditionLabel(product) : "";
+    const details = [platform, format, condition].filter(Boolean).join(" · ");
+    const price = formatDisplayPrice(product.price);
+    const action = category === "recargas-servicios" ? "solicitar" : "comprar";
+
+    return compactText(
+      `Hola, quiero ${action} ${name}${details ? ` (${details})` : ""}.${price ? ` Precio publicado: ${price}.` : ""} ¿Me confirmás disponibilidad y cómo completar el pedido?`
+    );
+  };
+
+  const getSavedOrFallbackWhatsappMessage = (message, fallback) => {
+    const text = compactText(message);
+    if (!text || /quiero consultar por/i.test(text)) return fallback;
+    return text;
+  };
+
+  const getHeroWhatsappMessage = (slide = {}) => {
+    const title = compactText(slide.title) || "SKAY GAMES";
+    return getSavedOrFallbackWhatsappMessage(
+      slide.message,
+      `Hola, me interesa ${title}. ¿Me indicás disponibilidad, precios y cómo completar el pedido?`
+    );
+  };
+
+  const getOfferWhatsappMessage = (offer = {}) => {
+    const title = compactText(offer?.title) || "la oferta publicada";
+    const price = formatDisplayPrice(offer?.price);
+    return `Hola, quiero comprar ${title}${price ? ` por ${price}` : ""}. ¿Me confirmás disponibilidad y cómo completar el pedido?`;
+  };
+
+  const getComboWhatsappMessage = (combo = {}) => {
+    const title = compactText(combo?.title) || "este combo";
+    return getSavedOrFallbackWhatsappMessage(
+      combo.message,
+      `Hola, quiero comprar ${title}. ¿Me confirmás disponibilidad y cómo completar el pedido?`
+    );
   };
 
   const getImagePositionStyle = (item, prefix = "image") => {
@@ -2500,7 +2543,7 @@ export default function SkayGamesWeb() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(selectedProduct.message || `Hola! Quiero consultar por ${selectedProduct.name}.`)}`}
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getProductWhatsappMessage(selectedProduct))}`}
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-2xl bg-green-500 px-6 py-4 font-bold text-black transition hover:scale-105"
@@ -2642,7 +2685,7 @@ export default function SkayGamesWeb() {
             Ver detalles
           </button>
           <a
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(product.message)}`}
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getProductWhatsappMessage(product))}`}
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -2943,7 +2986,19 @@ export default function SkayGamesWeb() {
 
     const getRechargeWhatsappMessage = (item, option) => {
       const previousPrice = getRechargeOptionPreviousPrice(option);
-      return `Hola! Quiero consultar por ${getRechargeOptionTitle(item, option)}${option.price ? ` - ${formatDisplayPrice(option.price)}` : ""}${previousPrice ? ` (antes ${formatDisplayPrice(previousPrice)})` : ""}.`;
+      const title = getRechargeOptionTitle(item, option);
+      const price = option.price ? formatDisplayPrice(option.price) : "";
+      const methodLabel = getRechargeMethodLabel(item);
+
+      if (item.type === "streaming") {
+        return compactText(
+          `Hola, quiero contratar ${title}${price ? ` por ${price}` : ""}${previousPrice ? ` (precio anterior ${formatDisplayPrice(previousPrice)})` : ""}. ¿Me confirmás disponibilidad y los pasos para activar el servicio?`
+        );
+      }
+
+      return compactText(
+        `Hola, quiero comprar ${title}${price ? ` por ${price}` : ""}${previousPrice ? ` (precio anterior ${formatDisplayPrice(previousPrice)})` : ""}${methodLabel ? ` - ${methodLabel}` : ""}. ¿Me indicás los datos necesarios para completar la recarga?`
+      );
     };
 
     const getRechargeOptionImage = (item = {}) => item.optionImage || item.priceImage || item.image || "";
@@ -4195,7 +4250,7 @@ export default function SkayGamesWeb() {
                               format: newProductDigitalOffer ? "digital" : newProductFormat,
                               image: newProductImage,
                               description: newProductDescription.trim(),
-                              message: `Hola! Quiero consultar por ${newProductName.trim() || "este producto"}.`,
+                              message: `Hola, quiero comprar ${newProductName.trim() || "este producto"}. ¿Me confirmás disponibilidad y cómo completar el pedido?`,
                             },
                             "Vista previa"
                           )}
@@ -4736,7 +4791,7 @@ export default function SkayGamesWeb() {
                     <h1 className="text-4xl font-black leading-tight md:text-6xl">{editableHeroSlides[currentSlide].title}</h1>
                     <p className="mt-5 text-lg text-white/75 md:text-xl">{editableHeroSlides[currentSlide].subtitle}</p>
                     <div className="mt-8 flex flex-wrap gap-4">
-                      <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(editableHeroSlides[currentSlide].message)}`} target="_blank" rel="noreferrer" className="rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">{editableHeroSlides[currentSlide].buttonText}</a>
+                      <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getHeroWhatsappMessage(editableHeroSlides[currentSlide]))}`} target="_blank" rel="noreferrer" className="rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">{editableHeroSlides[currentSlide].buttonText}</a>
                       <button
                         type="button"
                         onClick={() => navigateTo(getHeroSlideTargetPage(editableHeroSlides[currentSlide]))}
@@ -4795,7 +4850,7 @@ export default function SkayGamesWeb() {
                       <p className="text-white/85 mt-3 max-w-2xl drop-shadow-lg">{displayOffer?.subtitle || "Configurá una oferta desde el panel admin."}</p>
                       <p className="text-3xl font-black text-green-400 mt-4 drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">{formatDisplayPrice(displayOffer?.price || "Gs. 0")}</p>
                     </div>
-                    <a href={whatsappLink} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
+                    <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getOfferWhatsappMessage(displayOffer))}`} target="_blank" rel="noreferrer" className="bg-green-500 hover:bg-green-600 transition px-6 py-3 rounded-2xl text-white font-bold shadow-lg">Comprar por WhatsApp</a>
                   </div>
                 </div>
               </div>
@@ -4879,7 +4934,7 @@ export default function SkayGamesWeb() {
                       </div>
                       <h3 className="text-3xl font-black md:text-5xl">{editableComboSlides[currentComboSlide].title}</h3>
                       <p className="mt-4 text-base text-white/75 md:text-lg">{editableComboSlides[currentComboSlide].subtitle}</p>
-                      <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(editableComboSlides[currentComboSlide].message)}`} target="_blank" rel="noreferrer" className="mt-6 inline-block rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">Consultar combo</a>
+                      <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(getComboWhatsappMessage(editableComboSlides[currentComboSlide]))}`} target="_blank" rel="noreferrer" className="mt-6 inline-block rounded-2xl bg-green-500 px-6 py-3 font-bold text-black transition hover:scale-105">Consultar combo</a>
                     </div>
                   </div>
                 </div>
